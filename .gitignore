@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+*.whl
+build/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.env
+!Backend/.env.example
+calyenv/
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+Frontend/caly-frontend/dist/
+Frontend/caly-frontend/.vite/
+
+# IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets & env
+.env.local
+.env.production
+.env.*.local
+
+# Coverage
+coverage.xml
+htmlcov/
+.coverage
+
+# Misc
+*.bak
+*.tmp

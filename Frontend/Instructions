@@ -1,0 +1,355 @@
+You are an expert React developer. Your job is to build a complete production-ready frontend for a caly clone MVP. The Django backend is already running at http://localhost:8000. Wire every API call to that backend. Use React 18, React Router v6, Axios, and Tailwind CSS.
+
+---
+
+PROJECT STRUCTURE TO CREATE:
+
+caly-frontend/
+├── public/
+├── src/
+│   ├── api/
+│   │   └── client.js
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── Footer.jsx
+│   │   └── ProtectedRoute.jsx
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── Dashboard.jsx
+│   │   ├── EventTypes.jsx
+│   │   ├── CreateEventType.jsx
+│   │   ├── Availability.jsx
+│   │   ├── BookingPage.jsx
+│   │   ├── BookingConfirmed.jsx
+│   │   └── Settings.jsx
+│   ├── context/
+│   │   └── AuthContext.jsx
+│   ├── App.jsx
+│   └── main.jsx
+├── package.json
+├── tailwind.config.js
+└── vite.config.js
+
+---
+
+STEP 1 — INIT PROJECT
+
+Run:
+npm create vite@latest caly-frontend -- --template react
+cd caly-frontend
+npm install react-router-dom axios @stripe/stripe-js @stripe/react-stripe-js
+
+Install and configure Tailwind:
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+Set tailwind.config.js content to:
+["./index.html", "./src/**/*.{js,jsx}"]
+
+Add to src/index.css:
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+---
+
+STEP 2 — API CLIENT
+
+File: src/api/client.js
+
+Create an Axios instance:
+- baseURL: http://localhost:8000/api
+- On every request, read token from localStorage key "access_token" and attach as Authorization: Bearer <token> header
+- On 401 response, clear localStorage and redirect to /login
+- Export named functions for every API call:
+
+AUTH:
+  register(data) → POST /auth/register/
+  login(data) → POST /auth/login/ → store access_token and refresh_token in localStorage
+  getProfile() → GET /auth/me/
+  updateProfile(data) → PATCH /auth/me/
+
+EVENT TYPES:
+  getEventTypes() → GET /events/event-types/
+  createEventType(data) → POST /events/event-types/
+  updateEventType(id, data) → PATCH /events/event-types/<id>/
+  deleteEventType(id) → DELETE /events/event-types/<id>/
+  getPublicEventTypes(username) → GET /events/public/<username>/event-types/
+  getSlots(username, eventTypeId, date) → GET /events/public/<username>/event-types/<id>/slots/?date=<date>
+
+AVAILABILITY:
+  getAvailability() → GET /events/availability/
+  createAvailability(data) → POST /events/availability/
+  updateAvailability(id, data) → PATCH /events/availability/<id>/
+  deleteAvailability(id) → DELETE /events/availability/<id>/
+
+BOOKINGS:
+  createBooking(data) → POST /bookings/
+  getMyBookings(status) → GET /bookings/my/?status=<status>
+  cancelBooking(id, token) → POST /bookings/<id>/cancel/?token=<token>
+
+PAYMENTS:
+  createPaymentIntent(data) → POST /payments/create-intent/
+
+INTEGRATIONS:
+  getGoogleAuthUrl() → GET /integrations/google/auth/
+  getGoogleStatus() → GET /integrations/google/status/
+  disconnectGoogle() → DELETE /integrations/google/disconnect/
+
+---
+
+STEP 3 — AUTH CONTEXT
+
+File: src/context/AuthContext.jsx
+
+Create a React context that:
+- Stores user object and isAuthenticated boolean in state
+- On mount, if access_token exists in localStorage, calls getProfile() and sets user
+- Provides login(credentials), logout(), register(data) functions
+- logout() clears localStorage and redirects to /login
+- Wrap the entire app in this provider
+
+---
+
+STEP 4 — ROUTING
+
+File: src/App.jsx
+
+Set up React Router with these routes:
+
+Public routes (no auth required):
+  / → Home
+  /login → Login
+  /register → Register
+  /book/:username → BookingPage (lists all event types for that host)
+  /book/:username/:slug → BookingPage (specific event type with slot picker)
+  /booking-confirmed → BookingConfirmed
+
+Protected routes (redirect to /login if not authenticated):
+  /dashboard → Dashboard
+  /event-types → EventTypes
+  /event-types/new → CreateEventType
+  /availability → Availability
+  /settings → Settings
+
+ProtectedRoute component checks AuthContext.isAuthenticated. If false, redirect to /login.
+
+---
+
+STEP 5 — HOME PAGE
+
+File: src/pages/Home.jsx
+
+Build a stunning, modern landing page with these sections:
+
+HERO SECTION:
+- Large headline: "Scheduling that works for everyone"
+- Subheadline: "Share your caly link. Your invitees pick a time. It's that simple."
+- Two CTA buttons: "Get started free" (→ /register) and "See how it works" (smooth scroll to features)
+- Hero image: a clean mockup illustration of a booking calendar (build this as an inline SVG or styled div — do not use external image URLs)
+- Dark navy background with a bright blue accent color
+
+FEATURES SECTION (id="features"):
+Six feature cards in a 3-column grid, each with an icon (use inline SVG icons), title, and description:
+1. Unlimited event types — Create as many meeting types as you need
+2. Smart availability — Set your hours once, never double-book again
+3. Automated reminders — Email confirmations and reminders sent automatically
+4. Payment collection — Charge for meetings with Stripe integration
+5. Google Calendar sync — Two-way sync keeps your calendar always up to date
+6. Zapier integration — Connect to 5000+ apps via webhooks
+
+HOW IT WORKS SECTION:
+Three numbered steps in a horizontal layout:
+1. Set your availability — Tell us when you're free
+2. Share your link — Send your personal booking URL
+3. Get booked — Invitees pick a time that works for them
+
+PRICING SECTION (id="pricing"):
+Three pricing cards:
+- Free: $0/month — 1 event type, unlimited bookings, basic features
+- Standard: $12/month — Unlimited event types, Google Calendar sync, payment collection, email reminders, Zapier webhooks — highlight this card with a "Most popular" badge
+- Teams: $20/user/month — Everything in Standard plus round-robin routing, SMS reminders, Salesforce
+
+Each card has a "Get started" button linking to /register.
+
+TESTIMONIALS SECTION:
+Three fake testimonials with avatar initials, name, role, and quote. Style as cards with subtle shadows.
+
+FOOTER:
+Logo, tagline, links to Features / Pricing / Login / Register, and copyright.
+
+Make the entire page pixel-perfect, responsive (mobile-first), and use a color palette of deep navy (#0F172A), bright blue (#3B82F6), and white. Use smooth hover transitions on all interactive elements.
+
+---
+
+STEP 6 — AUTH PAGES
+
+Login page (src/pages/Login.jsx):
+- Clean centered card with email and password fields
+- On submit call login() from AuthContext, redirect to /dashboard on success
+- Show error message on failure
+- Link to /register
+
+Register page (src/pages/Register.jsx):
+- Fields: email, username, password, timezone (dropdown with common timezones)
+- On submit call register(), auto-login, redirect to /dashboard
+- Link to /login
+
+---
+
+STEP 7 — DASHBOARD
+
+File: src/pages/Dashboard.jsx
+
+After login this is the first screen. Show:
+- Welcome header: "Welcome back, <username>"
+- Stats row: total bookings, upcoming bookings, active event types (fetch from API)
+- Upcoming bookings table: invitee name, event type, date/time, status, cancel button
+- Quick actions: "Create event type" button, "Set availability" button, copy booking link button (copies http://localhost:3000/book/<username> to clipboard)
+- Sidebar navigation with links to Dashboard, Event Types, Availability, Settings
+
+---
+
+STEP 8 — EVENT TYPES PAGE
+
+File: src/pages/EventTypes.jsx
+
+List all event types as cards showing:
+- Color indicator dot, event name, duration, location type, price (if any)
+- Copy link button (copies the booking URL to clipboard)
+- Toggle active/inactive switch (calls PATCH API)
+- Delete button with confirmation dialog
+- "New event type" button at top right → /event-types/new
+
+File: src/pages/CreateEventType.jsx
+
+Form with fields:
+- Name (text)
+- Duration (select: 15/30/45/60/90/120 min)
+- Location type (select: Zoom/Google Meet/Phone/In person)
+- Location details (text, shown conditionally)
+- Description (textarea)
+- Color picker (6 preset colors as clickable circles)
+- Buffer before/after (number inputs, in minutes)
+- Minimum notice (number input, in minutes)
+- Max advance days (number input)
+- Max bookings per day (number input, optional)
+- Price (number input, optional — if filled show currency select)
+- Custom questions section: add/remove questions with label, type (text/select), required toggle
+- Save button → POST to API → redirect to /event-types
+
+---
+
+STEP 9 — AVAILABILITY PAGE
+
+File: src/pages/Availability.jsx
+
+Show a weekly grid (Mon–Sun). For each day:
+- Toggle switch to enable/disable that day
+- Time range picker (start time, end time) shown when enabled
+- Add multiple time windows per day (e.g. 9am-12pm and 2pm-5pm)
+
+On save, POST/PATCH/DELETE availability records via API to sync the current state.
+Also show a "Blocked times" section where user can add one-off date+time ranges to block.
+
+---
+
+STEP 10 — PUBLIC BOOKING PAGE
+
+File: src/pages/BookingPage.jsx
+
+This is the public-facing page invitees see. Two states:
+
+STATE A — /book/:username (no slug)
+- Fetch public event types for that username
+- Show host name and avatar initials
+- List event type cards: name, duration, location, price, description
+- Clicking a card navigates to /book/:username/:slug
+
+STATE B — /book/:username/:slug (specific event type)
+- Show event type details at top
+- Calendar date picker: show current month, highlight available dates (fetch slots for each date as user navigates months), grey out past dates and unavailable dates
+- When user clicks a date, fetch and show available time slots as clickable buttons
+- When user clicks a slot, show booking form below: name, email, timezone select, notes textarea, custom question answers
+- If event type has a price > 0, show Stripe payment section using @stripe/react-stripe-js Elements — call createPaymentIntent, complete payment, then show confirmed
+- If free, submit directly to POST /bookings/
+- On success, redirect to /booking-confirmed with booking details in state
+
+---
+
+STEP 11 — BOOKING CONFIRMED PAGE
+
+File: src/pages/BookingConfirmed.jsx
+
+Show a clean success screen:
+- Green checkmark icon
+- "You're scheduled!" heading
+- Booking details: event name, host, date/time, location
+- "Add to Google Calendar" link (build a Google Calendar event URL from the booking datetime)
+- "Book another time" link back to the host's page
+
+---
+
+STEP 12 — SETTINGS PAGE
+
+File: src/pages/Settings.jsx
+
+Four sections:
+
+Profile:
+- Edit first name, last name, timezone, bio
+- PATCH /auth/me/ on save
+
+Integrations:
+- Google Calendar card with connect/disconnect button
+  - If not connected: button calls getGoogleAuthUrl() and redirects to the returned URL
+  - If connected: show green "Connected" badge and disconnect button
+  - On page load call getGoogleStatus() to check
+
+Webhooks:
+- List registered webhooks (GET /integrations/webhooks/)
+- Form to add new webhook: URL field, event select (booking.created / booking.cancelled)
+- POST /integrations/webhooks/ on submit
+
+Account:
+- Display email (read-only)
+- Change password form (call PATCH /auth/me/ with new_password field)
+
+---
+
+STEP 13 — NAVBAR
+
+File: src/components/Navbar.jsx
+
+If not authenticated: show Logo, nav links (Features, Pricing), Login button, Get started button
+If authenticated: show Logo, nav links (Dashboard, Event Types, Availability), user avatar with dropdown (Profile, Settings, Logout)
+Mobile responsive with hamburger menu.
+
+---
+
+STEP 14 — FINAL WIRING AND RUN
+
+After all files are created:
+
+1. In vite.config.js add a proxy so /api requests in dev go to Django:
+   server: { proxy: { '/api': 'http://localhost:8000' } }
+
+2. Update src/api/client.js baseURL to '/api' (so the proxy handles it)
+
+3. Run:
+   npm install
+   npm run dev
+
+The app should start at http://localhost:5173
+
+Make sure:
+- All pages are connected through React Router
+- AuthContext wraps the entire app in main.jsx
+- Every API call uses the client.js functions (no raw fetch calls anywhere)
+- Tailwind classes are used throughout (no separate CSS files except index.css)
+- All forms show loading states and error messages
+- The booking page works end to end: pick date → pick slot → fill form → confirm
+
+Do not use any paid component libraries. Do not use any external image URLs. All icons should be inline SVG. Build this completely — do not skip any file or section.
