@@ -6,7 +6,7 @@ import { formatDateTimeUTC, formatDateLocal } from '../utils/datetime';
 import Sidebar from '../components/Sidebar';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [stats, setStats] = useState({ total: 0, upcoming: 0, active: 0 });
   const [analytics, setAnalytics] = useState({ totalRevenue: 0, cancellationRate: 0, noShowRate: 0 });
   const [bookingList, setBookingList] = useState([]);
@@ -97,6 +97,7 @@ export default function Dashboard() {
             <Link to="/event-types/new" className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">Create event type</Link>
             <Link to="/availability" className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">Set availability</Link>
             <button onClick={copyLink} className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition">Copy booking link</button>
+            <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition ml-auto">Logout</button>
           </div>
 
           {todaysBookings.length > 0 && (
