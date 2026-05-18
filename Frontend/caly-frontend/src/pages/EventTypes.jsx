@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { eventTypes } from '../api/client';
 import Sidebar from '../components/Sidebar';
 
 export default function EventTypes() {
+  const { user } = useAuth();
   const [events, setEvents] = useState([]);
   const [copiedId, setCopiedId] = useState(null);
 
@@ -27,7 +29,7 @@ export default function EventTypes() {
   };
 
   const copyLink = (slug) => {
-    navigator.clipboard.writeText(`http://localhost:5173/book/testhost/${slug}`);
+    navigator.clipboard.writeText(`http://localhost:5173/book/${user?.username}/${slug}`);
     setCopiedId(slug);
     setTimeout(() => setCopiedId(null), 2000);
   };

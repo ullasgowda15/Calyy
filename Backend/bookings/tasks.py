@@ -1,9 +1,10 @@
 from celery import shared_task
-from django.core.mail import send_mail
 from django.conf import settings
 import logging
+import resend
 
 logger = logging.getLogger(__name__)
+resend.api_key = settings.RESEND_API_KEY
 
 
 @shared_task
@@ -32,7 +33,15 @@ Need to cancel? Visit: {settings.BASE_URL}/api/bookings/{booking.id}/cancel/?tok
 
 See you soon!
 """
-    send_mail(subject, invitee_body, settings.DEFAULT_FROM_EMAIL, [booking.invitee_email], fail_silently=True)
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [booking.invitee_email],
+            'subject': subject,
+            'text': invitee_body,
+        })
+    except Exception as e:
+        logger.error(f'Failed to send invitee confirmation email: {e}')
 
     host_body = f"""Hi {host.get_full_name() or host.username},
 
@@ -43,7 +52,15 @@ Event: {booking.event_type.name}
 When: {booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')} UTC
 Notes: {booking.notes or 'None'}
 """
-    send_mail(f'New booking: {booking.invitee_name}', host_body, settings.DEFAULT_FROM_EMAIL, [host.email], fail_silently=True)
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [host.email],
+            'subject': f'New booking: {booking.invitee_name}',
+            'text': host_body,
+        })
+    except Exception as e:
+        logger.error(f'Failed to send host confirmation email: {e}')
 
 
 @shared_task
@@ -68,7 +85,15 @@ Location: {booking.event_type.location_type.upper()}
 
 See you soon!
 """
-    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [booking.invitee_email], fail_silently=True)
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [booking.invitee_email],
+            'subject': subject,
+            'text': body,
+        })
+    except Exception as e:
+        logger.error(f'Failed to send reminder email: {e}')
 
 
 @shared_task
@@ -89,4 +114,12 @@ Original time: {booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')} UTC
 
 To book again: {settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/
 """
-    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [booking.invitee_email], fail_silently=True)
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [booking.invitee_email],
+            'subject': subject,
+            'text': body,
+        })
+    except Exception as e:
+        logger.error(f'Failed to send cancellation email: {e}')

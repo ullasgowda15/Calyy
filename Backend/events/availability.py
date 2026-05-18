@@ -45,6 +45,19 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
         end_datetime__gt=day_start_utc,
     ).values('start_datetime', 'end_datetime')
 
+    try:
+        from integrations.models import GoogleCalendarToken
+        from integrations.google_calendar import get_busy_slots
+        google_token = GoogleCalendarToken.objects.get(user=event_type.host)
+        google_busy = get_busy_slots(google_token, day_start_utc, day_end_utc)
+        for busy in google_busy:
+            blocked_times = list(blocked_times) + [{
+                'start_datetime': pytz.utc.localize(datetime.fromisoformat(busy['start'].replace('Z', '+00:00').replace('+00:00', ''))) if 'T' not in busy['start'] else pytz.utc.localize(datetime.fromisoformat(busy['start'].rstrip('Z'))),
+                'end_datetime': pytz.utc.localize(datetime.fromisoformat(busy['end'].replace('Z', '+00:00').replace('+00:00', ''))) if 'T' not in busy['end'] else pytz.utc.localize(datetime.fromisoformat(busy['end'].rstrip('Z'))),
+            }]
+    except (GoogleCalendarToken.DoesNotExist, ImportError):
+        pass
+
     if event_type.max_bookings_per_day:
         confirmed_today = Booking.objects.filter(
             event_type__host=event_type.host,

@@ -35,10 +35,14 @@ export const auth = {
   },
   getProfile: () => api.get('/auth/me/'),
   updateProfile: (data) => api.patch('/auth/me/', data),
+  uploadAvatar: (formData) => api.patch('/auth/me/avatar/', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  passwordReset: (data) => api.post('/auth/password-reset/', data),
+  passwordResetConfirm: (uidb64, token, data) => api.post(`/auth/password-reset/confirm/${uidb64}/${token}/`, data),
 };
 
 export const eventTypes = {
   getEventTypes: () => api.get('/events/event-types/'),
+  getEventType: (id) => api.get(`/events/event-types/${id}/`),
   createEventType: (data) => api.post('/events/event-types/', data),
   updateEventType: (id, data) => api.patch(`/events/event-types/${id}/`, data),
   deleteEventType: (id) => api.delete(`/events/event-types/${id}/`),
@@ -58,10 +62,15 @@ export const bookings = {
   createBooking: (data) => api.post('/bookings/', data),
   getMyBookings: (status) => api.get(`/bookings/my/${status ? `?status=${status}` : ''}`),
   cancelBooking: (id, token) => api.post(`/bookings/${id}/cancel/?token=${token}`),
+  rescheduleBooking: (id, token, data) => api.post(`/bookings/${id}/reschedule/?token=${token}`, data),
+  updateBookingStatus: (id, data) => api.patch(`/bookings/${id}/status/`, data),
+  getBookingDetail: (id) => api.get(`/bookings/${id}/`),
 };
 
 export const payments = {
   createPaymentIntent: (data) => api.post('/payments/create-intent/', data),
+  getPaymentStatus: (id) => api.get(`/payments/${id}/status/`),
+  refundBooking: (id) => api.post(`/payments/${id}/refund/`),
 };
 
 export const integrations = {

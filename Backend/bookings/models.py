@@ -9,6 +9,7 @@ class Booking(models.Model):
         ('confirmed', 'Confirmed'),
         ('cancelled', 'Cancelled'),
         ('completed', 'Completed'),
+        ('no_show', 'No Show'),
     ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -26,6 +27,7 @@ class Booking(models.Model):
 
     stripe_payment_intent_id = models.CharField(max_length=200, blank=True)
     payment_status = models.CharField(max_length=20, default='unpaid')
+    google_calendar_event_id = models.CharField(max_length=300, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

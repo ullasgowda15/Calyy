@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { eventTypes, bookings, payments } from '../api/client';
+import { eventTypes, bookings } from '../api/client';
+import StripePayment from '../components/StripePayment';
+import { formatTimeLocal } from '../utils/datetime';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const TIMEZONES = ['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Kolkata', 'Australia/Sydney'];
@@ -83,7 +85,7 @@ export default function BookingPage() {
       };
       const res = await bookings.createBooking(data);
       if (res.data.requires_payment) {
-        navigate('/booking-confirmed', { state: { requiresPayment: true, eventTypeId: selectedEvent.id, bookingData: data, price: res.data.price, currency: res.data.currency } });
+        setStep('payment');
       } else {
         navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
       }
@@ -92,6 +94,14 @@ export default function BookingPage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePaymentSuccess = () => {
+    navigate('/booking-confirmed', { state: { bookingConfirmed: true, eventType: selectedEvent, host: username } });
+  };
+
+  const handlePaymentCancel = () => {
+    setStep('form');
   };
 
   if (!hostEvents.length && step === 'events') {
@@ -124,6 +134,26 @@ export default function BookingPage() {
             ))}
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (step === 'payment' && selectedEvent) {
+    const bookingData = {
+      event_type_id: selectedEvent.id,
+      ...form,
+      start_datetime: selectedSlot.start,
+    };
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <StripePayment
+          eventTypeId={selectedEvent.id}
+          bookingData={bookingData}
+          price={selectedEvent.price}
+          currency={selectedEvent.currency}
+          onSuccess={handlePaymentSuccess}
+          onCancel={handlePaymentCancel}
+        />
       </div>
     );
   }
@@ -174,14 +204,14 @@ export default function BookingPage() {
             <div>
               {selectedDate && step === 'date' && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6">
-                  <h3 className="font-semibold text-gray-900 mb-4">Available times — {selectedDate}</h3>
+                  <h3 className="font-semibold text-gray-900 mb-4">Available times</h3>
                   {slots.length === 0 ? (
                     <p className="text-gray-500 text-sm">No available slots for this date.</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       {slots.map((slot, idx) => (
                         <button key={idx} onClick={() => selectSlot(slot)} className="border border-gray-200 rounded-lg p-3 text-sm hover:border-[#3B82F6] hover:text-[#3B82F6] transition text-gray-700">
-                          {new Date(slot.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          {formatTimeLocal(slot.start, form.invitee_timezone)}
                         </button>
                       ))}
                     </div>
@@ -207,7 +237,7 @@ export default function BookingPage() {
                         )}
                       </div>
                     ))}
-                    <p className="text-sm text-gray-500">Selected: {new Date(selectedSlot.start).toLocaleString()}</p>
+                    <p className="text-sm text-gray-500">Selected: {formatTimeLocal(selectedSlot.start, form.invitee_timezone)}</p>
                     <button type="submit" disabled={loading} className="w-full bg-[#3B82F6] text-white py-2 rounded-lg font-semibold hover:bg-blue-600 transition disabled:opacity-50">
                       {loading ? 'Booking...' : selectedEvent.price ? 'Proceed to payment' : 'Confirm booking'}
                     </button>

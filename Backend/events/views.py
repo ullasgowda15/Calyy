@@ -61,6 +61,7 @@ def public_slots(request, username, pk):
 class AvailabilityViewSet(viewsets.ModelViewSet):
     serializer_class = AvailabilitySerializer
     permission_classes = (permissions.IsAuthenticated,)
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
         return Availability.objects.filter(user=self.request.user)

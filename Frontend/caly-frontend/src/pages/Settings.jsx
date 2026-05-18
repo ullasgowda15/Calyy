@@ -5,12 +5,13 @@ import Sidebar from '../components/Sidebar';
 
 export default function Settings() {
   const { user, loadProfile, logout } = useAuth();
-  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', username: '', timezone: 'UTC' });
+  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', username: '', timezone: 'UTC', bio: '' });
   const [googleStatus, setGoogleStatus] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
   const [newWebhook, setNewWebhook] = useState({ url: '', event: 'booking.created' });
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -20,6 +21,7 @@ export default function Settings() {
         email: user.email || '',
         username: user.username || '',
         timezone: user.timezone || 'UTC',
+        bio: user.bio || '',
       });
     }
   }, [user]);
@@ -43,6 +45,19 @@ export default function Settings() {
       setMessage('Failed to update profile');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAvatarUpload = async () => {
+    if (!avatarFile) return;
+    const formData = new FormData();
+    formData.append('avatar', avatarFile);
+    try {
+      await auth.uploadAvatar(formData);
+      await loadProfile();
+      setMessage('Avatar updated!');
+    } catch {
+      setMessage('Failed to upload avatar');
     }
   };
 
@@ -77,8 +92,6 @@ export default function Settings() {
     }
   };
 
-
-
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar />
@@ -90,6 +103,20 @@ export default function Settings() {
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">Profile</h2>
           <form onSubmit={saveProfile} className="space-y-4">
+            <div className="flex items-center gap-4 mb-4">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className="w-16 h-16 rounded-full object-cover" />
+              ) : (
+                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl">
+                  {user?.username?.[0]?.toUpperCase() || '?'}
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Upload Avatar</label>
+                <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} className="text-sm" />
+                {avatarFile && <button type="button" onClick={handleAvatarUpload} className="text-[#3B82F6] text-sm hover:underline mt-1">Upload</button>}
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium text-gray-700 mb-1">First name</label><input name="first_name" value={profile.first_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Last name</label><input name="last_name" value={profile.last_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
@@ -97,6 +124,7 @@ export default function Settings() {
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Email</label><input name="email" value={profile.email} disabled className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500" /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Username</label><input name="username" value={profile.username} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
             <div><label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label><input name="timezone" value={profile.timezone} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
+            <div><label className="block text-sm font-medium text-gray-700 mb-1">Bio</label><textarea name="bio" value={profile.bio} onChange={handleProfileChange} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
             <button type="submit" disabled={saving} className="bg-[#3B82F6] text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
               {saving ? 'Saving...' : 'Save profile'}
             </button>

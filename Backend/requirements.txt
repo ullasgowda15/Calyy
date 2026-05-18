@@ -19,3 +19,5 @@ requests
 python-dateutil
 django-filter
 pytz
+resend
+django-ratelimit
