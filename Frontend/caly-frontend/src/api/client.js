@@ -48,7 +48,7 @@ export const eventTypes = {
   deleteEventType: (id) => api.delete(`/events/event-types/${id}/`),
   getPublicEventTypes: (username) => api.get(`/events/public/${username}/event-types/`),
   getSlots: (username, eventTypeId, date) =>
-    api.get(`/events/public/${username}/event-types/${eventTypeId}/slots/?date=${date}`),
+    api.get(`/events/public/${username}/event-types/${eventTypeId}/slots/`, { params: { date } }),
 };
 
 export const availability = {

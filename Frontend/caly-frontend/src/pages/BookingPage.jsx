@@ -19,6 +19,7 @@ export default function BookingPage() {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [form, setForm] = useState({ invitee_name: '', invitee_email: '', invitee_timezone: 'UTC', notes: '', custom_answers: {} });
   const [loading, setLoading] = useState(false);
+  const [slotsLoading, setSlotsLoading] = useState(false);
   const [error, setError] = useState('');
   const [step, setStep] = useState('events');
 
@@ -58,11 +59,16 @@ export default function BookingPage() {
     const dateStr = d.toISOString().split('T')[0];
     setSelectedDate(dateStr);
     setSelectedSlot(null);
+    setSlotsLoading(true);
+    setError('');
     try {
       const res = await eventTypes.getSlots(username, selectedEvent.id, dateStr);
       setSlots(res.data.slots || []);
-    } catch {
+    } catch (err) {
+      console.error('Slot fetch error:', err);
       setSlots([]);
+    } finally {
+      setSlotsLoading(false);
     }
   };
 
@@ -205,7 +211,9 @@ export default function BookingPage() {
               {selectedDate && step === 'date' && (
                 <div className="bg-white rounded-xl border border-gray-200 p-6">
                   <h3 className="font-semibold text-gray-900 mb-4">Available times</h3>
-                  {slots.length === 0 ? (
+                  {slotsLoading ? (
+                    <p className="text-gray-500 text-sm">Loading available times...</p>
+                  ) : slots.length === 0 ? (
                     <p className="text-gray-500 text-sm">No available slots for this date.</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
