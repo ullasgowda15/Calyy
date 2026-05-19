@@ -56,6 +56,9 @@ export const availability = {
   createAvailability: (data) => api.post('/events/availability/', data),
   updateAvailability: (id, data) => api.patch(`/events/availability/${id}/`, data),
   deleteAvailability: (id) => api.delete(`/events/availability/${id}/`),
+  getBlockedTimes: () => api.get('/events/blocked-times/'),
+  createBlockedTime: (data) => api.post('/events/blocked-times/', data),
+  deleteBlockedTime: (id) => api.delete(`/events/blocked-times/${id}/`),
 };
 
 export const bookings = {

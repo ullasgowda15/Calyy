@@ -23,6 +23,7 @@ calyenv/
 *.pyc
 db.sqlite3
 db.sqlite3-journal
+test_db.sqlite3
 media/
 staticfiles/
 
@@ -61,3 +62,7 @@ htmlcov/
 # Misc
 *.bak
 *.tmp
+
+
+/Audits
+/Extra

@@ -5,15 +5,29 @@ import Sidebar from '../components/Sidebar';
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const HOURS = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
+function localToUTC(localDatetime) {
+  if (!localDatetime) return '';
+  const d = new Date(localDatetime);
+  if (isNaN(d.getTime())) return localDatetime;
+  return d.toISOString().slice(0, 19);
+}
+
 export default function AvailabilityPage() {
   const [windows, setWindows] = useState([]);
   const [blocked, setBlocked] = useState([]);
   const [blockForm, setBlockForm] = useState({ start_datetime: '', end_datetime: '', reason: '' });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [messageType, setMessageType] = useState('success');
+
+  const showMessage = (text, type = 'success') => {
+    setMessage(text);
+    setMessageType(type);
+  };
 
   useEffect(() => {
     availability.getAvailability().then((res) => setWindows(res.data)).catch(() => {});
+    availability.getBlockedTimes().then((res) => setBlocked(res.data)).catch(() => {});
   }, []);
 
   const getDayWindows = (dayIndex) => windows.filter((w) => w.weekday === dayIndex && w.is_active);
@@ -24,7 +38,7 @@ export default function AvailabilityPage() {
 
   const updateWindow = (idx, field, value) => {
     const w = [...windows];
-    w[idx] = { ...w[idx], [field]: value };
+    w[idx] = { ...w[idx], _dirty: true, [field]: value };
     setWindows(w);
   };
 
@@ -43,13 +57,15 @@ export default function AvailabilityPage() {
       for (const w of windows) {
         if (w._new) {
           await availability.createAvailability({ weekday: w.weekday, start_time: w.start_time, end_time: w.end_time });
+        } else if (w._dirty && w.id) {
+          await availability.updateAvailability(w.id, { weekday: w.weekday, start_time: w.start_time, end_time: w.end_time });
         }
       }
       const fresh = await availability.getAvailability();
       setWindows(fresh.data);
-      setMessage('Availability saved!');
+      showMessage('Availability saved!');
     } catch {
-      setMessage('Failed to save availability');
+      showMessage('Failed to save availability', 'error');
     } finally {
       setSaving(false);
     }
@@ -57,11 +73,28 @@ export default function AvailabilityPage() {
 
   const addBlocked = async () => {
     try {
-      await availability.createBlockedTime(blockForm);
+      const payload = {
+        start_datetime: localToUTC(blockForm.start_datetime),
+        end_datetime: localToUTC(blockForm.end_datetime),
+        reason: blockForm.reason,
+      };
+      await availability.createBlockedTime(payload);
       setBlockForm({ start_datetime: '', end_datetime: '', reason: '' });
-      setMessage('Time blocked!');
+      const fresh = await availability.getBlockedTimes();
+      setBlocked(fresh.data);
+      showMessage('Time blocked!');
     } catch {
-      setMessage('Failed to block time');
+      showMessage('Failed to block time', 'error');
+    }
+  };
+
+  const removeBlocked = async (id) => {
+    try {
+      await availability.deleteBlockedTime(id);
+      setBlocked(blocked.filter((b) => b.id !== id));
+      showMessage('Block removed');
+    } catch {
+      showMessage('Failed to remove block', 'error');
     }
   };
 
@@ -71,7 +104,11 @@ export default function AvailabilityPage() {
       <div className="flex-1 p-8 max-w-4xl">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Availability</h1>
 
-        {message && <div className="bg-green-50 text-green-600 p-3 rounded-lg mb-4 text-sm">{message}</div>}
+        {message && (
+          <div className={`p-3 rounded-lg mb-4 text-sm ${messageType === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+            {message}
+          </div>
+        )}
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">Weekly hours</h2>
@@ -88,7 +125,7 @@ export default function AvailabilityPage() {
                       windows.map((w, idx) => {
                         if (w.weekday !== di || !w.is_active) return null;
                         return (
-                          <div key={idx} className="flex items-center gap-2">
+                          <div key={w.id || idx} className="flex items-center gap-2">
                             <select value={w.start_time} onChange={(e) => updateWindow(idx, 'start_time', e.target.value)} className="px-2 py-1 border border-gray-300 rounded text-sm">
                               {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
                             </select>
@@ -122,6 +159,18 @@ export default function AvailabilityPage() {
             <div><label className="block text-xs text-gray-500 mb-1">Reason</label><input type="text" value={blockForm.reason} onChange={(e) => setBlockForm({ ...blockForm, reason: e.target.value })} className="px-3 py-2 border border-gray-300 rounded text-sm" placeholder="Lunch" /></div>
             <button onClick={addBlocked} className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition text-sm">Block</button>
           </div>
+          {blocked.length > 0 && (
+            <ul className="space-y-2">
+              {blocked.map((b) => (
+                <li key={b.id} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded text-sm">
+                  <span>{new Date(b.start_datetime).toLocaleString()} — {new Date(b.end_datetime).toLocaleString()}{b.reason ? ` (${b.reason})` : ''}</span>
+                  <button onClick={() => removeBlocked(b.id)} className="text-red-500 hover:text-red-700 ml-2">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>
