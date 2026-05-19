@@ -69,7 +69,7 @@ export default function AvailabilityPage() {
         }
       }
       const fresh = await availability.getAvailability();
-      setWindows(fresh.data);
+      setWindows(fresh.data.map((w) => ({ ...w, start_time: w.start_time.slice(0, 5), end_time: w.end_time.slice(0, 5) })));
       showMessage('Availability saved!');
     } catch {
       showMessage('Failed to save availability', 'error');
