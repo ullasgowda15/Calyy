@@ -19,8 +19,8 @@ export default function Dashboard() {
       bookings.getMyBookings().then((res) => {
         const all = res.data;
         setBookingList(all.slice(0, 5));
-        const today = new Date().toDateString();
-        setTodaysBookings(all.filter((b) => new Date(b.start_datetime).toDateString() === today));
+        const today = new Date().toISOString().split('T')[0];
+        setTodaysBookings(all.filter((b) => b.start_datetime.startsWith(today)));
         setStats((s) => ({ ...s, total: all.length, upcoming: all.filter((b) => b.status === 'confirmed').length }));
         const confirmed = all.filter((b) => b.status === 'confirmed').length;
         const cancelled = all.filter((b) => b.status === 'cancelled').length;
@@ -147,7 +147,7 @@ export default function Dashboard() {
                       <tr key={b.id} className="border-t border-gray-100">
                         <td className="p-4 text-gray-900">{b.invitee_name}</td>
                         <td className="p-4 text-gray-600">{b.event_type_name}</td>
-                        <td className="p-4 text-gray-600">{formatDateLocal(b.start_datetime)}</td>
+                        <td className="p-4 text-gray-600">{formatDateLocal(b.start_datetime, user?.timezone)}</td>
                         <td className="p-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${b.status === 'confirmed' ? 'bg-green-100 text-green-700' : b.status === 'cancelled' ? 'bg-red-100 text-red-700' : b.status === 'completed' ? 'bg-blue-100 text-blue-700' : b.status === 'no_show' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-700'}`}>{b.status}</span></td>
                         <td className="p-4 flex gap-2">
                           {b.status === 'confirmed' && (

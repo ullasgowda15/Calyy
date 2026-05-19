@@ -56,8 +56,7 @@ export default function BookingPage() {
   };
 
   const selectDate = async (day) => {
-    const d = new Date(currentYear, currentMonth, day);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     setSelectedDate(dateStr);
     setSelectedSlot(null);
     setSlotsLoading(true);
@@ -199,8 +198,9 @@ export default function BookingPage() {
                 {Array.from({ length: daysInMonth }).map((_, i) => {
                   const day = i + 1;
                   const d = new Date(currentYear, currentMonth, day);
+                  const dayStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                   const isPast = d < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                  const isSelected = selectedDate === d.toISOString().split('T')[0];
+                  const isSelected = selectedDate === dayStr;
                   return (
                     <button key={day} onClick={() => !isPast && selectDate(day)} disabled={isPast} className={`p-2 rounded-lg text-sm ${isPast ? 'text-gray-300 cursor-not-allowed' : isSelected ? 'bg-[#3B82F6] text-white' : 'hover:bg-gray-100 text-gray-700'}`}>
                       {day}

@@ -11,9 +11,10 @@ export function formatDateTimeUTC(isoString, timezone = 'UTC') {
   });
 }
 
-export function formatDateLocal(isoString) {
+export function formatDateLocal(isoString, timezone) {
   const date = new Date(isoString);
   return date.toLocaleDateString('en-US', {
+    timeZone: timezone,
     weekday: 'short',
     month: 'short',
     day: 'numeric',
