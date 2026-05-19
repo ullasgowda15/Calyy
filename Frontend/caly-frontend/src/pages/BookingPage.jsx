@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { eventTypes, bookings } from '../api/client';
 import StripePayment from '../components/StripePayment';
-import { formatTimeLocal } from '../utils/datetime';
+import { formatTimeLocal, getUserTimezone } from '../utils/datetime';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const TIMEZONES = ['UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'Europe/London', 'Europe/Paris', 'Asia/Tokyo', 'Asia/Kolkata', 'Australia/Sydney'];
@@ -18,7 +18,7 @@ export default function BookingPage() {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookingId, setBookingId] = useState(null);
-  const [form, setForm] = useState({ invitee_name: '', invitee_email: '', invitee_timezone: 'UTC', notes: '', custom_answers: {} });
+  const [form, setForm] = useState({ invitee_name: '', invitee_email: '', invitee_timezone: getUserTimezone(), notes: '', custom_answers: {} });
   const [loading, setLoading] = useState(false);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [error, setError] = useState('');
