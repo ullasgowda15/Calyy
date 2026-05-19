@@ -31,40 +31,37 @@ def _safe_apply_async(task, *args, **kwargs):
         logger.warning(f'Failed to enqueue task {task.__name__}: {e}')
 
 
+def finalize_booking(booking):
+    host = booking.event_type.host
+    if hasattr(host, 'google_token'):
+        gc_event_id = create_calendar_event(host.google_token, booking)
+        if gc_event_id:
+            booking.google_calendar_event_id = gc_event_id
+            booking.save(update_fields=['google_calendar_event_id'])
+    _safe_delay(send_booking_confirmation, str(booking.id))
+    reminder_24h = booking.start_datetime - timedelta(hours=24)
+    if reminder_24h > timezone.now():
+        _safe_apply_async(send_booking_reminder, args=[str(booking.id), 24], eta=reminder_24h)
+    reminder_1h = booking.start_datetime - timedelta(hours=1)
+    if reminder_1h > timezone.now():
+        _safe_apply_async(send_booking_reminder, args=[str(booking.id), 1], eta=reminder_1h)
+    fire_webhooks(host, 'booking.created', BookingSerializer(booking).data)
+
+
 class CreateBookingView(generics.CreateAPIView):
     serializer_class = BookingCreateSerializer
     permission_classes = (permissions.AllowAny,)
 
     def perform_create(self, serializer):
-        booking = serializer.save(status='confirmed')
-        host = booking.event_type.host
-        if hasattr(host, 'google_token'):
-            gc_event_id = create_calendar_event(host.google_token, booking)
-            if gc_event_id:
-                booking.google_calendar_event_id = gc_event_id
-                booking.save(update_fields=['google_calendar_event_id'])
-        _safe_delay(send_booking_confirmation, str(booking.id))
-        reminder_24h = booking.start_datetime - timedelta(hours=24)
-        if reminder_24h > timezone.now():
-            _safe_apply_async(send_booking_reminder, args=[str(booking.id), 24], eta=reminder_24h)
-        reminder_1h = booking.start_datetime - timedelta(hours=1)
-        if reminder_1h > timezone.now():
-            _safe_apply_async(send_booking_reminder, args=[str(booking.id), 1], eta=reminder_1h)
-        fire_webhooks(host, 'booking.created', BookingSerializer(booking).data)
+        return serializer.save()
+
+    def _finalize_booking(self, booking):
+        finalize_booking(booking)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         event_type = serializer.validated_data.get('event_type')
-
-        if event_type and event_type.price and float(event_type.price) > 0:
-            return Response({
-                'requires_payment': True,
-                'event_type_id': str(event_type.id),
-                'price': str(event_type.price),
-                'currency': event_type.currency,
-                'booking_data': request.data,
-            }, status=status.HTTP_200_OK)
 
         with transaction.atomic():
             Booking.objects.select_for_update().filter(
@@ -73,7 +70,26 @@ class CreateBookingView(generics.CreateAPIView):
                 start_datetime=serializer.validated_data['start_datetime'],
             ).first()
             self.perform_create(serializer)
-        return Response(BookingSerializer(serializer.instance).data, status=status.HTTP_201_CREATED)
+
+        booking = serializer.instance
+
+        if event_type and event_type.price and float(event_type.price) > 0:
+            booking.status = 'pending'
+            booking.payment_status = 'unpaid'
+            booking.save(update_fields=['status', 'payment_status'])
+            return Response({
+                'requires_payment': True,
+                'booking_id': str(booking.id),
+                'event_type_id': str(event_type.id),
+                'price': str(event_type.price),
+                'currency': event_type.currency,
+                'booking_data': request.data,
+            }, status=status.HTTP_200_OK)
+
+        booking.status = 'confirmed'
+        booking.save(update_fields=['status'])
+        self._finalize_booking(booking)
+        return Response(BookingSerializer(booking).data, status=status.HTTP_201_CREATED)
 
 
 class HostBookingListView(generics.ListAPIView):

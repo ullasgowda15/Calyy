@@ -72,6 +72,7 @@ export const bookings = {
 
 export const payments = {
   createPaymentIntent: (data) => api.post('/payments/create-intent/', data),
+  confirmBookingPayment: (data) => api.post('/payments/confirm-payment/', data),
   getPaymentStatus: (id) => api.get(`/payments/${id}/status/`),
   refundBooking: (id) => api.post(`/payments/${id}/refund/`),
 };

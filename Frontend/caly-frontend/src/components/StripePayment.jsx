@@ -3,7 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { payments } from '../api/client';
 
-function PaymentForm({ eventTypeId, bookingData, price, currency, onSuccess, onError }) {
+function PaymentForm({ eventTypeId, bookingId, bookingData, price, currency, onSuccess, onError }) {
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState('');
@@ -16,10 +16,15 @@ function PaymentForm({ eventTypeId, bookingData, price, currency, onSuccess, onE
     try {
       const { error: submitError } = await elements.submit();
       if (submitError) { setError(submitError.message); setProcessing(false); return; }
-      const { error: payError } = await stripe.confirmPayment({
+      const result = await stripe.confirmPayment({
         elements, redirect: 'if_required',
       });
-      if (payError) { setError(payError.message); setProcessing(false); return; }
+      if (result.error) { setError(result.error.message); setProcessing(false); return; }
+      if (bookingId && result.paymentIntent) {
+        try {
+          await payments.confirmBookingPayment({ booking_id: bookingId, stripe_payment_intent_id: result.paymentIntent.id });
+        } catch {}
+      }
       onSuccess();
     } catch {
       setError('Payment failed');
@@ -42,7 +47,7 @@ function PaymentForm({ eventTypeId, bookingData, price, currency, onSuccess, onE
   );
 }
 
-export default function StripePayment({ eventTypeId, bookingData, price, currency, onSuccess, onCancel }) {
+export default function StripePayment({ eventTypeId, bookingId, bookingData, price, currency, onSuccess, onCancel }) {
   const [clientSecret, setClientSecret] = useState('');
   const [stripePromise, setStripePromise] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -71,7 +76,7 @@ export default function StripePayment({ eventTypeId, bookingData, price, currenc
       </div>
       {clientSecret && stripePromise ? (
         <Elements stripe={stripePromise} options={{ clientSecret }}>
-          <PaymentForm eventTypeId={eventTypeId} bookingData={bookingData} price={price} currency={currency} onSuccess={onSuccess} />
+          <PaymentForm eventTypeId={eventTypeId} bookingId={bookingId} bookingData={bookingData} price={price} currency={currency} onSuccess={onSuccess} />
         </Elements>
       ) : (
         <p className="text-gray-500 text-center">Unable to load payment form.</p>

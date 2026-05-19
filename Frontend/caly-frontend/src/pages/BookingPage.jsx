@@ -17,6 +17,7 @@ export default function BookingPage() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
+  const [bookingId, setBookingId] = useState(null);
   const [form, setForm] = useState({ invitee_name: '', invitee_email: '', invitee_timezone: 'UTC', notes: '', custom_answers: {} });
   const [loading, setLoading] = useState(false);
   const [slotsLoading, setSlotsLoading] = useState(false);
@@ -91,6 +92,7 @@ export default function BookingPage() {
       };
       const res = await bookings.createBooking(data);
       if (res.data.requires_payment) {
+        setBookingId(res.data.booking_id);
         setStep('payment');
       } else {
         navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
@@ -154,6 +156,7 @@ export default function BookingPage() {
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <StripePayment
           eventTypeId={selectedEvent.id}
+          bookingId={bookingId}
           bookingData={bookingData}
           price={selectedEvent.price}
           currency={selectedEvent.currency}

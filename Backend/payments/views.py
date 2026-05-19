@@ -12,6 +12,7 @@ from events.models import EventType
 from bookings.models import Booking
 from bookings.serializers import BookingCreateSerializer, BookingSerializer
 from bookings.tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email
+from bookings.views import finalize_booking
 from django.utils import timezone
 from datetime import timedelta
 from integrations.views import fire_webhooks
@@ -42,6 +43,7 @@ def _safe_apply_async(task, *args, **kwargs):
 def create_payment_intent(request):
     event_type_id = request.data.get('event_type_id')
     booking_data = request.data.get('booking_data', {})
+    booking_id = request.data.get('booking_id')
 
     try:
         event_type = EventType.objects.get(id=event_type_id, is_active=True)
@@ -51,13 +53,17 @@ def create_payment_intent(request):
     if not event_type.price:
         return Response({'error': 'This event type is free'}, status=400)
 
+    metadata = {
+        'event_type_id': str(event_type.id),
+        'booking_data': json.dumps(booking_data),
+    }
+    if booking_id:
+        metadata['booking_id'] = str(booking_id)
+
     intent = stripe.PaymentIntent.create(
         amount=int(float(event_type.price) * 100),
         currency=event_type.currency.lower(),
-        metadata={
-            'event_type_id': str(event_type.id),
-            'booking_data': json.dumps(booking_data),
-        }
+        metadata=metadata,
     )
 
     return Response({
@@ -79,6 +85,33 @@ def payment_status(request, booking_id):
     })
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def confirm_booking_payment(request):
+    booking_id = request.data.get('booking_id')
+    stripe_payment_intent_id = request.data.get('stripe_payment_intent_id')
+
+    if not booking_id:
+        return Response({'error': 'booking_id required'}, status=400)
+
+    booking = Booking.objects.filter(id=booking_id).first()
+    if not booking:
+        return Response({'error': 'Booking not found'}, status=404)
+
+    if booking.status == 'confirmed':
+        return Response(BookingSerializer(booking).data, status=200)
+
+    booking.status = 'confirmed'
+    booking.payment_status = 'paid'
+    if stripe_payment_intent_id:
+        booking.stripe_payment_intent_id = stripe_payment_intent_id
+    booking.save(update_fields=['status', 'payment_status', 'stripe_payment_intent_id'])
+
+    finalize_booking(booking)
+
+    return Response(BookingSerializer(booking).data, status=200)
+
+
 @csrf_exempt
 def stripe_webhook(request):
     payload = request.body
@@ -97,6 +130,26 @@ def stripe_webhook(request):
 
 def _handle_payment_succeeded(intent):
     metadata = intent.get('metadata', {})
+    booking_id = metadata.get('booking_id')
+    stripe_pi_id = intent['id']
+
+    booking = None
+    if booking_id:
+        booking = Booking.objects.filter(id=booking_id).first()
+    if not booking and stripe_pi_id:
+        booking = Booking.objects.filter(stripe_payment_intent_id=stripe_pi_id).first()
+
+    if booking:
+        booking.status = 'confirmed'
+        booking.payment_status = 'paid'
+        booking.stripe_payment_intent_id = stripe_pi_id
+        booking.save(update_fields=['status', 'payment_status', 'stripe_payment_intent_id'])
+        try:
+            finalize_booking(booking)
+        except Exception as e:
+            logging.getLogger(__name__).error(f'Stripe webhook finalize_booking failed: {e}')
+        return
+
     event_type_id = metadata.get('event_type_id')
     booking_data_str = metadata.get('booking_data', '{}')
 
@@ -107,24 +160,12 @@ def _handle_payment_succeeded(intent):
         if serializer.is_valid():
             booking = serializer.save(
                 status='confirmed',
-                stripe_payment_intent_id=intent['id'],
+                stripe_payment_intent_id=stripe_pi_id,
                 payment_status='paid',
             )
-            event_type = booking.event_type
-            host = event_type.host
-            if hasattr(host, 'google_token'):
-                gc_event_id = create_calendar_event(host.google_token, booking)
-                if gc_event_id:
-                    booking.google_calendar_event_id = gc_event_id
-                    booking.save(update_fields=['google_calendar_event_id'])
-            _safe_delay(send_booking_confirmation, str(booking.id))
-            reminder_24h = booking.start_datetime - timedelta(hours=24)
-            if reminder_24h > timezone.now():
-                _safe_apply_async(send_booking_reminder, args=[str(booking.id), 24], eta=reminder_24h)
-            reminder_1h = booking.start_datetime - timedelta(hours=1)
-            if reminder_1h > timezone.now():
-                _safe_apply_async(send_booking_reminder, args=[str(booking.id), 1], eta=reminder_1h)
-            fire_webhooks(host, 'booking.created', BookingSerializer(booking).data)
+            finalize_booking(booking)
+        else:
+            logging.getLogger(__name__).error(f'Stripe webhook booking serializer errors: {serializer.errors}')
     except Exception as e:
         logging.getLogger(__name__).error(f'Stripe webhook booking creation failed: {e}')
 
