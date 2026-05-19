@@ -26,7 +26,14 @@ export default function AvailabilityPage() {
   };
 
   useEffect(() => {
-    availability.getAvailability().then((res) => setWindows(res.data)).catch(() => {});
+    availability.getAvailability().then((res) => {
+      const mapped = res.data.map((w) => ({
+        ...w,
+        start_time: w.start_time.slice(0, 5),
+        end_time: w.end_time.slice(0, 5),
+      }));
+      setWindows(mapped);
+    }).catch(() => {});
     availability.getBlockedTimes().then((res) => setBlocked(res.data)).catch(() => {});
   }, []);
 
