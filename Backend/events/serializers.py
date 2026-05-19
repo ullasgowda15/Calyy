@@ -4,6 +4,7 @@ from .models import EventType, Availability, BlockedTime
 
 
 class EventTypeSerializer(serializers.ModelSerializer):
+    host = serializers.UUIDField(source='host.id', read_only=True)
     host_username = serializers.CharField(source='host.username', read_only=True)
     booking_url = serializers.SerializerMethodField()
 

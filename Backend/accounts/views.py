@@ -23,6 +23,7 @@ class RegisterView(generics.CreateAPIView):
 class ProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
+    queryset = User.objects.all()
 
     def get_object(self):
         return self.request.user
@@ -32,6 +33,7 @@ class AvatarUploadView(generics.UpdateAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
     parser_classes = (MultiPartParser, FormParser)
+    queryset = User.objects.all()
 
     def get_object(self):
         return self.request.user

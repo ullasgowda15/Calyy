@@ -1,5 +1,6 @@
 import stripe
 import json
+import logging
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -18,6 +19,22 @@ from integrations.models import GoogleCalendarToken
 from integrations.google_calendar import create_calendar_event, delete_calendar_event
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+logger = logging.getLogger(__name__)
+
+
+def _safe_delay(task, *args, **kwargs):
+    try:
+        task.delay(*args, **kwargs)
+    except Exception as e:
+        logger.warning(f'Failed to enqueue task {task.__name__}: {e}')
+
+
+def _safe_apply_async(task, *args, **kwargs):
+    try:
+        task.apply_async(*args, **kwargs)
+    except Exception as e:
+        logger.warning(f'Failed to enqueue task {task.__name__}: {e}')
 
 
 @api_view(['POST'])
@@ -100,16 +117,15 @@ def _handle_payment_succeeded(intent):
                 if gc_event_id:
                     booking.google_calendar_event_id = gc_event_id
                     booking.save(update_fields=['google_calendar_event_id'])
-            send_booking_confirmation.delay(str(booking.id))
+            _safe_delay(send_booking_confirmation, str(booking.id))
             reminder_24h = booking.start_datetime - timedelta(hours=24)
             if reminder_24h > timezone.now():
-                send_booking_reminder.apply_async(args=[str(booking.id), 24], eta=reminder_24h)
+                _safe_apply_async(send_booking_reminder, args=[str(booking.id), 24], eta=reminder_24h)
             reminder_1h = booking.start_datetime - timedelta(hours=1)
             if reminder_1h > timezone.now():
-                send_booking_reminder.apply_async(args=[str(booking.id), 1], eta=reminder_1h)
+                _safe_apply_async(send_booking_reminder, args=[str(booking.id), 1], eta=reminder_1h)
             fire_webhooks(host, 'booking.created', BookingSerializer(booking).data)
     except Exception as e:
-        import logging
         logging.getLogger(__name__).error(f'Stripe webhook booking creation failed: {e}')
 
 
@@ -132,7 +148,7 @@ def refund_booking(request, booking_id):
         host = booking.event_type.host
         if hasattr(host, 'google_token') and booking.google_calendar_event_id:
             delete_calendar_event(host.google_token, booking.google_calendar_event_id)
-        send_cancellation_email.delay(str(booking.id))
+        _safe_delay(send_cancellation_email, str(booking.id))
         fire_webhooks(host, 'booking.cancelled', BookingSerializer(booking).data)
         return Response({'message': 'Booking refunded', 'refund_id': refund.id})
     except stripe.error.StripeError as e:

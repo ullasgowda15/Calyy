@@ -89,7 +89,9 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
             for booking in existing_bookings:
                 b_start = booking['start_datetime']
                 b_end = booking['end_datetime']
-                if b_start < effective_end and b_end > effective_start:
+                b_effective_start = b_start - buffer_before
+                b_effective_end = b_end + buffer_after
+                if b_effective_start < slot_end_utc and b_effective_end > slot_start_utc:
                     conflict = True
                     break
 
@@ -97,7 +99,7 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
                 for block in blocked_times:
                     b_start = block['start_datetime']
                     b_end = block['end_datetime']
-                    if b_start < effective_end and b_end > effective_start:
+                    if b_start < slot_end_utc and b_end > slot_start_utc:
                         conflict = True
                         break
 
