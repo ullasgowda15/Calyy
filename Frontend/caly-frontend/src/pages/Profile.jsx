@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { auth } from '../api/client';
 import Sidebar from '../components/Sidebar';
+import { User, Mail, Globe, FileText, Upload, CheckCircle, XCircle, Loader2, LogOut } from 'lucide-react';
 
 export default function Profile() {
   const { user, loadProfile, logout } = useAuth();
@@ -82,99 +83,146 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120]">
       <Sidebar />
-      <div className="ml-64 p-8 max-w-3xl min-h-screen">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Profile</h1>
+      <main className="ml-64 p-8 max-w-3xl">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Profile</h1>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage your public profile and booking link.</p>
+          </div>
+          {!editing && (
+            <button onClick={() => setEditing(true)} className="btn-primary">Edit profile</button>
+          )}
+        </div>
 
         {message && (
-          <div className={`p-3 rounded-lg mb-4 text-sm ${message.includes('Failed') || message.includes('taken') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+          <div className={`flex items-center gap-2 p-3 rounded-xl mb-6 text-sm border ${
+            message.includes('Failed') || message.includes('taken')
+              ? 'bg-red-50 border-red-200 text-red-700 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400'
+              : 'bg-green-50 border-green-200 text-green-700 dark:bg-green-500/10 dark:border-green-500/30 dark:text-green-400'
+          }`}>
+            {message.includes('Failed') || message.includes('taken') ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
             {message}
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex items-center gap-4">
-              {user?.avatar ? (
-                <img src={user.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
-              ) : (
-                <div className="w-20 h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-2xl">
-                  {user?.username?.[0]?.toUpperCase() || '?'}
-                </div>
-              )}
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">{user?.username}</h2>
-                <p className="text-sm text-gray-500">{user?.email}</p>
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-4 mb-6">
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Avatar" className="w-16 h-16 rounded-full object-cover ring-4 ring-slate-50 dark:ring-slate-700" />
+            ) : (
+              <div className="w-16 h-16 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 text-2xl font-bold">
+                {user?.username?.[0]?.toUpperCase() || '?'}
               </div>
-            </div>
-            {!editing && (
-              <button onClick={() => setEditing(true)} className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition text-sm">
-                Edit profile
-              </button>
             )}
+            <div>
+              <h2 className="text-xl font-semibold text-slate-900 dark:text-white">{user?.username}</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{user?.email}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                caly.app/book/{user?.username}
+              </p>
+            </div>
           </div>
 
           {editing && (
-            <form onSubmit={saveProfile} className="space-y-4 border-t border-gray-100 pt-6">
-              <div className="flex items-center gap-4 mb-4">
+            <form onSubmit={saveProfile} className="space-y-5 border-t border-slate-100 dark:border-slate-700 pt-6">
+              <div className="flex items-center gap-4">
                 {user?.avatar ? (
-                  <img src={user.avatar} alt="Avatar" className="w-16 h-16 rounded-full object-cover" />
+                  <img src={user.avatar} alt="Avatar" className="w-12 h-12 rounded-full object-cover" />
                 ) : (
-                  <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl">
+                  <div className="w-12 h-12 bg-slate-200 dark:bg-slate-600 rounded-full flex items-center justify-center text-slate-500 dark:text-slate-300 text-lg font-bold">
                     {user?.username?.[0]?.toUpperCase() || '?'}
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Upload Avatar</label>
-                  <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} className="text-sm" />
-                  {avatarFile && (
-                    <button type="button" onClick={handleAvatarUpload} className="bg-[#3B82F6] text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition mt-1">Upload</button>
-                  )}
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Upload Avatar</label>
+                  <div className="flex items-center gap-2">
+                    <label className="btn-secondary text-xs cursor-pointer">
+                      <Upload className="w-3.5 h-3.5" />
+                      Choose file
+                      <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} className="hidden" />
+                    </label>
+                    {avatarFile && (
+                      <button type="button" onClick={handleAvatarUpload} className="btn-primary text-xs">
+                        <Upload className="w-3.5 h-3.5" />
+                        Upload
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">First name</label>
-                  <input name="first_name" value={profile.first_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">First name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input name="first_name" value={profile.first_name} onChange={handleProfileChange} className="input-field pl-10" />
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Last name</label>
-                  <input name="last_name" value={profile.last_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" />
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Last name</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                    <input name="last_name" value={profile.last_name} onChange={handleProfileChange} className="input-field pl-10" />
+                  </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Username</label>
                 <div className="relative">
                   <input
                     name="username"
                     value={profile.username}
                     onChange={handleProfileChange}
-                    className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none ${
-                      usernameAvailable === true ? 'border-green-500' : usernameAvailable === false ? 'border-red-500' : 'border-gray-300'
+                    className={`input-field pr-24 ${
+                      usernameAvailable === true ? 'border-green-300 dark:border-green-600' : usernameAvailable === false ? 'border-red-300 dark:border-red-600' : ''
                     }`}
                   />
-                  {checkingUsername && <span className="absolute right-3 top-2.5 text-xs text-gray-400">Checking…</span>}
-                  {usernameAvailable === true && <span className="absolute right-3 top-2.5 text-xs text-green-600">Available</span>}
-                  {usernameAvailable === false && <span className="absolute right-3 top-2.5 text-xs text-red-600">Taken</span>}
+                  {checkingUsername && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500">
+                      <Loader2 className="w-3 h-3 animate-spin" /> Checking...
+                    </span>
+                  )}
+                  {usernameAvailable === true && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                      <CheckCircle className="w-3 h-3" /> Available
+                    </span>
+                  )}
+                  {usernameAvailable === false && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                      <XCircle className="w-3 h-3" /> Taken
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label>
-                <input name="timezone" value={profile.timezone} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Timezone</label>
+                <div className="relative">
+                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input name="timezone" value={profile.timezone} onChange={handleProfileChange} className="input-field pl-10" />
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
-                <textarea name="bio" value={profile.bio} onChange={handleProfileChange} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" />
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Bio</label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-3 w-4 h-4 text-slate-400" />
+                  <textarea name="bio" value={profile.bio} onChange={handleProfileChange} rows={3} className="input-field pl-10 resize-none" placeholder="Tell invitees about yourself..." />
+                </div>
               </div>
-              <div className="flex gap-3">
-                <button type="submit" disabled={saving || usernameAvailable === false} className="bg-[#3B82F6] text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
-                  {saving ? 'Saving...' : 'Save profile'}
+              <div className="flex gap-3 pt-2">
+                <button type="submit" disabled={saving || usernameAvailable === false} className="btn-primary">
+                  {saving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : 'Save profile'}
                 </button>
-                <button type="button" onClick={() => { setEditing(false); setUsernameAvailable(null); }} className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-50 transition">
+                <button type="button" onClick={() => { setEditing(false); setUsernameAvailable(null); }} className="btn-secondary">
                   Cancel
                 </button>
               </div>
@@ -182,19 +230,33 @@ export default function Profile() {
           )}
 
           {!editing && (
-            <div className="border-t border-gray-100 pt-4 space-y-3 text-sm text-gray-600">
-              <p><span className="font-medium text-gray-700">First name:</span> {profile.first_name || '—'}</p>
-              <p><span className="font-medium text-gray-700">Last name:</span> {profile.last_name || '—'}</p>
-              <p><span className="font-medium text-gray-700">Timezone:</span> {profile.timezone}</p>
-              <p><span className="font-medium text-gray-700">Bio:</span> {profile.bio || '—'}</p>
+            <div className="border-t border-slate-100 dark:border-slate-700 pt-5 space-y-3 text-sm">
+              <div className="flex items-center gap-3">
+                <User className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500 dark:text-slate-400">Name:</span>
+                <span className="text-slate-900 dark:text-white font-medium">{profile.first_name || '—'} {profile.last_name || ''}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Globe className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500 dark:text-slate-400">Timezone:</span>
+                <span className="text-slate-900 dark:text-white font-medium">{profile.timezone}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500 dark:text-slate-400">Bio:</span>
+                <span className="text-slate-900 dark:text-white">{profile.bio || '—'}</span>
+              </div>
             </div>
           )}
         </div>
 
-        <div className="mt-6">
-          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition">Sign out</button>
+        <div className="flex items-center justify-between">
+          <button onClick={logout} className="btn-danger">
+            <LogOut className="w-4 h-4" />
+            Sign out
+          </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

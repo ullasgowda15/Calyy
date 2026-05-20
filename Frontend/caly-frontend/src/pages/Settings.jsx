@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { integrations } from '../api/client';
 import Sidebar from '../components/Sidebar';
+import { Calendar, CheckCircle, XCircle, Link2, Plus, Globe, LogOut, ArrowUpRight, Moon, Sun } from 'lucide-react';
 
 export default function Settings() {
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [searchParams] = useSearchParams();
   const [googleStatus, setGoogleStatus] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
@@ -56,54 +59,142 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#0B1120]">
       <Sidebar />
-      <div className="ml-64 p-8 max-w-3xl min-h-screen">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
+      <main className="ml-64 p-8 max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Settings</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage integrations, webhooks, and account settings.</p>
+        </div>
 
-        {message && <div className={`p-3 rounded-lg mb-4 text-sm ${message.includes('Failed') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{message}</div>}
+        {message && (
+          <div className={`flex items-center gap-2 p-3 rounded-xl mb-6 text-sm border ${
+            message.includes('Failed')
+              ? 'bg-red-50 border-red-200 text-red-700 dark:bg-red-500/10 dark:border-red-500/30 dark:text-red-400'
+              : 'bg-green-50 border-green-200 text-green-700 dark:bg-green-500/10 dark:border-green-500/30 dark:text-green-400'
+          }`}>
+            {message.includes('Failed') ? <XCircle className="w-4 h-4" /> : <CheckCircle className="w-4 h-4" />}
+            {message}
+          </div>
+        )}
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Google Calendar</h2>
+        {/* Appearance */}
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            {theme === 'dark' ? <Moon className="w-5 h-5 text-slate-400" /> : <Sun className="w-5 h-5 text-slate-400" />}
+            <h2 className="font-semibold text-slate-900 dark:text-white">Appearance</h2>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                {theme === 'dark' ? 'Dark mode' : 'Light mode'}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                {theme === 'dark' ? 'Easier on the eyes in low light' : 'Clean and bright interface'}
+              </p>
+            </div>
+            <button
+              onClick={toggleTheme}
+              className="relative w-14 h-7 rounded-full bg-slate-200 dark:bg-slate-600 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 dark:focus:ring-offset-[#0B1120]"
+              aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              <div className={`absolute top-0.5 left-0.5 w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center transition-transform duration-200 ${
+                theme === 'dark' ? 'translate-x-7' : 'translate-x-0'
+              }`}>
+                {theme === 'dark' ? (
+                  <Moon className="w-3.5 h-3.5 text-slate-700" />
+                ) : (
+                  <Sun className="w-3.5 h-3.5 text-amber-500" />
+                )}
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Globe className="w-5 h-5 text-slate-400" />
+            <h2 className="font-semibold text-slate-900 dark:text-white">Google Calendar</h2>
+          </div>
           {googleStatus?.connected ? (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">Connected as <span className="font-medium">{googleStatus.email}</span></p>
-              <button onClick={disconnectGoogle} className="bg-red-500 text-white px-3 py-1.5 rounded text-sm hover:bg-red-600 transition">Disconnect</button>
+            <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl p-4 dark:bg-green-500/10 dark:border-green-500/30">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                <p className="text-sm text-green-800 dark:text-green-300">Connected as <span className="font-semibold">{googleStatus.email}</span></p>
+              </div>
+              <button onClick={disconnectGoogle} className="btn-danger text-sm">Disconnect</button>
             </div>
           ) : (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-600">Sync your availability with Google Calendar</p>
-              <button onClick={connectGoogle} className="bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition text-sm">Connect Google Calendar</button>
+            <div className="flex items-center justify-between bg-slate-50 rounded-xl p-4 dark:bg-slate-700/50">
+              <p className="text-sm text-slate-600 dark:text-slate-300">Sync your availability with Google Calendar to avoid conflicts.</p>
+              <button onClick={connectGoogle} className="btn-secondary text-sm">
+                <ArrowUpRight className="w-3.5 h-3.5" />
+                Connect Google Calendar
+              </button>
             </div>
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Webhooks</h2>
-          <form onSubmit={addWebhook} className="flex items-end gap-3 mb-4">
-            <div className="flex-1"><label className="block text-xs text-gray-500 mb-1">URL</label><input value={newWebhook.url} onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })} required className="w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="https://example.com/webhook" /></div>
-            <div><label className="block text-xs text-gray-500 mb-1">Event</label><select value={newWebhook.event} onChange={(e) => setNewWebhook({ ...newWebhook, event: e.target.value })} className="px-3 py-2 border border-gray-300 rounded text-sm"><option value="booking.created">booking.created</option><option value="booking.cancelled">booking.cancelled</option></select></div>
-            <button type="submit" className="bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition text-sm">Add</button>
+        <div className="card p-6 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Link2 className="w-5 h-5 text-slate-400" />
+            <h2 className="font-semibold text-slate-900 dark:text-white">Webhooks</h2>
+          </div>
+          <form onSubmit={addWebhook} className="flex items-end gap-3 mb-6">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">URL</label>
+              <input
+                value={newWebhook.url}
+                onChange={(e) => setNewWebhook({ ...newWebhook, url: e.target.value })}
+                required
+                className="input-field"
+                placeholder="https://example.com/webhook"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">Event</label>
+              <select
+                value={newWebhook.event}
+                onChange={(e) => setNewWebhook({ ...newWebhook, event: e.target.value })}
+                className="input-field appearance-none bg-white dark:bg-[#1E293B]"
+              >
+                <option value="booking.created">booking.created</option>
+                <option value="booking.cancelled">booking.cancelled</option>
+              </select>
+            </div>
+            <button type="submit" className="btn-secondary">
+              <Plus className="w-3.5 h-3.5" />
+              Add
+            </button>
           </form>
           {webhooks.length === 0 ? (
-            <p className="text-sm text-gray-400">No webhooks configured.</p>
+            <p className="text-sm text-slate-400 text-center py-4">No webhooks configured.</p>
           ) : (
-            <ul className="space-y-2">
+            <div className="space-y-2">
               {webhooks.map((w) => (
-                <li key={w.id} className="text-sm text-gray-600 flex items-center justify-between bg-gray-50 p-2 rounded">
-                  <span>{w.url} <span className="text-gray-400">({w.event})</span></span>
-                  <span className={`w-2 h-2 rounded-full ${w.is_active ? 'bg-green-400' : 'bg-red-400'}`} />
-                </li>
+                <div key={w.id} className="flex items-center justify-between bg-slate-50 px-4 py-3 rounded-xl text-sm dark:bg-slate-700/50">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-slate-700 dark:text-slate-300">{w.url}</span>
+                    <span className="text-slate-400 dark:text-slate-500">({w.event})</span>
+                  </div>
+                  <div className={`w-2 h-2 rounded-full ${w.is_active ? 'bg-green-400' : 'bg-red-400'}`} />
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Account</h2>
-          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition">Sign out</button>
+        <div className="card p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <LogOut className="w-5 h-5 text-slate-400" />
+            <h2 className="font-semibold text-slate-900 dark:text-white">Account</h2>
+          </div>
+          <button onClick={logout} className="btn-danger">
+            <LogOut className="w-4 h-4" />
+            Sign out
+          </button>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

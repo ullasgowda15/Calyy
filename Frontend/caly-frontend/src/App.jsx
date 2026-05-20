@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './components/ui/Toast';
 import ProtectedRoute from './components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -18,24 +20,28 @@ import BookingConfirmed from './pages/BookingConfirmed';
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/event-types" element={<ProtectedRoute><EventTypes /></ProtectedRoute>} />
-          <Route path="/event-types/new" element={<ProtectedRoute><CreateEventType /></ProtectedRoute>} />
-          <Route path="/event-types/:id/edit" element={<ProtectedRoute><EditEventType /></ProtectedRoute>} />
-          <Route path="/availability" element={<ProtectedRoute><Availability /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/book/:username" element={<BookingPage />} />
-          <Route path="/book/:username/:slug" element={<BookingPage />} />
-          <Route path="/booking-confirmed" element={<BookingConfirmed />} />
-        </Routes>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/event-types" element={<ProtectedRoute><EventTypes /></ProtectedRoute>} />
+              <Route path="/event-types/new" element={<ProtectedRoute><CreateEventType /></ProtectedRoute>} />
+              <Route path="/event-types/:id/edit" element={<ProtectedRoute><EditEventType /></ProtectedRoute>} />
+              <Route path="/availability" element={<ProtectedRoute><Availability /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/book/:username" element={<BookingPage />} />
+              <Route path="/book/:username/:slug" element={<BookingPage />} />
+              <Route path="/booking-confirmed" element={<BookingConfirmed />} />
+            </Routes>
+          </ToastProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }

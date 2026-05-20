@@ -6,8 +6,11 @@ export default function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#3B82F6]"></div>
+      <div className="flex items-center justify-center min-h-screen bg-slate-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-2 border-slate-200 border-t-accent mx-auto mb-4" />
+          <p className="text-sm text-slate-500">Loading...</p>
+        </div>
       </div>
     );
   }

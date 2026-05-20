@@ -15,6 +15,8 @@
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   * {
     margin: 0;
@@ -32,6 +34,12 @@
     -moz-osx-font-smoothing: grayscale;
     background: #F8FAFC;
     color: #0F172A;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  .dark body {
+    background: #0B1120;
+    color: #E2E8F0;
   }
 
   button:not(:disabled) {
@@ -90,9 +98,20 @@
     transition: all 0.2s ease;
   }
 
+  .dark .btn-secondary {
+    color: #CBD5E1;
+    background: #1E293B;
+    border-color: #334155;
+  }
+
   .btn-secondary:hover:not(:disabled) {
     background: #F8FAFC;
     border-color: #CBD5E1;
+  }
+
+  .dark .btn-secondary:hover:not(:disabled) {
+    background: #334155;
+    border-color: #475569;
   }
 
   .btn-danger {
@@ -131,8 +150,16 @@
     transition: all 0.15s ease;
   }
 
+  .dark .btn-ghost {
+    color: #60A5FA;
+  }
+
   .btn-ghost:hover {
     background: #EFF6FF;
+  }
+
+  .dark .btn-ghost:hover {
+    background: #1E3A5F;
   }
 
   .input-field {
@@ -147,13 +174,28 @@
     transition: all 0.2s ease;
   }
 
+  .dark .input-field {
+    color: #E2E8F0;
+    background: #1E293B;
+    border-color: #334155;
+  }
+
   .input-field:focus {
     border-color: #3B82F6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
   }
 
+  .dark .input-field:focus {
+    border-color: #60A5FA;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.15);
+  }
+
   .input-field::placeholder {
     color: #94A3B8;
+  }
+
+  .dark .input-field::placeholder {
+    color: #64748B;
   }
 
   .card {
@@ -163,8 +205,17 @@
     transition: all 0.2s ease;
   }
 
+  .dark .card {
+    background: #1E293B;
+    border-color: #334155;
+  }
+
   .card:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .dark .card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .stat-card {
@@ -175,9 +226,18 @@
     transition: all 0.2s ease;
   }
 
+  .dark .stat-card {
+    background: #1E293B;
+    border-color: #334155;
+  }
+
   .stat-card:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
     transform: translateY(-2px);
+  }
+
+  .dark .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   }
 
   .badge {
@@ -203,8 +263,27 @@
     border-radius: 0.5rem;
   }
 
+  .dark .skeleton {
+    background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+  }
+
   @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
   }
 }

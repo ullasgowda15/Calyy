@@ -1,5 +1,13 @@
 import { useState, useEffect } from 'react';
 import { payments } from '../api/client';
+import { Shield, CreditCard, Smartphone, Building2, Wallet } from 'lucide-react';
+
+const paymentMethods = [
+  { label: 'UPI', icon: Smartphone },
+  { label: 'Cards', icon: CreditCard },
+  { label: 'Net Banking', icon: Building2 },
+  { label: 'Wallets', icon: Wallet },
+];
 
 export default function RazorpayPayment({
   eventTypeId,
@@ -68,7 +76,7 @@ export default function RazorpayPayment({
         email: order.prefill?.email || '',
       },
       theme: {
-        color: '#2563EB',
+        color: '#3B82F6',
       },
       modal: {
         ondismiss: () => {
@@ -147,74 +155,82 @@ export default function RazorpayPayment({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 max-w-md w-full mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-bold text-gray-900">Complete Payment</h2>
-        {onCancel && (
-          <button
-            onClick={onCancel}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-      </div>
+    <div className="max-w-md mx-auto">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
+        <div className="bg-gradient-to-br from-accent to-blue-700 px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-bold text-white">Complete Payment</h2>
+              <p className="text-blue-100 text-sm mt-0.5">Secure checkout powered by Razorpay</p>
+            </div>
+            {onCancel && (
+              <button
+                onClick={onCancel}
+                className="text-white/70 hover:text-white transition-colors p-1.5 hover:bg-white/10 rounded-lg"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+        </div>
 
-      <div className="bg-blue-50 rounded-lg p-4 mb-6 flex items-center justify-between">
-        <span className="text-sm text-blue-700 font-medium">Amount due</span>
-        <span className="text-2xl font-bold text-blue-700">
-          ₹{parseFloat(price).toFixed(2)}
-        </span>
-      </div>
-
-      <div className="mb-6">
-        <p className="text-xs text-gray-500 mb-2">Accepted payment methods:</p>
-        <div className="flex gap-2 flex-wrap">
-          {['UPI', 'Cards', 'Net Banking', 'Wallets'].map((method) => (
-            <span
-              key={method}
-              className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded font-medium"
-            >
-              {method}
+        <div className="p-6">
+          <div className="bg-blue-50 rounded-xl p-4 mb-6 flex items-center justify-between">
+            <span className="text-sm text-blue-700 font-medium">Amount due</span>
+            <span className="text-2xl font-bold text-blue-700">
+              ₹{parseFloat(price).toFixed(2)}
             </span>
-          ))}
+          </div>
+
+          <div className="mb-6">
+            <p className="text-xs text-slate-500 mb-3 font-medium uppercase tracking-wider">Accepted payment methods</p>
+            <div className="grid grid-cols-2 gap-2">
+              {paymentMethods.map((method) => (
+                <div
+                  key={method.label}
+                  className="flex items-center gap-2 px-3 py-2.5 bg-slate-50 rounded-lg border border-slate-100"
+                >
+                  <method.icon className="w-4 h-4 text-slate-400" />
+                  <span className="text-sm text-slate-600 font-medium">{method.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm mb-4">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handlePayNow}
+            disabled={loading}
+            className="w-full bg-accent text-white py-3 px-6 rounded-xl font-semibold
+                       hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed
+                       transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 hover:shadow-blue-500/30"
+          >
+            {loading ? (
+              <>
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+                </svg>
+                Processing...
+              </>
+            ) : (
+              <>Pay ₹{parseFloat(price).toFixed(2)}</>
+            )}
+          </button>
+
+          <div className="flex items-center justify-center gap-1.5 mt-4 text-slate-400">
+            <Shield className="w-3.5 h-3.5" />
+            <p className="text-xs">Secured by Razorpay. Your payment details are encrypted.</p>
+          </div>
         </div>
       </div>
-
-      {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-4">
-          {error}
-        </div>
-      )}
-
-      <button
-        onClick={handlePayNow}
-        disabled={loading}
-        className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold
-                   hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed
-                   transition-colors flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10"
-                stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8v8H4z" />
-            </svg>
-            Processing...
-          </>
-        ) : (
-          <>Pay ₹{parseFloat(price).toFixed(2)}</>
-        )}
-      </button>
-
-      <p className="text-xs text-gray-400 text-center mt-3">
-        Secured by Razorpay. Your payment details are encrypted.
-      </p>
     </div>
   );
 }

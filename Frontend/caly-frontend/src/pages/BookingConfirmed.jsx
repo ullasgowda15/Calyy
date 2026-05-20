@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { payments } from '../api/client';
+import { CheckCircle, Calendar, Clock, User, DollarSign, ArrowRight } from 'lucide-react';
 
 export default function BookingConfirmed() {
   const location = useLocation();
@@ -23,27 +24,39 @@ export default function BookingConfirmed() {
 
   if (!state) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center"><p className="text-gray-500">No booking information found.</p><Link to="/" className="text-[#3B82F6] hover:underline">Go home</Link></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="card p-8">
+            <p className="text-slate-500 mb-4">No booking information found.</p>
+            <Link to="/" className="btn-primary">
+              Go home
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (state.requiresPayment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full">
-          <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center">
-            <h1 className="text-xl font-bold text-gray-900 mb-4">Complete payment to confirm your booking</h1>
-            <p className="text-gray-500 mb-6">Your booking is pending payment.</p>
-            <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-700 mb-6">
+          <div className="card p-8 text-center">
+            <h1 className="text-xl font-bold text-slate-900 mb-4">Complete payment to confirm your booking</h1>
+            <p className="text-slate-500 mb-6">Your booking is pending payment.</p>
+            <div className="bg-blue-50 p-4 rounded-xl text-sm text-blue-700 mb-6 flex items-center justify-center gap-2">
+              <DollarSign className="w-4 h-4" />
               Amount: ₹{state.price}
             </div>
             {paymentStatus === 'paid' && (
-              <div className="bg-green-100 p-3 rounded-lg text-green-700 mb-4">Payment received! Your booking is confirmed.</div>
+              <div className="bg-green-50 border border-green-200 p-3 rounded-xl text-green-700 mb-4 flex items-center justify-center gap-2">
+                <CheckCircle className="w-4 h-4" />
+                Payment received! Your booking is confirmed.
+              </div>
             )}
-            {loadingPayment && <p className="text-gray-500 mb-4">Checking payment status...</p>}
-            <Link to="/" className="block text-center text-[#3B82F6] hover:underline">Return home</Link>
+            {loadingPayment && <p className="text-slate-400 mb-4 text-sm">Checking payment status...</p>}
+            <Link to="/" className="text-accent hover:text-blue-700 font-medium text-sm transition">Return home</Link>
           </div>
         </div>
       </div>
@@ -54,27 +67,44 @@ export default function BookingConfirmed() {
   const endDate = booking?.end_datetime ? new Date(booking.end_datetime) : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm">
+        <div className="card p-8">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
+            <CheckCircle className="w-8 h-8 text-green-500" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">You&apos;re scheduled!</h1>
-          <p className="text-gray-500 mb-6">Your meeting has been confirmed.</p>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">You&apos;re scheduled!</h1>
+          <p className="text-slate-500 mb-6">Your meeting has been confirmed.</p>
 
           {booking && (
-            <div className="text-left bg-gray-50 rounded-lg p-4 mb-6 space-y-2 text-sm">
-              <p><span className="font-medium text-gray-700">Event:</span> <span className="text-gray-600">{booking.event_type_name}</span></p>
-              <p><span className="font-medium text-gray-700">With:</span> <span className="text-gray-600">{host}</span></p>
-              <p><span className="font-medium text-gray-700">Date:</span> <span className="text-gray-600">{startDate?.toLocaleString()}</span></p>
+            <div className="text-left bg-slate-50 rounded-xl p-5 mb-6 space-y-3 text-sm">
+              <div className="flex items-center gap-3">
+                <Calendar className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500">Event:</span>
+                <span className="text-slate-900 font-medium ml-auto">{booking.event_type_name}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <User className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500">With:</span>
+                <span className="text-slate-900 font-medium ml-auto">{host}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Clock className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-500">Date:</span>
+                <span className="text-slate-900 font-medium ml-auto">{startDate?.toLocaleString()}</span>
+              </div>
               {paymentStatus && (
-                <p>
-                  <span className="font-medium text-gray-700">Payment:</span>{' '}
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${paymentStatus === 'paid' ? 'bg-green-100 text-green-700' : paymentStatus === 'refunded' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-4 h-4 text-slate-400" />
+                  <span className="text-slate-500">Payment:</span>
+                  <span className={`ml-auto px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                    paymentStatus === 'paid' ? 'bg-green-100 text-green-700' :
+                    paymentStatus === 'refunded' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-slate-100 text-slate-600'
+                  }`}>
                     {paymentStatus}
                   </span>
-                </p>
+                </div>
               )}
             </div>
           )}
@@ -84,13 +114,16 @@ export default function BookingConfirmed() {
               href={`https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(booking?.event_type_name || 'Meeting')}&dates=${startDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z/${endDate.toISOString().replace(/[-:]/g, '').split('.')[0]}Z`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block text-center border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition mb-4"
+              className="block text-center btn-secondary mb-4"
             >
+              <Calendar className="w-4 h-4" />
               Add to Google Calendar
             </a>
           )}
 
-          <Link to={`/book/${host}`} className="block text-center text-[#3B82F6] hover:underline">Book another time</Link>
+          <Link to={`/book/${host}`} className="text-accent hover:text-blue-700 font-medium text-sm transition">
+            Book another time
+          </Link>
         </div>
       </div>
     </div>
