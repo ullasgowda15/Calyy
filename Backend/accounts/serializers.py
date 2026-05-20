@@ -26,6 +26,11 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'username', 'timezone', 'bio', 'avatar', 'first_name', 'last_name')
         read_only_fields = ('id', 'email')
 
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exclude(id=self.instance.id if self.instance else None).exists():
+            raise serializers.ValidationError('This username is already taken.')
+        return value
+
 
 class PasswordResetRequestSerializer(serializers.Serializer):
     email = serializers.EmailField()

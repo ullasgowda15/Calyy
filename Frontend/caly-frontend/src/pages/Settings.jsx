@@ -1,65 +1,28 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { integrations, auth } from '../api/client';
+import { integrations } from '../api/client';
 import Sidebar from '../components/Sidebar';
 
 export default function Settings() {
-  const { user, loadProfile, logout } = useAuth();
-  const [profile, setProfile] = useState({ first_name: '', last_name: '', email: '', username: '', timezone: 'UTC', bio: '' });
+  const { logout } = useAuth();
+  const [searchParams] = useSearchParams();
   const [googleStatus, setGoogleStatus] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
   const [newWebhook, setNewWebhook] = useState({ url: '', event: 'booking.created' });
   const [message, setMessage] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [avatarFile, setAvatarFile] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      setProfile({
-        first_name: user.first_name || '',
-        last_name: user.last_name || '',
-        email: user.email || '',
-        username: user.username || '',
-        timezone: user.timezone || 'UTC',
-        bio: user.bio || '',
-      });
+    if (searchParams.get('google') === 'connected') {
+      setMessage('Google Calendar connected!');
+      window.history.replaceState({}, '', '/settings');
     }
-  }, [user]);
+  }, [searchParams]);
 
   useEffect(() => {
     integrations.getGoogleStatus().then((res) => setGoogleStatus(res.data)).catch(() => {});
     integrations.getWebhooks().then((res) => setWebhooks(res.data)).catch(() => {});
   }, []);
-
-  const handleProfileChange = (e) => setProfile({ ...profile, [e.target.name]: e.target.value });
-
-  const saveProfile = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setMessage('');
-    try {
-      await auth.updateProfile(profile);
-      await loadProfile();
-      setMessage('Profile updated!');
-    } catch {
-      setMessage('Failed to update profile');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleAvatarUpload = async () => {
-    if (!avatarFile) return;
-    const formData = new FormData();
-    formData.append('avatar', avatarFile);
-    try {
-      await auth.uploadAvatar(formData);
-      await loadProfile();
-      setMessage('Avatar updated!');
-    } catch {
-      setMessage('Failed to upload avatar');
-    }
-  };
 
   const connectGoogle = async () => {
     try {
@@ -93,50 +56,19 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 p-8 max-w-3xl">
+      <div className="ml-64 p-8 max-w-3xl min-h-screen">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Settings</h1>
 
-        {message && <div className="bg-green-50 text-green-600 p-3 rounded-lg mb-4 text-sm">{message}</div>}
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="font-semibold text-gray-900 mb-4">Profile</h2>
-          <form onSubmit={saveProfile} className="space-y-4">
-            <div className="flex items-center gap-4 mb-4">
-              {user?.avatar ? (
-                <img src={user.avatar} alt="Avatar" className="w-16 h-16 rounded-full object-cover" />
-              ) : (
-                <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xl">
-                  {user?.username?.[0]?.toUpperCase() || '?'}
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Upload Avatar</label>
-                <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files[0])} className="text-sm" />
-                {avatarFile && <button type="button" onClick={handleAvatarUpload} className="text-[#3B82F6] text-sm hover:underline mt-1">Upload</button>}
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">First name</label><input name="first_name" value={profile.first_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Last name</label><input name="last_name" value={profile.last_name} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
-            </div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Email</label><input name="email" value={profile.email} disabled className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Username</label><input name="username" value={profile.username} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Timezone</label><input name="timezone" value={profile.timezone} onChange={handleProfileChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Bio</label><textarea name="bio" value={profile.bio} onChange={handleProfileChange} rows={3} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" /></div>
-            <button type="submit" disabled={saving} className="bg-[#3B82F6] text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition disabled:opacity-50">
-              {saving ? 'Saving...' : 'Save profile'}
-            </button>
-          </form>
-        </div>
+        {message && <div className={`p-3 rounded-lg mb-4 text-sm ${message.includes('Failed') ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>{message}</div>}
 
         <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
           <h2 className="font-semibold text-gray-900 mb-4">Google Calendar</h2>
           {googleStatus?.connected ? (
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-600">Connected as <span className="font-medium">{googleStatus.email}</span></p>
-              <button onClick={disconnectGoogle} className="text-red-500 text-sm hover:underline">Disconnect</button>
+              <button onClick={disconnectGoogle} className="bg-red-500 text-white px-3 py-1.5 rounded text-sm hover:bg-red-600 transition">Disconnect</button>
             </div>
           ) : (
             <div className="flex items-center justify-between">
@@ -169,7 +101,7 @@ export default function Settings() {
 
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="font-semibold text-gray-900 mb-4">Account</h2>
-          <button onClick={logout} className="text-red-500 hover:underline text-sm">Sign out</button>
+          <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-600 transition">Sign out</button>
         </div>
       </div>
     </div>

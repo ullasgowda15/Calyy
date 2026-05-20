@@ -33,7 +33,9 @@ def google_auth_url(request):
         access_type='offline',
         include_granted_scopes='true',
         state=str(request.user.id),
+        prompt='consent',
     )
+    request.session['google_code_verifier'] = flow.code_verifier
     return Response({'auth_url': auth_url})
 
 
@@ -57,7 +59,8 @@ def google_callback(request):
         state=state,
     )
     flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
-    flow.fetch_token(code=code)
+    code_verifier = request.session.pop('google_code_verifier', None)
+    flow.fetch_token(code=code, code_verifier=code_verifier)
 
     credentials = flow.credentials
     from accounts.models import User
@@ -66,7 +69,7 @@ def google_callback(request):
     except User.DoesNotExist:
         return Response({'error': 'Invalid state'}, status=400)
 
-    GoogleCalendarToken.objects.update_or_create(
+    token, _ = GoogleCalendarToken.objects.update_or_create(
         user=user,
         defaults={
             'access_token': credentials.token,
@@ -74,7 +77,20 @@ def google_callback(request):
             'token_expiry': credentials.expiry,
         }
     )
-    return redirect(f"{settings.FRONTEND_URL}/settings/integrations?google=connected")
+
+    from bookings.models import Booking
+    from .google_calendar import create_calendar_event
+    existing = Booking.objects.filter(
+        event_type__host=user,
+        status__in=['confirmed', 'pending'],
+    ).exclude(google_calendar_event_id__gt='')
+    for booking in existing:
+        event_id = create_calendar_event(token, booking)
+        if event_id:
+            booking.google_calendar_event_id = event_id
+            booking.save(update_fields=['google_calendar_event_id'])
+
+    return redirect(f"{settings.FRONTEND_URL}/settings?google=connected")
 
 
 @api_view(['DELETE'])
@@ -87,8 +103,8 @@ def google_disconnect(request):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def google_status(request):
-    connected = GoogleCalendarToken.objects.filter(user=request.user).exists()
-    return Response({'connected': connected})
+    token = GoogleCalendarToken.objects.filter(user=request.user).first()
+    return Response({'connected': bool(token)})
 
 
 class WebhookSubscriptionViewSet(generics.ListCreateAPIView):

@@ -36,6 +36,7 @@ export const auth = {
   getProfile: () => api.get('/auth/me/'),
   updateProfile: (data) => api.patch('/auth/me/', data),
   uploadAvatar: (formData) => api.patch('/auth/me/avatar/', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
+  checkUsername: (username) => api.get('/auth/check-username/', { params: { username } }),
   passwordReset: (data) => api.post('/auth/password-reset/', data),
   passwordResetConfirm: (uidb64, token, data) => api.post(`/auth/password-reset/confirm/${uidb64}/${token}/`, data),
 };
@@ -71,10 +72,11 @@ export const bookings = {
 };
 
 export const payments = {
-  createPaymentIntent: (data) => api.post('/payments/create-intent/', data),
-  confirmBookingPayment: (data) => api.post('/payments/confirm-payment/', data),
+  createOrder: (data) => api.post('/payments/create-order/', data),
+  verifyPayment: (data) => api.post('/payments/verify/', data),
   getPaymentStatus: (id) => api.get(`/payments/${id}/status/`),
   refundBooking: (id) => api.post(`/payments/${id}/refund/`),
+  cancelPendingBooking: (data) => api.post('/payments/cancel-pending/', data),
 };
 
 export const integrations = {

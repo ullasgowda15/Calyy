@@ -1,6 +1,210 @@
 @import "tailwindcss";
 
-body {
-  margin: 0;
-  font-family: system-ui, -apple-system, sans-serif;
+@theme {
+  --color-navy: #0F172A;
+  --color-navy-light: #1E293B;
+  --color-accent: #3B82F6;
+  --color-accent-hover: #2563EB;
+  --color-accent-light: #EFF6FF;
+  --color-success: #10B981;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FFFBEB;
+  --color-danger: #EF4444;
+  --color-danger-bg: #FEF2F2;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: #F8FAFC;
+    color: #0F172A;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  input, select, textarea {
+    font-family: inherit;
+  }
+
+  ::selection {
+    background: #3B82F6;
+    color: white;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: white;
+    background: #3B82F6;
+    border-radius: 0.625rem;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: #2563EB;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #334155;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.625rem;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover:not(:disabled) {
+    background: #F8FAFC;
+    border-color: #CBD5E1;
+  }
+
+  .btn-danger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: white;
+    background: #EF4444;
+    border-radius: 0.625rem;
+    border: none;
+    transition: all 0.2s ease;
+  }
+
+  .btn-danger:hover:not(:disabled) {
+    background: #DC2626;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #3B82F6;
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    transition: all 0.15s ease;
+  }
+
+  .btn-ghost:hover {
+    background: #EFF6FF;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #0F172A;
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.625rem;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .input-field:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  .input-field::placeholder {
+    color: #94A3B8;
+  }
+
+  .card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  .stat-card {
+    background: white;
+    border: 1px solid #E2E8F0;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    transform: translateY(-2px);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 9999px;
+  }
+
+  .badge-confirmed { background: #ECFDF5; color: #059669; }
+  .badge-pending { background: #FFFBEB; color: #D97706; }
+  .badge-cancelled { background: #FEF2F2; color: #DC2626; }
+  .badge-completed { background: #EFF6FF; color: #2563EB; }
+  .badge-no_show { background: #FFF7ED; color: #EA580C; }
+
+  .skeleton {
+    background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.5rem;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
 }

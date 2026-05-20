@@ -6,12 +6,15 @@ from .models import EventType, Availability, BlockedTime
 class EventTypeSerializer(serializers.ModelSerializer):
     host = serializers.UUIDField(source='host.id', read_only=True)
     host_username = serializers.CharField(source='host.username', read_only=True)
+    host_avatar = serializers.ImageField(source='host.avatar', read_only=True)
+    host_bio = serializers.CharField(source='host.bio', read_only=True)
+    host_first_name = serializers.CharField(source='host.first_name', read_only=True)
     booking_url = serializers.SerializerMethodField()
 
     class Meta:
         model = EventType
         fields = '__all__'
-        read_only_fields = ('id', 'host', 'created_at', 'updated_at', 'host_username', 'booking_url')
+        read_only_fields = ('id', 'host', 'created_at', 'updated_at', 'host_username', 'host_avatar', 'host_bio', 'host_first_name', 'booking_url')
         extra_kwargs = {
             'slug': {'required': False, 'allow_blank': True},
         }

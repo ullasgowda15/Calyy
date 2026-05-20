@@ -107,7 +107,7 @@ def paid_event_type(host_user):
         buffer_after=0,
         is_active=True,
         price=Decimal('50.00'),
-        currency='USD',
+        currency='INR',
     )
 
 
@@ -189,5 +189,7 @@ def paid_booking(paid_event_type, full_week_availability, future_monday):
         end_datetime=future_monday + timedelta(hours=3),
         status='confirmed',
         payment_status='paid',
-        stripe_payment_intent_id='pi_test_123456789',
+        razorpay_order_id='order_test_123456789',
+        razorpay_payment_id='pay_test_123456789',
+        razorpay_signature='test_signature_abc',
     )

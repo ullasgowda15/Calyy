@@ -37,7 +37,7 @@ class EventType(models.Model):
     max_bookings_per_day = models.PositiveIntegerField(null=True, blank=True)
 
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    currency = models.CharField(max_length=3, default='USD')
+    currency = models.CharField(max_length=3, default='INR')
 
     custom_questions = models.JSONField(default=list, blank=True)
 

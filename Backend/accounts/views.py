@@ -46,6 +46,16 @@ class AvatarUploadView(generics.UpdateAPIView):
         return Response(UserSerializer(user).data)
 
 
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def check_username(request):
+    username = request.query_params.get('username', '').strip()
+    if not username:
+        return Response({'available': False, 'error': 'username parameter required'}, status=400)
+    exists = User.objects.filter(username=username).exists()
+    return Response({'available': not exists, 'username': username})
+
+
 class PublicProfileView(generics.RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)

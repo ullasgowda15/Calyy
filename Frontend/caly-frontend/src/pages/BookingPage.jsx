@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { eventTypes, bookings } from '../api/client';
-import StripePayment from '../components/StripePayment';
+import { eventTypes, bookings, payments } from '../api/client';
+import RazorpayPayment from '../components/RazorpayPayment';
 import { formatTimeLocal, getUserTimezone } from '../utils/datetime';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -11,6 +11,7 @@ export default function BookingPage() {
   const { username, slug } = useParams();
   const navigate = useNavigate();
   const [hostEvents, setHostEvents] = useState([]);
+  const [hostProfile, setHostProfile] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -25,7 +26,18 @@ export default function BookingPage() {
   const [step, setStep] = useState('events');
 
   useEffect(() => {
-    eventTypes.getPublicEventTypes(username).then((res) => setHostEvents(res.data)).catch(() => setHostEvents([]));
+    eventTypes.getPublicEventTypes(username).then((res) => {
+      setHostEvents(res.data);
+      if (res.data.length > 0) {
+        const ev = res.data[0];
+        setHostProfile({
+          username: ev.host_username,
+          avatar: ev.host_avatar,
+          bio: ev.host_bio,
+          first_name: ev.host_first_name,
+        });
+      }
+    }).catch(() => setHostEvents([]));
   }, [username]);
 
   useEffect(() => {
@@ -103,11 +115,15 @@ export default function BookingPage() {
     }
   };
 
-  const handlePaymentSuccess = () => {
-    navigate('/booking-confirmed', { state: { bookingConfirmed: true, eventType: selectedEvent, host: username } });
+  const handlePaymentSuccess = (booking) => {
+    navigate('/booking-confirmed', { state: { booking, paid: true, eventType: selectedEvent, host: username } });
   };
 
-  const handlePaymentCancel = () => {
+  const handlePaymentCancel = async () => {
+    if (bookingId) {
+      try { await payments.cancelPendingBooking({ booking_id: bookingId }); } catch {}
+    }
+    setBookingId(null);
     setStep('form');
   };
 
@@ -124,9 +140,18 @@ export default function BookingPage() {
       <div className="min-h-screen bg-gray-50 py-12 px-4">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#3B82F6] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">{username[0].toUpperCase()}</div>
-            <h1 className="text-2xl font-bold text-gray-900">{username}</h1>
-            <p className="text-gray-500">Select a meeting type to book</p>
+            <div className="flex justify-center mb-4">
+              {hostProfile?.avatar ? (
+                <img src={hostProfile.avatar} alt={username} className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md" />
+              ) : (
+                <div className="w-20 h-20 bg-[#3B82F6] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-md">
+                  {username[0].toUpperCase()}
+                </div>
+              )}
+            </div>
+            <h1 className="text-2xl font-bold text-gray-900">{hostProfile?.first_name || username}</h1>
+            {hostProfile?.bio && <p className="text-gray-500 mt-1 max-w-md mx-auto">{hostProfile.bio}</p>}
+            <p className="text-gray-500 mt-2">Select a meeting type to book</p>
           </div>
           <div className="space-y-4">
             {hostEvents.map((ev) => (
@@ -136,7 +161,7 @@ export default function BookingPage() {
                   <h3 className="font-semibold text-gray-900">{ev.name}</h3>
                   <p className="text-sm text-gray-500">{ev.duration} min — {ev.location_type.replace('_', ' ')}</p>
                 </div>
-                {ev.price && <span className="text-[#3B82F6] font-semibold">${ev.price}</span>}
+                {ev.price && <span className="text-[#3B82F6] font-semibold">₹{ev.price}</span>}
               </button>
             ))}
           </div>
@@ -153,7 +178,7 @@ export default function BookingPage() {
     };
     return (
       <div className="min-h-screen bg-gray-50 py-12 px-4">
-        <StripePayment
+        <RazorpayPayment
           eventTypeId={selectedEvent.id}
           bookingId={bookingId}
           bookingData={bookingData}
@@ -161,6 +186,7 @@ export default function BookingPage() {
           currency={selectedEvent.currency}
           onSuccess={handlePaymentSuccess}
           onCancel={handlePaymentCancel}
+          onError={(msg) => setError(msg)}
         />
       </div>
     );

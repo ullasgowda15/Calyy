@@ -44,7 +44,7 @@ et2, _ = EventType.objects.get_or_create(
         'max_advance_days': 30,
         'location_type': 'zoom',
         'price': '99.00',
-        'currency': 'USD',
+        'currency': 'INR',
         'color': '#9B51E0',
     }
 )

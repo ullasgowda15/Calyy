@@ -35,9 +35,9 @@ export default function EventTypes() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 p-8">
+      <div className="ml-64 p-8 min-h-screen">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Event Types</h1>
           <Link to="/event-types/new" className="bg-[#3B82F6] text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">New event type</Link>
@@ -57,12 +57,12 @@ export default function EventTypes() {
                 </div>
                 <div className="text-sm text-gray-500 space-y-1 mb-4">
                   <p>{et.duration} min — {et.location_type}</p>
-                  {et.price && <p className="text-[#3B82F6] font-semibold">${et.price} {et.currency}</p>}
+                  {et.price && <p className="text-[#3B82F6] font-semibold">₹{et.price}</p>}
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                  <button onClick={() => copyLink(et.slug)} className="text-[#3B82F6] hover:underline">{copiedId === et.slug ? 'Copied!' : 'Copy link'}</button>
-                  <Link to={`/event-types/${et.id}/edit`} className="text-gray-500 hover:underline">Edit</Link>
-                  <button onClick={() => handleDelete(et.id)} className="text-red-500 hover:underline ml-auto">Delete</button>
+                  <button onClick={() => copyLink(et.slug)} className="bg-[#3B82F6] text-white px-3 py-1 rounded hover:bg-blue-600 transition">{copiedId === et.slug ? 'Copied!' : 'Copy link'}</button>
+                  <Link to={`/event-types/${et.id}/edit`} className="bg-gray-100 text-gray-700 px-3 py-1 rounded hover:bg-gray-200 transition">Edit</Link>
+                  <button onClick={() => handleDelete(et.id)} className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition ml-auto">Delete</button>
                   <label className="relative inline-flex items-center cursor-pointer ml-2">
                     <input type="checkbox" checked={et.is_active} onChange={() => toggleActive(et.id, et.is_active)} className="sr-only peer" />
                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#3B82F6]" />

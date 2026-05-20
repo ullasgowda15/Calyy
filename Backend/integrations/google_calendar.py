@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
@@ -6,11 +7,13 @@ from googleapiclient.discovery import build
 from django.conf import settings
 from django.utils import timezone
 
+logger = logging.getLogger(__name__)
+
 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 
-def get_credentials(google_token) -> Credentials:
+def get_credentials(google_token) -> Credentials | None:
     creds = Credentials(
         token=google_token.access_token,
         refresh_token=google_token.refresh_token,
@@ -20,10 +23,17 @@ def get_credentials(google_token) -> Credentials:
         scopes=SCOPES,
     )
     if creds.expired and creds.refresh_token:
-        creds.refresh(Request())
-        google_token.access_token = creds.token
-        google_token.token_expiry = creds.expiry
-        google_token.save()
+        try:
+            creds.refresh(Request())
+            google_token.access_token = creds.token
+            google_token.token_expiry = creds.expiry
+            google_token.save()
+        except Exception as e:
+            logger.error(f'Failed to refresh Google token: {e}')
+            return None
+    elif creds.expired and not creds.refresh_token:
+        logger.error('Google token expired and no refresh token available')
+        return None
     return creds
 
 
@@ -46,6 +56,8 @@ def get_busy_slots(google_token, date_min: datetime, date_max: datetime) -> list
 def create_calendar_event(google_token, booking) -> str:
     try:
         creds = get_credentials(google_token)
+        if not creds:
+            return ''
         service = build('calendar', 'v3', credentials=creds)
         event = {
             'summary': f'{booking.event_type.name} with {booking.invitee_name}',
@@ -58,7 +70,8 @@ def create_calendar_event(google_token, booking) -> str:
         }
         result = service.events().insert(calendarId=google_token.calendar_id, body=event).execute()
         return result.get('id', '')
-    except Exception:
+    except Exception as e:
+        logger.error(f'Failed to create Google Calendar event: {e}')
         return ''
 
 

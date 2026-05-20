@@ -37,7 +37,7 @@ export default function BookingConfirmed() {
             <h1 className="text-xl font-bold text-gray-900 mb-4">Complete payment to confirm your booking</h1>
             <p className="text-gray-500 mb-6">Your booking is pending payment.</p>
             <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-700 mb-6">
-              Amount: {state.currency?.toUpperCase()} {state.price}
+              Amount: ₹{state.price}
             </div>
             {paymentStatus === 'paid' && (
               <div className="bg-green-100 p-3 rounded-lg text-green-700 mb-4">Payment received! Your booking is confirmed.</div>

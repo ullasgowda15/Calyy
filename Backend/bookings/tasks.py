@@ -123,3 +123,22 @@ To book again: {settings.BASE_URL}/book/{booking.event_type.host.username}/{book
         })
     except Exception as e:
         logger.error(f'Failed to send cancellation email: {e}')
+
+
+@shared_task
+def release_expired_pending_bookings():
+    from django.utils import timezone
+    from .models import Booking
+
+    now = timezone.now()
+    expired = Booking.objects.filter(
+        status='pending',
+        pending_until__isnull=False,
+        pending_until__lt=now,
+    )
+
+    count = expired.count()
+    if count:
+        expired.update(status='cancelled', pending_until=None)
+        logger.info(f'Released {count} expired pending booking(s)')
+    return count

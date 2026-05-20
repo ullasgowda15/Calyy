@@ -76,7 +76,8 @@ class CreateBookingView(generics.CreateAPIView):
         if event_type and event_type.price and float(event_type.price) > 0:
             booking.status = 'pending'
             booking.payment_status = 'unpaid'
-            booking.save(update_fields=['status', 'payment_status'])
+            booking.pending_until = timezone.now() + timedelta(minutes=10)
+            booking.save(update_fields=['status', 'payment_status', 'pending_until'])
             return Response({
                 'requires_payment': True,
                 'booking_id': str(booking.id),

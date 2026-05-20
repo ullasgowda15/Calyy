@@ -13,7 +13,7 @@ export default function CreateEventType() {
     name: '', duration: 30, location_type: 'zoom', location_details: '',
     description: '', color: '#0069FF', buffer_before: 0, buffer_after: 0,
     min_notice: 120, max_advance_days: 60, max_bookings_per_day: '',
-    price: '', currency: 'USD',
+    price: '', currency: 'INR',
   });
   const [questions, setQuestions] = useState([]);
   const [error, setError] = useState('');
@@ -49,9 +49,9 @@ export default function CreateEventType() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-gray-50">
       <Sidebar />
-      <div className="flex-1 p-8 max-w-3xl">
+      <div className="ml-64 p-8 max-w-3xl min-h-screen">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">Create event type</h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -86,7 +86,7 @@ export default function CreateEventType() {
             <h2 className="font-semibold text-gray-900">Payment (optional)</h2>
             <div className="grid grid-cols-2 gap-4">
               <div><label className="block text-sm font-medium text-gray-700 mb-1">Price</label><input type="number" step="0.01" name="price" value={form.price} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none" placeholder="0.00" /></div>
-              <div><label className="block text-sm font-medium text-gray-700 mb-1">Currency</label><select name="currency" value={form.currency} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none"><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option></select></div>
+              <div><label className="block text-sm font-medium text-gray-700 mb-1">Currency</label><select name="currency" value={form.currency} onChange={handleChange} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#3B82F6] outline-none"><option value="INR">INR (₹)</option><option value="USD">USD ($)</option></select></div>
             </div>
           </div>
 

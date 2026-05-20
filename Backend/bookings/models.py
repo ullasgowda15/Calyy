@@ -25,8 +25,11 @@ class Booking(models.Model):
     cancel_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     reschedule_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
-    stripe_payment_intent_id = models.CharField(max_length=200, blank=True)
+    razorpay_order_id = models.CharField(max_length=200, blank=True)
+    razorpay_payment_id = models.CharField(max_length=200, blank=True)
+    razorpay_signature = models.CharField(max_length=500, blank=True)
     payment_status = models.CharField(max_length=20, default='unpaid')
+    pending_until = models.DateTimeField(null=True, blank=True)
     google_calendar_event_id = models.CharField(max_length=300, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)

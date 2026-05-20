@@ -151,7 +151,7 @@ class PaidBookingTests(APITestCase):
         self.event_type = EventType.objects.create(
             host=self.host, name='Paid Call', slug='paid-call',
             duration=60, location_type='zoom',
-            price='99.00', currency='USD'
+            price='99.00', currency='INR'
         )
         Availability.objects.create(
             user=self.host, weekday=0, start_time='09:00', end_time='17:00'
