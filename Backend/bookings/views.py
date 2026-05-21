@@ -7,10 +7,7 @@ from django.db import transaction
 from datetime import timedelta
 from .models import Booking
 from .serializers import BookingCreateSerializer, BookingSerializer
-from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email
-from integrations.views import fire_webhooks
-from integrations.models import GoogleCalendarToken
-from integrations.google_calendar import create_calendar_event, delete_calendar_event
+from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email, sync_google_calendar_event, delete_google_calendar_event, deliver_webhook_task
 from django_ratelimit.decorators import ratelimit
 import logging
 
@@ -31,13 +28,13 @@ def _safe_apply_async(task, *args, **kwargs):
         logger.warning(f'Failed to enqueue task {task.__name__}: {e}')
 
 
+BOOKING_SELECT = Booking.objects.select_related('event_type__host')
+
+
 def finalize_booking(booking):
     host = booking.event_type.host
     if hasattr(host, 'google_token'):
-        gc_event_id = create_calendar_event(host.google_token, booking)
-        if gc_event_id:
-            booking.google_calendar_event_id = gc_event_id
-            booking.save(update_fields=['google_calendar_event_id'])
+        _safe_delay(sync_google_calendar_event, str(booking.id))
     _safe_delay(send_booking_confirmation, str(booking.id))
     reminder_24h = booking.start_datetime - timedelta(hours=24)
     if reminder_24h > timezone.now():
@@ -45,7 +42,7 @@ def finalize_booking(booking):
     reminder_1h = booking.start_datetime - timedelta(hours=1)
     if reminder_1h > timezone.now():
         _safe_apply_async(send_booking_reminder, args=[str(booking.id), 1], eta=reminder_1h)
-    fire_webhooks(host, 'booking.created', BookingSerializer(booking).data)
+    _safe_delay(deliver_webhook_task, str(host.id), 'booking.created', BookingSerializer(booking).data)
 
 
 class CreateBookingView(generics.CreateAPIView):
@@ -99,11 +96,14 @@ class HostBookingListView(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        qs = Booking.objects.filter(event_type__host=self.request.user)
+        qs = BOOKING_SELECT.filter(event_type__host=self.request.user)
         status_filter = self.request.query_params.get('status')
+        valid_statuses = [s[0] for s in Booking.STATUS_CHOICES]
         if status_filter:
+            if status_filter not in valid_statuses:
+                return Booking.objects.none()
             qs = qs.filter(status=status_filter)
-        return qs.select_related('event_type')
+        return qs
 
 
 class BookingDetailView(generics.RetrieveAPIView):
@@ -111,14 +111,14 @@ class BookingDetailView(generics.RetrieveAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return Booking.objects.filter(event_type__host=self.request.user)
+        return BOOKING_SELECT.filter(event_type__host=self.request.user)
 
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 @ratelimit(key='ip', rate='10/h', method='POST')
 def cancel_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id)
+    booking = get_object_or_404(BOOKING_SELECT, id=booking_id)
     token = request.query_params.get('token') or request.data.get('token')
 
     if str(booking.cancel_token) != str(token):
@@ -132,9 +132,9 @@ def cancel_booking(request, booking_id):
     booking.save()
     host = booking.event_type.host
     if hasattr(host, 'google_token') and booking.google_calendar_event_id:
-        delete_calendar_event(host.google_token, booking.google_calendar_event_id)
+        _safe_delay(delete_google_calendar_event, str(host.id), booking.google_calendar_event_id)
     _safe_delay(send_cancellation_email, str(booking.id), reason)
-    fire_webhooks(host, 'booking.cancelled', BookingSerializer(booking).data)
+    _safe_delay(deliver_webhook_task, str(host.id), 'booking.cancelled', BookingSerializer(booking).data)
     return Response({'message': 'Booking cancelled successfully'})
 
 
@@ -144,7 +144,7 @@ def cancel_booking(request, booking_id):
 def reschedule_booking(request, booking_id, token=None):
     if token is None:
         token = request.query_params.get('token') or request.data.get('token')
-    booking = get_object_or_404(Booking, id=booking_id)
+    booking = get_object_or_404(BOOKING_SELECT, id=booking_id)
     if str(booking.reschedule_token) != str(token):
         return Response({'error': 'Invalid reschedule token'}, status=403)
 
@@ -182,15 +182,10 @@ def reschedule_booking(request, booking_id, token=None):
 
     host = booking.event_type.host
     if hasattr(host, 'google_token') and booking.google_calendar_event_id:
-        delete_calendar_event(host.google_token, booking.google_calendar_event_id)
-    gc_event_id = None
-    if hasattr(host, 'google_token'):
-        gc_event_id = create_calendar_event(host.google_token, booking)
-    if gc_event_id:
-        booking.google_calendar_event_id = gc_event_id
-        booking.save(update_fields=['google_calendar_event_id'])
+        _safe_delay(delete_google_calendar_event, str(host.id), booking.google_calendar_event_id)
+    _safe_delay(sync_google_calendar_event, str(booking.id))
     _safe_delay(send_booking_confirmation, str(booking.id))
-    fire_webhooks(host, 'booking.rescheduled', BookingSerializer(booking).data)
+    _safe_delay(deliver_webhook_task, str(host.id), 'booking.rescheduled', BookingSerializer(booking).data)
     return Response(BookingSerializer(booking).data, status=status.HTTP_200_OK)
 
 
@@ -198,14 +193,14 @@ def reschedule_booking(request, booking_id, token=None):
 @permission_classes([permissions.AllowAny])
 @ratelimit(key='ip', rate='10/h', method='POST')
 def reschedule_by_token(request, reschedule_token):
-    booking = get_object_or_404(Booking, reschedule_token=reschedule_token)
+    booking = get_object_or_404(BOOKING_SELECT, reschedule_token=reschedule_token)
     return reschedule_booking(request._request, booking.id, token=str(reschedule_token))
 
 
 @api_view(['PATCH'])
 @permission_classes([permissions.IsAuthenticated])
 def update_booking_status(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, event_type__host=request.user)
+    booking = get_object_or_404(BOOKING_SELECT, id=booking_id, event_type__host=request.user)
     new_status = request.data.get('status')
     if new_status not in ['completed', 'no_show']:
         return Response({'error': 'Invalid status'}, status=400)
@@ -221,7 +216,7 @@ def update_booking_status(request, booking_id):
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
 def host_cancel_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, event_type__host=request.user)
+    booking = get_object_or_404(BOOKING_SELECT, id=booking_id, event_type__host=request.user)
     if booking.status == 'cancelled':
         return Response({'error': 'Booking already cancelled'}, status=400)
     reason = request.data.get('reason', '')
@@ -229,7 +224,7 @@ def host_cancel_booking(request, booking_id):
     booking.save()
     host = booking.event_type.host
     if hasattr(host, 'google_token') and booking.google_calendar_event_id:
-        delete_calendar_event(host.google_token, booking.google_calendar_event_id)
+        _safe_delay(delete_google_calendar_event, str(host.id), booking.google_calendar_event_id)
     _safe_delay(send_cancellation_email, str(booking.id), reason)
-    fire_webhooks(host, 'booking.cancelled', BookingSerializer(booking).data)
+    _safe_delay(deliver_webhook_task, str(host.id), 'booking.cancelled', BookingSerializer(booking).data)
     return Response({'message': 'Booking cancelled successfully'})

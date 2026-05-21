@@ -1,7 +1,9 @@
 from celery import shared_task
 from django.conf import settings
+from django.core.mail import send_mail
 import logging
 import resend
+import requests
 
 logger = logging.getLogger(__name__)
 resend.api_key = settings.RESEND_API_KEY
@@ -18,7 +20,7 @@ HTML_WRAP = """<!DOCTYPE html><html><body style="margin:0;padding:0;background:#
 Caly &mdash; Modern Scheduling</td></tr></table></td></tr></table></body></html>"""
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_booking_confirmation(booking_id: str):
     from .models import Booking
     try:
@@ -50,6 +52,7 @@ def send_booking_confirmation(booking_id: str):
         })
     except Exception as e:
         logger.error(f'Failed to send invitee confirmation email: {e}')
+        raise
 
     host_body = f"""<p style="margin:0 0 16px">Hi {host_name},</p>
 <p style="margin:0 0 16px">New booking received!</p>
@@ -68,9 +71,10 @@ def send_booking_confirmation(booking_id: str):
         })
     except Exception as e:
         logger.error(f'Failed to send host confirmation email: {e}')
+        raise
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_booking_reminder(booking_id: str, hours_before: int = 24):
     from .models import Booking
     try:
@@ -98,9 +102,10 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
         })
     except Exception as e:
         logger.error(f'Failed to send reminder email: {e}')
+        raise
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_cancellation_email(booking_id: str, reason: str = ''):
     from .models import Booking
     try:
@@ -126,9 +131,10 @@ def send_cancellation_email(booking_id: str, reason: str = ''):
         })
     except Exception as e:
         logger.error(f'Failed to send cancellation email: {e}')
+        raise
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_no_show_email(booking_id: str):
     from .models import Booking
     try:
@@ -157,6 +163,51 @@ def send_no_show_email(booking_id: str):
         })
     except Exception as e:
         logger.error(f'Failed to send no-show email: {e}')
+        raise
+
+
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
+def sync_google_calendar_event(booking_id: str):
+    from .models import Booking
+    from integrations.google_calendar import create_calendar_event
+    try:
+        booking = Booking.objects.select_related('event_type__host').get(id=booking_id)
+    except Booking.DoesNotExist:
+        return
+    host = booking.event_type.host
+    if not hasattr(host, 'google_token'):
+        return
+    gc_event_id = create_calendar_event(host.google_token, booking)
+    if gc_event_id:
+        booking.google_calendar_event_id = gc_event_id
+        booking.save(update_fields=['google_calendar_event_id'])
+
+
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
+def delete_google_calendar_event(host_id: str, event_id: str):
+    from integrations.models import GoogleCalendarToken
+    from integrations.google_calendar import delete_calendar_event
+    try:
+        token = GoogleCalendarToken.objects.get(user_id=host_id)
+    except GoogleCalendarToken.DoesNotExist:
+        return
+    try:
+        delete_calendar_event(token, event_id)
+    except Exception as e:
+        logger.error(f'Failed to delete calendar event {event_id}: {e}')
+        raise
+
+
+@shared_task(autoretry_for=(requests.RequestException,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
+def deliver_webhook_task(user_id: str, event: str, payload: dict):
+    from integrations.models import WebhookSubscription
+    subscriptions = WebhookSubscription.objects.filter(user_id=user_id, event=event, is_active=True)
+    for sub in subscriptions:
+        try:
+            requests.post(sub.url, json=payload, timeout=5)
+        except requests.RequestException as e:
+            logger.error(f'Webhook delivery failed to {sub.url}: {e}')
+            raise
 
 
 @shared_task

@@ -20,10 +20,10 @@ from bookings.tasks import (
     send_booking_confirmation,
     send_booking_reminder,
     send_cancellation_email,
+    sync_google_calendar_event,
+    delete_google_calendar_event,
+    deliver_webhook_task,
 )
-from integrations.views import fire_webhooks
-from integrations.models import GoogleCalendarToken
-from integrations.google_calendar import create_calendar_event, delete_calendar_event
 
 logger = logging.getLogger(__name__)
 
@@ -161,12 +161,7 @@ def verify_payment(request):
             )
 
     try:
-        host = booking.event_type.host
-        if hasattr(host, 'google_token'):
-            gc_event_id = create_calendar_event(host.google_token, booking)
-            if gc_event_id:
-                booking.google_calendar_event_id = gc_event_id
-                booking.save(update_fields=['google_calendar_event_id'])
+        sync_google_calendar_event.delay(str(booking.id))
     except Exception as e:
         logger.warning(f'Google Calendar push failed: {e}')
 
@@ -183,11 +178,8 @@ def verify_payment(request):
             args=[str(booking.id), 1], eta=reminder_1h
         )
 
-    fire_webhooks(
-        booking.event_type.host,
-        'booking.created',
-        BookingSerializer(booking).data,
-    )
+    host = booking.event_type.host
+    deliver_webhook_task.delay(str(host.id), 'booking.created', BookingSerializer(booking).data)
 
     logger.info(f'Booking {booking.id} confirmed via Razorpay payment {razorpay_payment_id}')
     return Response(BookingSerializer(booking).data, status=201)
@@ -297,11 +289,7 @@ def _handle_payment_captured(event):
             )
 
         send_booking_confirmation.delay(str(booking.id))
-        fire_webhooks(
-            booking.event_type.host,
-            'booking.created',
-            BookingSerializer(booking).data,
-        )
+        deliver_webhook_task.delay(str(booking.event_type.host.id), 'booking.created', BookingSerializer(booking).data)
         logger.info(f'Booking {booking.id} created via webhook for payment {razorpay_payment_id}')
 
     except Exception as e:
@@ -347,19 +335,11 @@ def refund_booking(request, booking_id):
         booking.status = 'cancelled'
         booking.save(update_fields=['payment_status', 'status'])
 
-        try:
-            host = booking.event_type.host
-            if hasattr(host, 'google_token') and booking.google_calendar_event_id:
-                delete_calendar_event(host.google_token, booking.google_calendar_event_id)
-        except Exception as e:
-            logger.warning(f'Calendar event deletion failed on refund: {e}')
+        if booking.google_calendar_event_id:
+            delete_google_calendar_event.delay(str(booking.event_type.host.id), booking.google_calendar_event_id)
 
         send_cancellation_email.delay(str(booking.id))
-        fire_webhooks(
-            booking.event_type.host,
-            'booking.cancelled',
-            BookingSerializer(booking).data,
-        )
+        deliver_webhook_task.delay(str(booking.event_type.host.id), 'booking.cancelled', BookingSerializer(booking).data)
 
         return Response({
             'message': 'Refund initiated successfully',

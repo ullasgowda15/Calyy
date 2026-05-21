@@ -1,5 +1,6 @@
 from celery import shared_task
 from django.conf import settings
+from django.core.mail import send_mail
 import logging
 import resend
 import random
@@ -19,7 +20,7 @@ HTML_WRAP = """<!DOCTYPE html><html><body style="margin:0;padding:0;background:#
 Caly &mdash; Modern Scheduling</td></tr></table></td></tr></table></body></html>"""
 
 
-@shared_task
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_verification_otp(user_id: str, otp: str):
     from .models import User
     try:
@@ -42,3 +43,15 @@ def send_verification_otp(user_id: str, otp: str):
         logger.info(f'Verification OTP sent to {user.email}')
     except Exception as e:
         logger.error(f'Failed to send verification OTP: {e}')
+        raise
+
+
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
+def send_password_reset_email(email: str, reset_link: str):
+    send_mail(
+        'Reset your Caly password',
+        f'Click the link below to reset your password:\n\n{reset_link}\n\nIf you did not request this, ignore this email.',
+        settings.DEFAULT_FROM_EMAIL,
+        [email],
+        fail_silently=False,
+    )

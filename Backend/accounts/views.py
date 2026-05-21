@@ -5,14 +5,13 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
-from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import update_session_auth_hash
 from .serializers import RegisterSerializer, UserSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, VerifyEmailSerializer, ResendOTPSerializer, ChangePasswordSerializer
 from .models import User, EmailVerificationOTP
-from .tasks import send_verification_otp
+from .tasks import send_verification_otp, send_password_reset_email
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 
@@ -66,7 +65,7 @@ class AvatarUploadView(generics.UpdateAPIView):
 def check_username(request):
     username = request.query_params.get('username', '').strip()
     if not username:
-        return Response({'available': False, 'error': 'username parameter required'}, status=400)
+        return Response({'available': False, 'error': 'username parameter required'}, status=200)
     exists = User.objects.filter(username=username).exists()
     return Response({'available': not exists, 'username': username})
 
@@ -99,13 +98,10 @@ def password_reset_request(request):
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         token = default_token_generator.make_token(user)
         reset_link = f"{settings.FRONTEND_URL}/reset-password/{uid}/{token}/"
-        send_mail(
-            'Reset your Caly password',
-            f'Click the link below to reset your password:\n\n{reset_link}\n\nIf you did not request this, ignore this email.',
-            settings.DEFAULT_FROM_EMAIL,
-            [email],
-            fail_silently=True,
-        )
+        try:
+            send_password_reset_email.delay(email, reset_link)
+        except Exception:
+            pass
     return Response({'message': 'If an account with that email exists, a reset link has been sent.'})
 
 

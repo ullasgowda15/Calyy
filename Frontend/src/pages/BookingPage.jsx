@@ -308,6 +308,7 @@ export default function BookingPage() {
                           {q.type === 'select' ? (
                             <select onChange={(e) => setForm({ ...form, custom_answers: { ...form.custom_answers, [q.label]: e.target.value } })} required={q.required} className="field">
                               <option value="">Select…</option>
+                              {q.options?.map((o) => <option key={o} value={o}>{o}</option>)}
                             </select>
                           ) : (
                             <input type="text" onChange={(e) => setForm({ ...form, custom_answers: { ...form.custom_answers, [q.label]: e.target.value } })} required={q.required} className="field" />

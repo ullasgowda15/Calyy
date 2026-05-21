@@ -10,6 +10,12 @@ const HOURS = Array.from({ length: 48 }, (_, i) => {
   return `${h}:${m}`;
 });
 
+const TimeSelect = ({ value, onChange }) => (
+  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ width: '110px', padding: '7px 10px', fontSize: '13px' }}>
+    {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
+  </select>
+);
+
 function localToUTC(localDatetime) {
   if (!localDatetime) return '';
   const d = new Date(localDatetime);
@@ -85,12 +91,6 @@ export default function AvailabilityPage() {
       toast('Block removed', 'info');
     } catch { toast('Failed to remove block', 'error'); }
   };
-
-  const TimeSelect = ({ value, onChange }) => (
-    <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ width: '110px', padding: '7px 10px', fontSize: '13px' }}>
-      {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
-    </select>
-  );
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>

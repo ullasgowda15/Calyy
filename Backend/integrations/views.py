@@ -11,6 +11,7 @@ from django_ratelimit.decorators import ratelimit
 from google_auth_oauthlib.flow import Flow
 from .models import GoogleCalendarToken, WebhookSubscription
 from .serializers import WebhookSubscriptionSerializer
+from bookings.tasks import sync_google_calendar_event
 
 SCOPES = [
     'https://www.googleapis.com/auth/calendar',
@@ -138,19 +139,11 @@ def google_callback(request):
 
         if not created:
             from bookings.models import Booking
-            from .google_calendar import create_calendar_event
-            existing = Booking.objects.filter(
+            for booking in Booking.objects.filter(
                 event_type__host=user,
                 status__in=['confirmed', 'pending'],
-            ).exclude(google_calendar_event_id__gt='')
-            for booking in existing:
-                event_id = create_calendar_event(
-                    GoogleCalendarToken.objects.get(user=user),
-                    booking,
-                )
-                if event_id:
-                    booking.google_calendar_event_id = event_id
-                    booking.save(update_fields=['google_calendar_event_id'])
+            ).exclude(google_calendar_event_id__gt=''):
+                sync_google_calendar_event.delay(str(booking.id))
 
         from rest_framework_simplejwt.tokens import RefreshToken
         refresh = RefreshToken.for_user(user)
@@ -177,19 +170,11 @@ def google_callback(request):
     )
 
     from bookings.models import Booking
-    from .google_calendar import create_calendar_event
-    existing = Booking.objects.filter(
+    for booking in Booking.objects.filter(
         event_type__host=user,
         status__in=['confirmed', 'pending'],
-    ).exclude(google_calendar_event_id__gt='')
-    for booking in existing:
-        event_id = create_calendar_event(
-            GoogleCalendarToken.objects.get(user=user),
-            booking,
-        )
-        if event_id:
-            booking.google_calendar_event_id = event_id
-            booking.save(update_fields=['google_calendar_event_id'])
+    ).exclude(google_calendar_event_id__gt=''):
+        sync_google_calendar_event.delay(str(booking.id))
 
     return redirect(f"{settings.FRONTEND_URL}/settings?google=connected")
 
@@ -219,10 +204,4 @@ class WebhookSubscriptionViewSet(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-def fire_webhooks(user, event: str, payload: dict):
-    subs = WebhookSubscription.objects.filter(user=user, event=event, is_active=True)
-    for sub in subs:
-        try:
-            requests.post(sub.url, json=payload, timeout=5)
-        except Exception:
-            pass
+from bookings.tasks import sync_google_calendar_event

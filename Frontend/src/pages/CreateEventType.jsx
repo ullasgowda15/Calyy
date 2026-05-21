@@ -26,7 +26,7 @@ const Field = ({ label, hint, children }) => (
 );
 
 function EventTypeForm({ form, setForm, questions, setQuestions, error, loading, onSubmit, submitLabel }) {
-  const addQuestion = () => setQuestions([...questions, { label: '', type: 'text', required: false }]);
+  const addQuestion = () => setQuestions([...questions, { _id: crypto.randomUUID(), label: '', type: 'text', required: false }]);
   const updateQuestion = (i, field, value) => { const qs = [...questions]; qs[i][field] = value; setQuestions(qs); };
   const removeQuestion = (i) => setQuestions(questions.filter((_, idx) => idx !== i));
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
@@ -102,7 +102,7 @@ function EventTypeForm({ form, setForm, questions, setQuestions, error, loading,
           </button>
         </div>
         {questions.map((q, i) => (
-          <div key={i} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
+          <div key={q._id || i} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
             <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <input value={q.label} onChange={(e) => updateQuestion(i, 'label', e.target.value)} placeholder="Question label" className="field" style={{ padding: '8px 12px', fontSize: '13px' }} />

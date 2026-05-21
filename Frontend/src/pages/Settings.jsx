@@ -5,10 +5,21 @@ import { integrations, auth } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
 
+const Section = ({ title, desc, children }) => (
+  <div className="card" style={{ overflow: 'hidden', marginBottom: '20px' }}>
+    <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)' }}>
+      <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>{title}</h2>
+      {desc && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>{desc}</p>}
+    </div>
+    <div style={{ padding: '22px' }}>{children}</div>
+  </div>
+);
+
 export default function Settings() {
   const { logout } = useAuth();
   const toast = useToast();
   const [searchParams] = useSearchParams();
+  const googleConnected = searchParams.get('google') === 'connected';
   const [googleStatus, setGoogleStatus] = useState(null);
   const [webhooks, setWebhooks] = useState([]);
   const [newWebhook, setNewWebhook] = useState({ url: '', event: 'booking.created' });
@@ -18,11 +29,11 @@ export default function Settings() {
   const [pwdLoading, setPwdLoading] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('google') === 'connected') {
+    if (googleConnected) {
       toast('Google Calendar connected!', 'success');
       window.history.replaceState({}, '', '/settings');
     }
-  }, [searchParams]);
+  }, [googleConnected]);
 
   useEffect(() => {
     Promise.all([
@@ -53,16 +64,6 @@ export default function Settings() {
       toast('Webhook created!', 'success');
     } catch { toast('Failed to create webhook', 'error'); }
   };
-
-  const Section = ({ title, desc, children }) => (
-    <div className="card" style={{ overflow: 'hidden', marginBottom: '20px' }}>
-      <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)' }}>
-        <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>{title}</h2>
-        {desc && <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>{desc}</p>}
-      </div>
-      <div style={{ padding: '22px' }}>{children}</div>
-    </div>
-  );
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>

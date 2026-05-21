@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { auth } from '../api/client';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function ForgotPassword() {
@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     setError(''); setMessage('');
     setLoading(true);
     try {
-      await axios.post('/api/auth/password-reset/', { email });
+      await auth.passwordReset({ email });
       setMessage('If an account with that email exists, a reset link has been sent.');
     } catch {
       setError('Failed to send reset email. Please try again.');

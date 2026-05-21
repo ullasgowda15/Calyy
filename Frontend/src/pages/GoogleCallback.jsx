@@ -4,11 +4,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 export default function GoogleCallback() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const access = params.get('access');
+  const refresh = params.get('refresh');
 
   useEffect(() => {
-    const access = params.get('access');
-    const refresh = params.get('refresh');
-
     if (access && refresh) {
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
@@ -16,7 +15,7 @@ export default function GoogleCallback() {
     } else {
       navigate('/login?error=google_auth_failed', { replace: true });
     }
-  }, [params, navigate]);
+  }, [access, refresh, navigate]);
 
   return (
     <div style={{

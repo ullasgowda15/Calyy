@@ -7,13 +7,14 @@ export default function BookingConfirmed() {
   const state = location.state;
   const [paymentStatus, setPaymentStatus] = useState(null);
 
+  const bookingId = state?.booking?.id;
   useEffect(() => {
-    if (state?.booking?.id) {
-      payments.getPaymentStatus(state.booking.id)
+    if (bookingId) {
+      payments.getPaymentStatus(bookingId)
         .then((res) => setPaymentStatus(res.data.payment_status))
         .catch(() => {});
     }
-  }, [state]);
+  }, [bookingId]);
 
   if (!state) {
     return (

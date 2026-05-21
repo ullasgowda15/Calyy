@@ -45,38 +45,9 @@ export default function EditEventType() {
   }, [id, navigate]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const addQuestion = () => setQuestions([...questions, { label: '', type: 'text', required: false }]);
+  const addQuestion = () => setQuestions([...questions, { _id: crypto.randomUUID(), label: '', type: 'text', required: false }]);
   const updateQuestion = (i, field, value) => { const qs = [...questions]; qs[i][field] = value; setQuestions(qs); };
   const removeQuestion = (i) => setQuestions(questions.filter((_, idx) => idx !== i));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      const data = { ...form };
-      if (!data.max_bookings_per_day) delete data.max_bookings_per_day;
-      if (!data.price) { delete data.price; delete data.currency; }
-      data.custom_questions = questions;
-      await eventTypes.updateEventType(id, data);
-      toast('Event type updated!', 'success');
-      navigate('/event-types');
-    } catch (err) {
-      const d = err.response?.data;
-      setError(d ? Object.values(d).flat().join(', ') : 'Failed to update event type');
-    } finally { setLoading(false); }
-  };
-
-  if (fetching) return (
-    <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
-      <Sidebar />
-      <main style={{ flex: 1, marginLeft: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center' }} className="sidebar-main">
-        <div style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-          <svg className="spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-        </div>
-      </main>
-    </div>
-  );
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
@@ -141,7 +112,7 @@ export default function EditEventType() {
                 </button>
               </div>
               {questions.map((q, i) => (
-                <div key={i} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
+                <div key={q._id || i} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
                     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       <input value={q.label} onChange={(e) => updateQuestion(i, 'label', e.target.value)} placeholder="Question label" className="field" style={{ padding: '8px 12px', fontSize: '13px' }} />

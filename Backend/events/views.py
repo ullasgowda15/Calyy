@@ -15,7 +15,7 @@ class EventTypeViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return EventType.objects.filter(host=self.request.user)
+        return EventType.objects.filter(host=self.request.user).select_related('host')
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
     def slots(self, request, pk=None):

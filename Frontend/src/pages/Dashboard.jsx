@@ -57,7 +57,7 @@ export default function Dashboard() {
   const [cancelModal, setCancelModal] = useState({ show: false, id: null, cancelToken: '', reason: '' });
   const [refundModal, setRefundModal] = useState({ show: false, id: null });
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('caly-onboarding-dismissed'));
 
   useEffect(() => {
     integrations.getGoogleStatus().then((res) => setGoogleConnected(res.data.connected)).catch(() => {});
@@ -275,23 +275,21 @@ export default function Dashboard() {
 
       {/* Onboarding */}
       {showOnboarding && !loading && (
-        <div className="card" style={{ marginBottom: '20px', overflow: 'hidden', background: 'linear-gradient(135deg, var(--accent) 0%, #7C3AED 100%)', color: '#fff' }}>
-          <div style={{ padding: '28px 24px', textAlign: 'center' }}>
-            <div style={{ width: '56px', height: '56px', background: 'rgba(255,255,255,0.2)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
+        <div className="card" style={{ marginBottom: '20px', overflow: 'hidden', background: 'var(--surface)', border: '1.5px solid var(--border)', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--accent)' }} />
+          <div style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+            <div style={{ width: '44px', height: '44px', background: 'color-mix(in srgb, var(--accent) 12%, transparent)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
             </div>
-            <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '20px', margin: '0 0 8px' }}>Welcome to Caly!</h2>
-            <p style={{ fontSize: '14px', opacity: 0.9, margin: '0 0 20px', maxWidth: '400px', marginLeft: 'auto', marginRight: 'auto' }}>Get started by creating your first event type so people can book time with you.</p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <Link to="/event-types/new" className="btn" style={{ background: '#fff', color: 'var(--accent)', fontWeight: 700, border: 'none', padding: '10px 20px', fontSize: '14px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                Create event type
-              </Link>
-              <Link to="/availability" className="btn" style={{ background: 'rgba(255,255,255,0.15)', color: '#fff', border: '1px solid rgba(255,255,255,0.3)', padding: '10px 20px', fontSize: '14px' }}>
-                Set availability
-              </Link>
+            <div style={{ flex: 1, minWidth: '200px' }}>
+              <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>Welcome to Caly!</h3>
+              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0' }}>Create your first event type so people can book time with you.</p>
             </div>
-            <button onClick={() => setShowOnboarding(false)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', marginTop: '16px', fontSize: '13px', textDecoration: 'underline' }}>Dismiss</button>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <Link to="/event-types/new" className="btn btn-primary btn-sm">Create event type</Link>
+              <Link to="/availability" className="btn btn-ghost btn-sm">Set availability</Link>
+              <button onClick={() => { localStorage.setItem('caly-onboarding-dismissed', '1'); setShowOnboarding(false); }} className="btn btn-ghost btn-sm" style={{ opacity: 0.6 }}>Dismiss</button>
+            </div>
           </div>
         </div>
       )}
