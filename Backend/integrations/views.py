@@ -1,50 +1,26 @@
 import json
 import requests
+import secrets
+from urllib.parse import urlencode
 from django.conf import settings
 from django.shortcuts import redirect
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from django_ratelimit.decorators import ratelimit
 from google_auth_oauthlib.flow import Flow
 from .models import GoogleCalendarToken, WebhookSubscription
 from .serializers import WebhookSubscriptionSerializer
 
-
-SCOPES = ['https://www.googleapis.com/auth/calendar']
-
-
-@api_view(['GET'])
-@permission_classes([permissions.IsAuthenticated])
-def google_auth_url(request):
-    flow = Flow.from_client_config(
-        {
-            'web': {
-                'client_id': settings.GOOGLE_CLIENT_ID,
-                'client_secret': settings.GOOGLE_CLIENT_SECRET,
-                'redirect_uris': [settings.GOOGLE_REDIRECT_URI],
-                'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
-                'token_uri': 'https://oauth2.googleapis.com/token',
-            }
-        },
-        scopes=SCOPES,
-    )
-    flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
-    auth_url, state = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true',
-        state=str(request.user.id),
-        prompt='consent',
-    )
-    request.session['google_code_verifier'] = flow.code_verifier
-    return Response({'auth_url': auth_url})
+SCOPES = [
+    'https://www.googleapis.com/auth/calendar',
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
 
 
-@api_view(['GET'])
-@permission_classes([permissions.AllowAny])
-def google_callback(request):
-    code = request.query_params.get('code')
-    state = request.query_params.get('state')
-
+def _make_flow(state=None):
     flow = Flow.from_client_config(
         {
             'web': {
@@ -59,17 +35,139 @@ def google_callback(request):
         state=state,
     )
     flow.redirect_uri = settings.GOOGLE_REDIRECT_URI
+    return flow
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def google_auth_url(request):
+    flow = _make_flow(state=str(request.user.id))
+    auth_url, _ = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='consent',
+    )
+    request.session['google_code_verifier'] = flow.code_verifier
+    return Response({'auth_url': auth_url})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+def google_register_url(request):
+    nonce = secrets.token_urlsafe(32)
+    flow = _make_flow(state=f'register:{nonce}')
+    auth_url, _ = flow.authorization_url(
+        access_type='offline',
+        include_granted_scopes='true',
+        prompt='consent',
+    )
+    request.session['google_code_verifier'] = flow.code_verifier
+    request.session['google_register_nonce'] = nonce
+    return Response({'auth_url': auth_url})
+
+
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='10/h', method='GET')
+def google_callback(request):
+    code = request.query_params.get('code')
+    state = request.query_params.get('state', '')
+    error = request.query_params.get('error')
+
+    if error:
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+        return redirect(f'{frontend_url}/login?error=google_auth_denied')
+
     code_verifier = request.session.pop('google_code_verifier', None)
-    flow.fetch_token(code=code, code_verifier=code_verifier)
+    flow = _make_flow(state=state)
+
+    try:
+        flow.fetch_token(code=code, code_verifier=code_verifier)
+    except Exception as e:
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+        return redirect(f'{frontend_url}/login?error=google_auth_failed')
 
     credentials = flow.credentials
+
     from accounts.models import User
+
+    if state.startswith('register:'):
+        nonce = request.session.pop('google_register_nonce', None)
+        reg_state = state[len('register:'):]
+        if not nonce or nonce != reg_state:
+            return Response({'error': 'Invalid state'}, status=400)
+
+        userinfo_resp = requests.get(
+            'https://www.googleapis.com/oauth2/v2/userinfo',
+            headers={'Authorization': f'Bearer {credentials.token}'},
+            timeout=10,
+        )
+        if userinfo_resp.status_code != 200:
+            return Response({'error': 'Failed to fetch Google profile'}, status=400)
+        userinfo = userinfo_resp.json()
+        google_email = userinfo.get('email')
+        if not google_email:
+            return Response({'error': 'No email returned from Google'}, status=400)
+
+        user = User.objects.filter(email=google_email).first()
+        created = False
+        if not user:
+            base_username = google_email.split('@')[0].lower()[:30]
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f'{base_username}{counter}'
+                counter += 1
+            user = User.objects.create(
+                email=google_email,
+                username=username,
+                password=secrets.token_urlsafe(32),
+                timezone='UTC',
+                bio='',
+            )
+            created = True
+
+        GoogleCalendarToken.objects.update_or_create(
+            user=user,
+            defaults={
+                'access_token': credentials.token,
+                'refresh_token': credentials.refresh_token or '',
+                'token_expiry': credentials.expiry,
+            }
+        )
+
+        if not created:
+            from bookings.models import Booking
+            from .google_calendar import create_calendar_event
+            existing = Booking.objects.filter(
+                event_type__host=user,
+                status__in=['confirmed', 'pending'],
+            ).exclude(google_calendar_event_id__gt='')
+            for booking in existing:
+                event_id = create_calendar_event(
+                    GoogleCalendarToken.objects.get(user=user),
+                    booking,
+                )
+                if event_id:
+                    booking.google_calendar_event_id = event_id
+                    booking.save(update_fields=['google_calendar_event_id'])
+
+        from rest_framework_simplejwt.tokens import RefreshToken
+        refresh = RefreshToken.for_user(user)
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+        params = urlencode({
+            'access': str(refresh.access_token),
+            'refresh': str(refresh),
+            'new_user': 'true' if created else 'false',
+        })
+        return redirect(f'{frontend_url}/auth/google-redirect?{params}')
+
     try:
         user = User.objects.get(id=state)
     except User.DoesNotExist:
         return Response({'error': 'Invalid state'}, status=400)
 
-    token, _ = GoogleCalendarToken.objects.update_or_create(
+    GoogleCalendarToken.objects.update_or_create(
         user=user,
         defaults={
             'access_token': credentials.token,
@@ -85,7 +183,10 @@ def google_callback(request):
         status__in=['confirmed', 'pending'],
     ).exclude(google_calendar_event_id__gt='')
     for booking in existing:
-        event_id = create_calendar_event(token, booking)
+        event_id = create_calendar_event(
+            GoogleCalendarToken.objects.get(user=user),
+            booking,
+        )
         if event_id:
             booking.google_calendar_event_id = event_id
             booking.save(update_fields=['google_calendar_event_id'])

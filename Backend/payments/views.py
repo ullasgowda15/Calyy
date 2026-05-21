@@ -12,6 +12,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from django_ratelimit.decorators import ratelimit
 from events.models import EventType
 from bookings.models import Booking
 from bookings.serializers import BookingCreateSerializer, BookingSerializer
@@ -42,6 +43,7 @@ def get_razorpay_client():
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='10/h', method='POST')
 def create_razorpay_order(request):
     event_type_id = request.data.get('event_type_id')
     booking_data = request.data.get('booking_data', {})
@@ -96,6 +98,7 @@ def create_razorpay_order(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='20/h', method='POST')
 def verify_payment(request):
     razorpay_order_id = request.data.get('razorpay_order_id')
     razorpay_payment_id = request.data.get('razorpay_payment_id')
@@ -313,6 +316,7 @@ def _handle_payment_captured(event):
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
+@ratelimit(key='ip', rate='5/h', method='POST')
 def refund_booking(request, booking_id):
     booking = Booking.objects.filter(
         id=booking_id,
@@ -376,6 +380,7 @@ def refund_booking(request, booking_id):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@ratelimit(key='ip', rate='20/h', method='POST')
 def cancel_pending_booking(request):
     booking_id = request.data.get('booking_id')
 

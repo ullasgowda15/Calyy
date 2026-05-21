@@ -35,6 +35,7 @@ yarn-debug.log*
 yarn-error.log*
 Frontend/caly-frontend/dist/
 Frontend/caly-frontend/.vite/
+Frontend/.vite/
 
 # IDE
 .vscode/*
@@ -50,6 +51,7 @@ Thumbs.db
 desktop.ini
 
 # Secrets & env
+.env
 .env.local
 .env.production
 .env.*.local
@@ -66,3 +68,8 @@ htmlcov/
 
 /Audits
 /Extra
+
+.start-all.ps1
+
+/.pytest_cache
+/.vscode

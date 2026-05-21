@@ -3,6 +3,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from datetime import date
+from django_ratelimit.decorators import ratelimit
 from .models import EventType, Availability, BlockedTime
 from .serializers import EventTypeSerializer, AvailabilitySerializer, BlockedTimeSerializer
 from .availability import get_available_slots
@@ -43,6 +44,7 @@ class PublicEventTypeView(viewsets.ReadOnlyModelViewSet):
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='60/h', method='GET')
 def public_slots(request, username, pk):
     event_type = get_object_or_404(EventType, pk=pk, is_active=True)
     if event_type.host.username != username:

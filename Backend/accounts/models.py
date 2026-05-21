@@ -14,5 +14,18 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    email_verified = models.BooleanField(default=False)
+
     def __str__(self):
         return self.email
+
+
+class EmailVerificationOTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='otps')
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def is_expired(self):
+        from django.utils import timezone
+        from datetime import timedelta
+        return timezone.now() > self.created_at + timedelta(minutes=10)

@@ -1,15 +1,18 @@
+import random
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from .serializers import RegisterSerializer, UserSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer
-from .models import User
+from django.contrib.auth import update_session_auth_hash
+from .serializers import RegisterSerializer, UserSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, VerifyEmailSerializer, ResendOTPSerializer, ChangePasswordSerializer
+from .models import User, EmailVerificationOTP
+from .tasks import send_verification_otp
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 
@@ -18,6 +21,17 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
     permission_classes = (permissions.AllowAny,)
+    throttle_scope = 'register'
+
+    def perform_create(self, serializer):
+        user = serializer.save()
+        otp = f'{random.randint(100000, 999999)}'
+        EmailVerificationOTP.objects.create(user=user, otp=otp)
+        try:
+            send_verification_otp.delay(str(user.id), otp)
+        except Exception:
+            pass
+        return user
 
 
 class ProfileView(generics.RetrieveUpdateAPIView):
@@ -48,6 +62,7 @@ class AvatarUploadView(generics.UpdateAPIView):
 
 @api_view(['GET'])
 @permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='20/h', method='GET')
 def check_username(request):
     username = request.query_params.get('username', '').strip()
     if not username:
@@ -61,6 +76,14 @@ class PublicProfileView(generics.RetrieveAPIView):
     permission_classes = (permissions.AllowAny,)
     lookup_field = 'username'
     queryset = User.objects.all()
+
+
+class LoginView(TokenObtainPairView):
+    throttle_scope = 'login'
+
+
+class TokenRefreshThrottledView(TokenRefreshView):
+    throttle_scope = 'token-refresh'
 
 
 @api_view(['POST'])
@@ -104,3 +127,61 @@ def password_reset_confirm(request, uidb64, token):
     user.set_password(serializer.validated_data['new_password'])
     user.save()
     return Response({'message': 'Password reset successfully'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='10/h', method='POST')
+def verify_email(request):
+    serializer = VerifyEmailSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.validated_data['email']
+    otp = serializer.validated_data['otp']
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'error': 'No account with that email'}, status=404)
+    latest_otp = EmailVerificationOTP.objects.filter(user=user).last()
+    if not latest_otp:
+        return Response({'error': 'No OTP sent'}, status=400)
+    if latest_otp.is_expired():
+        return Response({'error': 'OTP expired. Request a new one.'}, status=400)
+    if latest_otp.otp != otp:
+        return Response({'error': 'Invalid OTP'}, status=400)
+    user.email_verified = True
+    user.save(update_fields=['email_verified'])
+    return Response({'message': 'Email verified successfully'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='5/h', method='POST')
+def resend_otp(request):
+    serializer = ResendOTPSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    email = serializer.validated_data['email']
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({'message': 'If an account with that email exists, a new OTP has been sent.'})
+    otp = f'{random.randint(100000, 999999)}'
+    EmailVerificationOTP.objects.create(user=user, otp=otp)
+    try:
+        send_verification_otp.delay(str(user.id), otp)
+    except Exception:
+        pass
+    return Response({'message': 'If an account with that email exists, a new OTP has been sent.'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def change_password(request):
+    serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    user = request.user
+    if not user.check_password(serializer.validated_data['old_password']):
+        return Response({'error': 'Current password is incorrect'}, status=400)
+    user.set_password(serializer.validated_data['new_password'])
+    user.save()
+    update_session_auth_hash(request, user)
+    return Response({'message': 'Password changed successfully'})
