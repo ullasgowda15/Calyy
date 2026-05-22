@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { integrations, auth } from '../api/client';
+import { payments, integrations, auth } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
 
@@ -69,7 +69,7 @@ export default function Settings() {
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
-        <div style={{ padding: '28px 32px', maxWidth: '720px' }}>
+        <div className="page-content" style={{ maxWidth: '720px' }}>
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Settings</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Manage integrations and account preferences.</p>
@@ -111,6 +111,10 @@ export default function Settings() {
             )}
           </Section>
 
+          {/* Platform Subscription */}
+          <Section title="Subscription" desc="Your Caly platform subscription plan.">
+            <SubscriptionContent />
+          </Section>
           {/* Webhooks */}
           <Section title="Webhooks" desc="Get notified when bookings are created or cancelled.">
             <form onSubmit={addWebhook} style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'flex-end' }}>
@@ -185,7 +189,125 @@ export default function Settings() {
           </Section>
         </div>
       </main>
-      <style>{`@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }`}</style>
+    </div>
+  );
+}
+
+
+function SubscriptionContent() {
+  const [sub, setSub] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [paying, setPaying] = useState(false);
+  const toast = useToast();
+
+  useEffect(() => {
+    payments.getSubscriptionStatus().then((res) => setSub(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const daysLeft = () => {
+    if (!sub) return 0;
+    if (sub.is_subscribed) {
+      if (sub.subscribed_until) {
+        const diff = new Date(sub.subscribed_until) - new Date();
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+      }
+      if (sub.trial_ends_at) {
+        const diff = new Date(sub.trial_ends_at) - new Date();
+        return Math.ceil(diff / (1000 * 60 * 60 * 24));
+      }
+    }
+    return 0;
+  };
+
+  const handleSubscribe = async () => {
+    setPaying(true);
+    try {
+      const orderRes = await payments.createSubscriptionOrder();
+      const { order_id, key_id, amount } = orderRes.data;
+
+      if (typeof window.Razorpay === 'undefined') {
+        toast('Razorpay SDK not loaded. Please refresh.', 'error');
+        setPaying(false);
+        return;
+      }
+
+      const rzp = new window.Razorpay({
+        key: key_id,
+        amount,
+        currency: 'INR',
+        name: 'Caly',
+        description: 'Monthly subscription',
+        order_id,
+        handler: async (response) => {
+          try {
+            const verifyRes = await payments.verifySubscription({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+            setSub((prev) => ({ ...prev, ...verifyRes.data }));
+            setPaying(false);
+            toast('Subscription activated!', 'success');
+          } catch {
+            setPaying(false);
+            toast('Payment verification failed.', 'error');
+          }
+        },
+        modal: { ondismiss: () => setPaying(false) },
+      });
+      rzp.open();
+    } catch {
+      toast('Failed to initiate payment', 'error');
+      setPaying(false);
+    }
+  };
+
+  if (loading) return <div className="skeleton" style={{ width: '200px', height: '16px', borderRadius: '6px' }} />;
+
+  const days = daysLeft();
+
+  return (
+    <div>
+      {sub?.is_subscribed ? (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                {sub.subscription_status === 'free_trial' ? 'Free Trial' : 'Active'} — {days > 0 ? `${days} day${days > 1 ? 's' : ''} remaining` : 'Expiring today'}
+              </div>
+              {sub.subscribed_until && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Renews {new Date(sub.subscribed_until).toLocaleDateString()}</div>}
+              {sub.trial_ends_at && sub.subscription_status === 'free_trial' && <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Trial ends {new Date(sub.trial_ends_at).toLocaleDateString()}</div>}
+            </div>
+          </div>
+          {sub.subscription_status === 'free_trial' ? (
+            <button onClick={handleSubscribe} disabled={paying} className="btn btn-primary btn-sm">
+              {paying ? 'Processing…' : 'Subscribe now — ₹499/mo'}
+            </button>
+          ) : days <= 7 ? (
+            <button onClick={handleSubscribe} disabled={paying} className="btn btn-primary btn-sm">
+              {paying ? 'Processing…' : 'Renew — ₹499/mo'}
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <div>
+              <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Expired</div>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Your booking links are disabled</div>
+            </div>
+          </div>
+          <button onClick={handleSubscribe} disabled={paying} className="btn btn-primary btn-sm">
+            {paying ? 'Processing…' : 'Resubscribe — ₹499/mo'}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

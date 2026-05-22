@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'bookings',
     'integrations',
     'payments',
+    'admin_panel',
 ]
 
 MIDDLEWARE = [

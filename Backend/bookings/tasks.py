@@ -1,23 +1,13 @@
 from celery import shared_task
 from django.conf import settings
-from django.core.mail import send_mail
 import logging
 import resend
 import requests
 
+from .email_templates import HTML_WRAP, detail_rows, detail_table
+
 logger = logging.getLogger(__name__)
 resend.api_key = settings.RESEND_API_KEY
-
-HTML_WRAP = """<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:32px 16px"><tr><td align="center">
-<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
-<tr><td style="padding:32px 32px 0">
-<h1 style="margin:0 0 4px;font-size:22px;font-weight:700;color:#1a1a2e">Caly</h1>
-<hr style="border:none;border-top:1px solid #eee;margin:16px 0 24px">
-</td></tr>
-<tr><td style="padding:0 32px 32px;font-size:15px;line-height:1.6;color:#333">{body}</td></tr>
-<tr><td style="padding:16px 32px;background:#fafafa;border-top:1px solid #eee;font-size:13px;color:#888;text-align:center">
-Caly &mdash; Modern Scheduling</td></tr></table></td></tr></table></body></html>"""
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
@@ -33,16 +23,18 @@ def send_booking_confirmation(booking_id: str):
     host_name = host.get_full_name() or host.username
     dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
 
-    invitee_body = f"""<p style="margin:0 0 16px">Hi <strong>{booking.invitee_name}</strong>,</p>
-<p style="margin:0 0 16px">Your meeting has been confirmed!</p>
-<table cellpadding="8" cellspacing="0" style="width:100%;font-size:14px;margin:0 0 16px">
-<tr><td style="color:#888;width:100px;vertical-align:top">Event</td><td style="font-weight:600">{booking.event_type.name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">With</td><td style="font-weight:600">{host_name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">When</td><td style="font-weight:600">{dt} UTC</td></tr>
-<tr><td style="color:#888;vertical-align:top">Duration</td><td style="font-weight:600">{booking.event_type.duration} min</td></tr>
-<tr><td style="color:#888;vertical-align:top">Location</td><td style="font-weight:600">{booking.event_type.location_type.upper()}</td></tr>
-</table>
-<p style="margin:0;font-size:13px;color:#888">Need to cancel? <a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#7C3AED">Cancel here</a></p>"""
+    invitee_rows = detail_rows([
+        ('Event', booking.event_type.name),
+        ('With', host_name),
+        ('When', f'{dt} UTC'),
+        ('Duration', f'{booking.event_type.duration} min'),
+        ('Location', booking.event_type.location_type.upper()),
+    ])
+    invitee_body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
+<p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Your meeting has been confirmed!</p>
+{detail_table(invitee_rows)}
+<p style="margin:0;font-size:13px;color:#999">Need to cancel?
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#7C3AED;text-decoration:none;font-weight:600">Cancel here</a></p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -54,14 +46,15 @@ def send_booking_confirmation(booking_id: str):
         logger.error(f'Failed to send invitee confirmation email: {e}')
         raise
 
-    host_body = f"""<p style="margin:0 0 16px">Hi {host_name},</p>
-<p style="margin:0 0 16px">New booking received!</p>
-<table cellpadding="8" cellspacing="0" style="width:100%;font-size:14px;margin:0 0 16px">
-<tr><td style="color:#888;width:100px;vertical-align:top">From</td><td style="font-weight:600">{booking.invitee_name} ({booking.invitee_email})</td></tr>
-<tr><td style="color:#888;vertical-align:top">Event</td><td style="font-weight:600">{booking.event_type.name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">When</td><td style="font-weight:600">{dt} UTC</td></tr>
-<tr><td style="color:#888;vertical-align:top">Notes</td><td style="font-weight:600">{booking.notes or 'None'}</td></tr>
-</table>"""
+    host_rows = detail_rows([
+        ('From', f'{booking.invitee_name} ({booking.invitee_email})'),
+        ('Event', booking.event_type.name),
+        ('When', f'{dt} UTC'),
+        ('Notes', booking.notes or 'None'),
+    ])
+    host_body = f'''<p style="margin:0 0 20px">Hi {host_name},</p>
+<p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">New booking received!</p>
+{detail_table(host_rows)}'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -86,13 +79,14 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
         return
 
     dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
-    body = f"""<p style="margin:0 0 16px">Hi <strong>{booking.invitee_name}</strong>,</p>
-<p style="margin:0 0 16px">Just a reminder about your upcoming meeting.</p>
-<table cellpadding="8" cellspacing="0" style="width:100%;font-size:14px;margin:0 0 16px">
-<tr><td style="color:#888;width:100px;vertical-align:top">Event</td><td style="font-weight:600">{booking.event_type.name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">When</td><td style="font-weight:600">{dt} UTC</td></tr>
-<tr><td style="color:#888;vertical-align:top">Location</td><td style="font-weight:600">{booking.event_type.location_type.upper()}</td></tr>
-</table>"""
+    rows = detail_rows([
+        ('Event', booking.event_type.name),
+        ('When', f'{dt} UTC'),
+        ('Location', booking.event_type.location_type.upper()),
+    ])
+    body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
+<p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Reminder: your meeting is coming up!</p>
+{detail_table(rows)}'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -114,14 +108,18 @@ def send_cancellation_email(booking_id: str, reason: str = ''):
         return
 
     dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
-    reason_html = f'<tr><td style="color:#888;vertical-align:top">Reason</td><td style="font-weight:600">{reason}</td></tr>' if reason else ''
-    body = f"""<p style="margin:0 0 16px">Hi <strong>{booking.invitee_name}</strong>,</p>
-<p style="margin:0 0 16px">Your booking has been cancelled.</p>
-<table cellpadding="8" cellspacing="0" style="width:100%;font-size:14px;margin:0 0 16px">
-<tr><td style="color:#888;width:100px;vertical-align:top">Event</td><td style="font-weight:600">{booking.event_type.name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">Original time</td><td style="font-weight:600">{dt} UTC</td></tr>
-{reason_html}</table>
-<p style="margin:0;font-size:13px;color:#888">To book again: <a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED">Schedule a new meeting</a></p>"""
+    items = [
+        ('Event', booking.event_type.name),
+        ('Original time', f'{dt} UTC'),
+    ]
+    if reason:
+        items.append(('Reason', reason))
+    rows = detail_rows(items)
+    body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
+<p style="margin:0 0 20px;font-size:16px;color:#dc2626;font-weight:600">Your booking has been cancelled.</p>
+{detail_table(rows)}
+<p style="margin:0;font-size:13px;color:#999">To book a new time:
+<a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Schedule a meeting</a></p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -145,15 +143,17 @@ def send_no_show_email(booking_id: str):
     host = booking.event_type.host
     host_name = host.get_full_name() or host.username
     dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
-    body = f"""<p style="margin:0 0 16px">Hi <strong>{booking.invitee_name}</strong>,</p>
-<p style="margin:0 0 16px">You were marked as a <strong>no-show</strong> for the following meeting.</p>
-<table cellpadding="8" cellspacing="0" style="width:100%;font-size:14px;margin:0 0 16px">
-<tr><td style="color:#888;width:100px;vertical-align:top">Event</td><td style="font-weight:600">{booking.event_type.name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">With</td><td style="font-weight:600">{host_name}</td></tr>
-<tr><td style="color:#888;vertical-align:top">Scheduled</td><td style="font-weight:600">{dt} UTC</td></tr>
-</table>
-<p style="margin:0 0 8px;font-size:13px;color:#888">If you believe this is an error, please contact the host directly.</p>
-<p style="margin:0;font-size:13px;color:#888">To reschedule: <a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED">Book a new time</a></p>"""
+    rows = detail_rows([
+        ('Event', booking.event_type.name),
+        ('With', host_name),
+        ('Scheduled', f'{dt} UTC'),
+    ])
+    body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
+<p style="margin:0 0 20px;font-size:16px;color:#dc2626;font-weight:600">Marked as no-show</p>
+{detail_table(rows)}
+<p style="margin:0 0 4px;font-size:13px;color:#999">If you believe this is an error, please contact the host directly.</p>
+<p style="margin:0;font-size:13px;color:#999">To reschedule:
+<a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Book a new time</a></p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,

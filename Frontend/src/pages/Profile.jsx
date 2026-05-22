@@ -3,13 +3,14 @@ import { useAuth } from '../context/AuthContext';
 import { auth } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
+import { getUserTimezone, resolveTimezone } from '../utils/datetime';
 
 const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
 
 export default function Profile() {
   const { user, loadProfile, logout } = useAuth();
   const toast = useToast();
-  const [profile, setProfile] = useState({ first_name: '', last_name: '', username: '', timezone: 'UTC', bio: '' });
+  const [profile, setProfile] = useState({ first_name: '', last_name: '', username: '', timezone: getUserTimezone(), bio: '' });
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [avatarFile, setAvatarFile] = useState(null);
@@ -20,7 +21,7 @@ export default function Profile() {
   const fileRef = useRef(null);
 
   useEffect(() => {
-    if (user) setProfile({ first_name: user.first_name || '', last_name: user.last_name || '', username: user.username || '', timezone: user.timezone || 'UTC', bio: user.bio || '' });
+    if (user) setProfile({ first_name: user.first_name || '', last_name: user.last_name || '', username: user.username || '', timezone: resolveTimezone(user.timezone), bio: user.bio || '' });
   }, [user]);
 
   const handleProfileChange = (e) => {
@@ -81,7 +82,7 @@ export default function Profile() {
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
-        <div style={{ padding: '28px 32px', maxWidth: '720px' }}>
+        <div className="page-content" style={{ maxWidth: '720px' }}>
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Profile</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Manage your public profile and personal information.</p>
@@ -126,7 +127,7 @@ export default function Profile() {
             <div style={{ padding: '24px' }}>
               {!editing ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  {[['First name', profile.first_name || '—'], ['Last name', profile.last_name || '—'], ['Timezone', profile.timezone], ['Bio', profile.bio || '—']].map(([label, value]) => (
+                  {[['First name', profile.first_name || '—'], ['Last name', profile.last_name || '—'], ['Phone', user?.phone || '—'], ['Timezone', profile.timezone], ['Bio', profile.bio || '—']].map(([label, value]) => (
                     <div key={label} style={{ display: 'flex', gap: '16px' }}>
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', width: '100px', flexShrink: 0 }}>{label}</span>
                       <span style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{value}</span>
@@ -158,6 +159,7 @@ export default function Profile() {
                     <select name="timezone" value={profile.timezone} onChange={handleProfileChange} className="field">
                       {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                     </select>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Browser detects <strong>{getUserTimezone()}</strong>. This timezone is used for computing your availability.</div>
                   </div>
                   <div style={{ marginBottom: '24px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Bio</label>
@@ -182,7 +184,6 @@ export default function Profile() {
           </div>
         </div>
       </main>
-      <style>{`@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }`}</style>
     </div>
   );
 }

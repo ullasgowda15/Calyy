@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eventTypes, bookings, payments, integrations } from '../api/client';
-import { formatDateTimeUTC, formatDateLocal, formatTimeLocal } from '../utils/datetime';
+import { formatDateTimeUTC, formatDateLocal, formatTimeLocal, resolveTimezone } from '../utils/datetime';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
 import ConfirmModal from '../components/ConfirmModal';
@@ -58,9 +58,11 @@ export default function Dashboard() {
   const [refundModal, setRefundModal] = useState({ show: false, id: null });
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
   const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('caly-onboarding-dismissed'));
+  const [subStatus, setSubStatus] = useState(null);
 
   useEffect(() => {
     integrations.getGoogleStatus().then((res) => setGoogleConnected(res.data.connected)).catch(() => {});
+    payments.getSubscriptionStatus().then((res) => setSubStatus(res.data)).catch(() => {});
   }, []);
 
   const fetchData = (isRefresh = false) => {
@@ -225,7 +227,7 @@ export default function Dashboard() {
   ];
 
   const mainContent = (
-    <div style={{ padding: '28px 32px', maxWidth: '1280px' }}>
+    <div className="page-content" style={{ maxWidth: '1280px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
@@ -250,6 +252,34 @@ export default function Dashboard() {
         </div>
       </div>
 
+      {!/^active$/.test(subStatus?.subscription_status) && subStatus?.subscription_status !== 'free_trial' && (
+        <div style={{ background: '#FEF2F2', border: '1.5px solid #FECACA', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <p style={{ fontSize: '13px', color: '#991B1B', flex: 1, margin: 0 }}>Your subscription has expired — booking links are disabled. <Link to="/settings" style={{ color: '#991B1B', fontWeight: 600 }}>Resubscribe</Link> to re-enable them.</p>
+        </div>
+      )}
+      {subStatus?.subscription_status === 'free_trial' && subStatus?.trial_ends_at && new Date(subStatus.trial_ends_at) > new Date() && (
+        <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <p style={{ fontSize: '13px', color: '#92400E', flex: 1, margin: 0 }}>
+            Free trial ends {new Date(subStatus.trial_ends_at).toLocaleDateString()} — <Link to="/settings" style={{ color: '#92400E', fontWeight: 600 }}>subscribe</Link> to keep your booking links active.
+          </p>
+        </div>
+      )}
+      {subStatus?.subscription_status === 'active' && subStatus?.subscribed_until && (() => {
+        const daysLeft = Math.ceil((new Date(subStatus.subscribed_until) - new Date()) / (1000 * 60 * 60 * 24));
+        if (daysLeft > 0 && daysLeft <= 14) {
+          return (
+            <div style={{ background: '#EFF6FF', border: '1.5px solid #BFDBFE', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <p style={{ fontSize: '13px', color: '#1E40AF', flex: 1, margin: 0 }}>
+                Your subscription ends in {daysLeft} day{daysLeft > 1 ? 's' : ''} — <Link to="/settings" style={{ color: '#1E40AF', fontWeight: 600 }}>renew</Link> to avoid interruption.
+              </p>
+            </div>
+          );
+        }
+        return null;
+      })()}
       {!googleConnected && (
         <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -321,7 +351,7 @@ export default function Dashboard() {
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDateTimeUTC(b.start_datetime, user?.timezone || 'UTC')}</td>
+                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td>{b.invitee_name}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td><StatusBadge status={b.status} /></td>
@@ -381,8 +411,8 @@ export default function Dashboard() {
                   <tr key={b.id}>
                     <td style={{ fontWeight: 500 }}>{b.invitee_name}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, user?.timezone)}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, user?.timezone)}</td>
+                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
                       {b.status === 'confirmed' && (
@@ -450,8 +480,8 @@ export default function Dashboard() {
                   <tr key={b.id}>
                     <td style={{ fontWeight: 500 }}>{b.invitee_name}</td>
                     <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, user?.timezone)}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, user?.timezone)}</td>
+                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
                       {b.status === 'confirmed' && (
@@ -482,7 +512,6 @@ export default function Dashboard() {
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
         {mainContent}
       </main>
-      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }' }} />
       {cancelModal.show && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.45)' }} onClick={() => setCancelModal({ ...cancelModal, show: false })}>
           <div style={{ background: 'var(--surface)', borderRadius: '14px', padding: '28px', width: '100%', maxWidth: '400px', boxShadow: '0 12px 40px rgba(0,0,0,.25)' }} onClick={(e) => e.stopPropagation()}>

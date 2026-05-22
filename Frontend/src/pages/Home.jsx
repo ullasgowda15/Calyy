@@ -1,4 +1,5 @@
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -50,6 +51,17 @@ const testimonials = [
 const brandColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
 
 export default function Home() {
+  const location = useLocation();
+  useEffect(() => {
+    const section = location.hash.replace('#', '');
+    if (section) {
+      setTimeout(() => {
+        const el = document.getElementById(section);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [location.hash]);
+
   return (
     <div style={{ background: 'var(--surface-2)', minHeight: '100vh' }}>
       <Navbar />

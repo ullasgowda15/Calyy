@@ -149,9 +149,11 @@ class BlockedTimeTests(APITestCase):
 class PublicEventTests(APITestCase):
     def setUp(self):
         self.client = APIClient(SERVER_NAME='localhost')
+        from django.utils import timezone
         self.user = User.objects.create_user(
             email='host@test.com', username='host', password='testpass123',
-            timezone='America/New_York'
+            timezone='America/New_York',
+            trial_started_at=timezone.now(),
         )
         self.event_type = EventType.objects.create(
             host=self.user, name='Public Meeting', slug='public-meeting',

@@ -45,15 +45,29 @@ export default function EditEventType() {
   }, [id, navigate]);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
-  const addQuestion = () => setQuestions([...questions, { _id: crypto.randomUUID(), label: '', type: 'text', required: false }]);
+  const addQuestion = () => {
+    const id = (crypto.randomUUID && crypto.randomUUID()) || Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    setQuestions([...questions, { _id: id, label: '', type: 'text', required: false }]);
+  };
   const updateQuestion = (i, field, value) => { const qs = [...questions]; qs[i][field] = value; setQuestions(qs); };
   const removeQuestion = (i) => setQuestions(questions.filter((_, idx) => idx !== i));
+
+  const handleSubmit = async (e) => {
+    e.preventDefault(); setError(''); setLoading(true);
+    try {
+      await eventTypes.updateEventType(id, { ...form, custom_questions: questions });
+      toast('Event type updated successfully', 'success');
+      navigate('/event-types');
+    } catch (err) {
+      setError(err.response?.data?.error || err.response?.data?.detail || 'Failed to update event type');
+    } finally { setLoading(false); }
+  };
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
-        <div style={{ padding: '28px 32px', maxWidth: '720px' }}>
+        <div className="page-content" style={{ maxWidth: '720px' }}>
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Edit event type</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Update the details of this event type.</p>
@@ -140,7 +154,6 @@ export default function EditEventType() {
           </form>
         </div>
       </main>
-      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }' }} />
     </div>
   );
 }

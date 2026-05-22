@@ -1,24 +1,47 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { integrations } from '../api/client';
-import ThemeToggle from '../components/ThemeToggle';
+import { auth, integrations } from '../api/client';
+import Navbar from '../components/Navbar';
 
+const BROWSER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
 
 export default function Register() {
-  const [form, setForm] = useState({ email: '', username: '', password: '', timezone: 'UTC' });
+  const [form, setForm] = useState({ email: '', username: '', password: '', timezone: BROWSER_TZ, phone: '' });
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [phoneAvailable, setPhoneAvailable] = useState(null);
+  const [checkingPhone, setCheckingPhone] = useState(false);
+  const phoneTimer = useRef(null);
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  useEffect(() => {
+    return () => { if (phoneTimer.current) clearTimeout(phoneTimer.current); };
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (name === 'phone') {
+      const p = value.trim();
+      if (!p) { setPhoneAvailable(null); return; }
+      if (phoneTimer.current) clearTimeout(phoneTimer.current);
+      phoneTimer.current = setTimeout(async () => {
+        setCheckingPhone(true);
+        try { const res = await auth.checkPhone(p); setPhoneAvailable(res.data.available); }
+        catch { setPhoneAvailable(null); }
+        finally { setCheckingPhone(false); }
+      }, 400);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (phoneAvailable === false) { setError('This phone number is already registered.'); return; }
     setLoading(true);
     try {
       await register(form);
@@ -37,15 +60,7 @@ export default function Register() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-          <div style={{ width: '28px', height: '28px', background: 'var(--accent)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          </div>
-          <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>Caly</span>
-        </Link>
-        <ThemeToggle />
-      </div>
+      <Navbar />
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div className="auth-split" style={{ display: 'flex', maxWidth: '880px', width: '100%', gap: '0', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,.08)' }}>
@@ -92,6 +107,18 @@ export default function Register() {
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Email address</label>
                 <input type="email" name="email" value={form.email} onChange={handleChange} required className="field" placeholder="you@example.com" />
+              </div>
+              <div style={{ marginBottom: '14px' }}>
+                <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Phone number</label>
+                <div style={{ position: 'relative' }}>
+                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} required className="field" placeholder="+91 98765 43210" />
+                  {form.phone.trim() && (
+                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>
+                      {checkingPhone ? '…' : phoneAvailable === true ? <span style={{ color: '#10B981' }}>✓</span> : phoneAvailable === false ? <span style={{ color: '#EF4444' }}>✗</span> : null}
+                    </span>
+                  )}
+                </div>
+                {phoneAvailable === false && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px', marginBottom: 0 }}>Phone already registered</p>}
               </div>
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>

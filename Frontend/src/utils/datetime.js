@@ -1,4 +1,8 @@
-export function formatDateTimeUTC(isoString, timezone = 'UTC') {
+const BROWSER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const TIME_OPT = { hour: '2-digit', minute: '2-digit', hour12: true };
+
+export function formatDateTimeUTC(isoString, timezone = BROWSER_TZ) {
   const date = new Date(isoString);
   return date.toLocaleString('en-US', {
     timeZone: timezone,
@@ -6,12 +10,11 @@ export function formatDateTimeUTC(isoString, timezone = 'UTC') {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
+    ...TIME_OPT,
   });
 }
 
-export function formatDateLocal(isoString, timezone) {
+export function formatDateLocal(isoString, timezone = BROWSER_TZ) {
   const date = new Date(isoString);
   return date.toLocaleDateString('en-US', {
     timeZone: timezone,
@@ -21,13 +24,9 @@ export function formatDateLocal(isoString, timezone) {
   });
 }
 
-export function formatTimeLocal(isoString, timezone = 'UTC') {
+export function formatTimeLocal(isoString, timezone = BROWSER_TZ) {
   const date = new Date(isoString);
-  return date.toLocaleTimeString('en-US', {
-    timeZone: timezone,
-    hour: '2-digit',
-    minute: '2-digit',
-  });
+  return date.toLocaleTimeString('en-US', { ...TIME_OPT, timeZone: timezone });
 }
 
 export function toLocalISOString(isoString, timezone = 'UTC') {
@@ -37,4 +36,8 @@ export function toLocalISOString(isoString, timezone = 'UTC') {
 
 export function getUserTimezone() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function resolveTimezone(userTz) {
+  return userTz && userTz !== 'UTC' ? userTz : getUserTimezone();
 }

@@ -1,4 +1,4 @@
-import random
+import secrets
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth import update_session_auth_hash
-from .serializers import RegisterSerializer, UserSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, VerifyEmailSerializer, ResendOTPSerializer, ChangePasswordSerializer
+from .serializers import RegisterSerializer, UserSerializer, PublicUserSerializer, PasswordResetRequestSerializer, PasswordResetConfirmSerializer, VerifyEmailSerializer, ResendOTPSerializer, ChangePasswordSerializer
 from .models import User, EmailVerificationOTP
 from .tasks import send_verification_otp, send_password_reset_email
 from django_ratelimit.decorators import ratelimit
@@ -24,7 +24,7 @@ class RegisterView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()
-        otp = f'{random.randint(100000, 999999)}'
+        otp = f'{secrets.randbelow(900000) + 100000}'
         EmailVerificationOTP.objects.create(user=user, otp=otp)
         try:
             send_verification_otp.delay(str(user.id), otp)
@@ -70,8 +70,19 @@ def check_username(request):
     return Response({'available': not exists, 'username': username})
 
 
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='20/h', method='GET')
+def check_phone(request):
+    phone = request.query_params.get('phone', '').strip()
+    if not phone:
+        return Response({'available': False, 'error': 'phone parameter required'}, status=200)
+    exists = User.objects.filter(phone=phone).exists()
+    return Response({'available': not exists, 'phone': phone})
+
+
 class PublicProfileView(generics.RetrieveAPIView):
-    serializer_class = UserSerializer
+    serializer_class = PublicUserSerializer
     permission_classes = (permissions.AllowAny,)
     lookup_field = 'username'
     queryset = User.objects.all()
@@ -136,7 +147,7 @@ def verify_email(request):
     try:
         user = User.objects.get(email=email)
     except User.DoesNotExist:
-        return Response({'error': 'No account with that email'}, status=404)
+        return Response({'error': 'Invalid OTP'}, status=400)
     latest_otp = EmailVerificationOTP.objects.filter(user=user).last()
     if not latest_otp:
         return Response({'error': 'No OTP sent'}, status=400)
@@ -160,7 +171,7 @@ def resend_otp(request):
         user = User.objects.get(email=email)
     except User.DoesNotExist:
         return Response({'message': 'If an account with that email exists, a new OTP has been sent.'})
-    otp = f'{random.randint(100000, 999999)}'
+    otp = f'{secrets.randbelow(900000) + 100000}'
     EmailVerificationOTP.objects.create(user=user, otp=otp)
     try:
         send_verification_otp.delay(str(user.id), otp)

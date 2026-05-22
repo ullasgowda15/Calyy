@@ -1,12 +1,24 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const { isAuthenticated, user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const scrollTo = (section) => {
+    setMenuOpen(false);
+    if (location.pathname === '/') {
+      const el = document.getElementById(section);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      navigate(`/#${section}`);
+    }
+  };
 
   return (
     <nav style={{
@@ -31,12 +43,12 @@ export default function Navbar() {
         <div className="nav-links">
           {!isAuthenticated && (
             <>
-              <a href="#features" style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.15s' }}
+              <span onClick={() => scrollTo('features')} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none', cursor: 'pointer', transition: 'color 0.15s' }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>Features</a>
-              <a href="#pricing" style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'color 0.15s' }}
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>Features</span>
+              <span onClick={() => scrollTo('pricing')} style={{ fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none', cursor: 'pointer', transition: 'color 0.15s' }}
                 onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text-primary)'}
-                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>Pricing</a>
+                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-secondary)'}>Pricing</span>
             </>
           )}
         </div>
@@ -134,8 +146,8 @@ export default function Navbar() {
         <div style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '12px 24px 16px' }} className="nav-mobile-menu">
           {!isAuthenticated && (
             <>
-              <a href="#features" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 0', fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Features</a>
-              <a href="#pricing" onClick={() => setMenuOpen(false)} style={{ display: 'block', padding: '10px 0', fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', textDecoration: 'none' }}>Pricing</a>
+              <span onClick={() => scrollTo('features')} style={{ display: 'block', padding: '10px 0', fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer' }}>Features</span>
+              <span onClick={() => scrollTo('pricing')} style={{ display: 'block', padding: '10px 0', fontSize: '14px', fontWeight: 500, color: 'var(--text-secondary)', cursor: 'pointer' }}>Pricing</span>
               <div style={{ height: '1px', background: 'var(--border)', margin: '8px 0' }} />
               <div style={{ display: 'flex', gap: '10px', paddingTop: '4px' }}>
                 <Link to="/login" className="btn btn-ghost btn-sm" style={{ flex: 1, justifyContent: 'center' }} onClick={() => setMenuOpen(false)}>Sign in</Link>

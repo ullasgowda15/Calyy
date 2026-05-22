@@ -16,6 +16,32 @@ class User(AbstractUser):
 
     email_verified = models.BooleanField(default=False)
 
+    phone = models.CharField(max_length=20, unique=True, null=True, blank=True)
+
+    SUBSCRIPTION_CHOICES = (
+        ('free_trial', 'Free Trial'),
+        ('active', 'Active'),
+        ('expired', 'Expired'),
+        ('cancelled', 'Cancelled'),
+    )
+    subscription_status = models.CharField(
+        max_length=20, choices=SUBSCRIPTION_CHOICES, default='free_trial'
+    )
+    trial_started_at = models.DateTimeField(null=True, blank=True)
+    subscribed_until = models.DateTimeField(null=True, blank=True)
+    razorpay_subscription_order_id = models.CharField(max_length=100, blank=True, default='')
+    razorpay_subscription_payment_id = models.CharField(max_length=100, blank=True, default='')
+
+    def is_subscribed(self):
+        from django.utils import timezone
+        from datetime import timedelta
+        if self.subscription_status == 'active' and self.subscribed_until and self.subscribed_until > timezone.now():
+            return True
+        if self.subscription_status == 'free_trial' and self.trial_started_at:
+            if timezone.now() < self.trial_started_at + timedelta(days=7):
+                return True
+        return False
+
     def __str__(self):
         return self.email
 

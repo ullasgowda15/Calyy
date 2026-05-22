@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { integrations } from '../api/client';
-import ThemeToggle from '../components/ThemeToggle';
+import Navbar from '../components/Navbar';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ export default function Login() {
       await login({ email, password });
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.');
+      setError('Invalid credentials');
     } finally {
       setLoading(false);
     }
@@ -29,15 +29,7 @@ export default function Login() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-          <div style={{ width: '28px', height: '28px', background: 'var(--accent)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-          </div>
-          <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>Caly</span>
-        </Link>
-        <ThemeToggle />
-      </div>
+      <Navbar />
 
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
         <div className="auth-split" style={{ display: 'flex', maxWidth: '800px', width: '100%', gap: '0', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,.08)' }}>
@@ -48,12 +40,16 @@ export default function Login() {
             </div>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans, sans-serif', fontWeight: 700, fontSize: '20px', color: 'var(--text-primary)', margin: '0 0 8px', letterSpacing: '-0.01em' }}>Welcome back</h2>
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 28px', lineHeight: 1.5, maxWidth: '260px' }}>Sign in with Google to access your account and manage your bookings instantly.</p>
-            <button
+              <button
               type="button"
               onClick={() => {
                 integrations.getGoogleRegisterUrl().then((res) => {
                   window.location.href = res.data.auth_url;
-                }).catch(() => setError('Failed to initiate Google sign-in'));
+                }).catch((err) => {
+                  const status = err.response?.status;
+                  if (status === 429) setError('Too many requests — please wait a minute and try again.');
+                  else setError('Failed to initiate Google sign-in');
+                });
               }}
               className="btn btn-ghost"
               style={{

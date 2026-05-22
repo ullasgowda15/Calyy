@@ -16,6 +16,7 @@ from django_ratelimit.decorators import ratelimit
 from events.models import EventType
 from bookings.models import Booking
 from bookings.serializers import BookingCreateSerializer, BookingSerializer
+from accounts.models import User
 from bookings.tasks import (
     send_booking_confirmation,
     send_booking_reminder,
@@ -59,7 +60,7 @@ def create_razorpay_order(request):
     if not event_type.price or float(event_type.price) <= 0:
         return Response({'error': 'This event type is free'}, status=400)
 
-    amount_in_paise = int(float(event_type.price) * 100)
+    amount_in_paise = int(event_type.price * 100)
     currency = event_type.currency.upper() if event_type.currency else 'INR'
 
     try:
@@ -192,15 +193,13 @@ def verify_payment(request):
 # ─────────────────────────────────────────────────────────────
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
+@ratelimit(key='ip', rate='60/h', method='GET')
 def payment_status(request, booking_id):
-    booking = Booking.objects.filter(
-        id=booking_id,
-        event_type__host=request.user
-    ).first()
+    booking = Booking.objects.filter(id=booking_id).first()
 
     if not booking:
-        return Response({'error': 'Booking not found'}, status=404)
+        return Response({'error': 'If the booking exists, its status is shown below.'}, status=404)
 
     return Response({
         'booking_id': str(booking.id),
@@ -306,7 +305,7 @@ def _handle_payment_captured(event):
 @permission_classes([IsAuthenticated])
 @ratelimit(key='ip', rate='5/h', method='POST')
 def refund_booking(request, booking_id):
-    booking = Booking.objects.filter(
+    booking = Booking.objects.select_related('event_type').filter(
         id=booking_id,
         event_type__host=request.user
     ).first()
@@ -325,7 +324,7 @@ def refund_booking(request, booking_id):
 
     try:
         client = get_razorpay_client()
-        amount_in_paise = int(float(booking.event_type.price) * 100)
+        amount_in_paise = int(booking.event_type.price * 100)
         refund = client.payment.refund(
             booking.razorpay_payment_id,
             {'amount': amount_in_paise}
@@ -348,7 +347,7 @@ def refund_booking(request, booking_id):
 
     except Exception as e:
         logger.error(f'Razorpay refund failed for booking {booking_id}: {e}')
-        return Response({'error': str(e)}, status=500)
+        return Response({'error': 'Refund failed. Please try again later.'}, status=500)
 
 
 # ─────────────────────────────────────────────────────────────
@@ -363,13 +362,14 @@ def refund_booking(request, booking_id):
 @ratelimit(key='ip', rate='20/h', method='POST')
 def cancel_pending_booking(request):
     booking_id = request.data.get('booking_id')
+    cancel_token = request.data.get('cancel_token')
 
-    if not booking_id:
-        return Response({'error': 'booking_id required'}, status=400)
+    if not booking_id or not cancel_token:
+        return Response({'error': 'booking_id and cancel_token required'}, status=400)
 
     booking = Booking.objects.filter(id=booking_id, status='pending').first()
-    if not booking:
-        return Response({'error': 'Pending booking not found'}, status=404)
+    if not booking or str(booking.cancel_token) != str(cancel_token):
+        return Response({'error': 'If the booking exists, it has been cancelled.'}, status=404)
 
     booking.status = 'cancelled'
     booking.pending_until = None
@@ -377,3 +377,95 @@ def cancel_pending_booking(request):
 
     logger.info(f'Pending booking {booking_id} cancelled — slot released')
     return Response({'message': 'Booking cancelled, slot released'})
+
+
+# ─────────────────────────────────────────────────────────────
+# PLATFORM SUBSCRIPTION
+# ─────────────────────────────────────────────────────────────
+
+SUBSCRIPTION_AMOUNT = 49900  # ₹499 in paise
+SUBSCRIPTION_DURATION_DAYS = 30
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def create_subscription_order(request):
+    try:
+        client = get_razorpay_client()
+        order = client.order.create({
+            'amount': SUBSCRIPTION_AMOUNT,
+            'currency': 'INR',
+            'notes': {
+                'type': 'platform_subscription',
+                'user_id': str(request.user.id),
+            }
+        })
+    except Exception as e:
+        logger.error(f'Razorpay subscription order failed: {e}')
+        return Response({'error': 'Payment initialization failed'}, status=500)
+
+    return Response({
+        'order_id': order['id'],
+        'key_id': settings.RAZORPAY_KEY_ID,
+        'amount': SUBSCRIPTION_AMOUNT,
+        'currency': 'INR',
+    })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def verify_subscription(request):
+    razorpay_order_id = request.data.get('razorpay_order_id')
+    razorpay_payment_id = request.data.get('razorpay_payment_id')
+    razorpay_signature = request.data.get('razorpay_signature')
+
+    if not all([razorpay_order_id, razorpay_payment_id, razorpay_signature]):
+        return Response({'error': 'Payment details incomplete'}, status=400)
+
+    generated_signature = hmac.new(
+        settings.RAZORPAY_KEY_SECRET.encode('utf-8'),
+        f'{razorpay_order_id}|{razorpay_payment_id}'.encode('utf-8'),
+        hashlib.sha256
+    ).hexdigest()
+
+    if generated_signature != razorpay_signature:
+        return Response({'error': 'Payment verification failed'}, status=400)
+
+    user = request.user
+    now = timezone.now()
+    user.subscription_status = 'active'
+    current_end = user.subscribed_until if user.subscribed_until and user.subscribed_until > now else now
+    user.subscribed_until = current_end + timedelta(days=SUBSCRIPTION_DURATION_DAYS)
+    user.razorpay_subscription_order_id = razorpay_order_id
+    user.razorpay_subscription_payment_id = razorpay_payment_id
+    user.save(update_fields=[
+        'subscription_status', 'subscribed_until',
+        'razorpay_subscription_order_id', 'razorpay_subscription_payment_id',
+    ])
+
+    logger.info(f'Subscription activated for {user.email} until {user.subscribed_until}')
+    return Response({
+        'subscription_status': 'active',
+        'subscribed_until': user.subscribed_until.isoformat(),
+        'is_subscribed': True,
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def subscription_status(request):
+    user = request.user
+    from datetime import timedelta
+    now = timezone.now()
+    is_active = user.is_subscribed()
+    trial_end = None
+    if user.trial_started_at:
+        trial_end = (user.trial_started_at + timedelta(days=7)).isoformat()
+
+    return Response({
+        'is_subscribed': is_active,
+        'subscription_status': user.subscription_status,
+        'trial_started_at': user.trial_started_at.isoformat() if user.trial_started_at else None,
+        'trial_ends_at': trial_end,
+        'subscribed_until': user.subscribed_until.isoformat() if user.subscribed_until else None,
+    })
