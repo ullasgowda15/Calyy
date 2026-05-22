@@ -1,9 +1,11 @@
+import html
+from datetime import timedelta
 from rest_framework import serializers
 from django.utils import timezone
 from .models import Booking
 from events.models import EventType
 from events.availability import get_available_slots
-from datetime import datetime
+from django.db import transaction
 import pytz
 
 
@@ -19,9 +21,11 @@ class BookingCreateSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         try:
-            event_type = EventType.objects.get(id=data['event_type_id'], is_active=True)
+            event_type = EventType.objects.select_related('host').get(id=data['event_type_id'], is_active=True)
         except EventType.DoesNotExist:
             raise serializers.ValidationError('Event type not found or inactive.')
+        if event_type.host.email == data.get('invitee_email', ''):
+            raise serializers.ValidationError('You cannot book your own event.')
 
         start = data['start_datetime']
         if timezone.is_naive(start):
@@ -55,8 +59,19 @@ class BookingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Booking
-        fields = '__all__'
-        read_only_fields = ('id', 'cancel_token', 'reschedule_token', 'created_at', 'updated_at')
+        fields = (
+            'id', 'event_type', 'event_type_name', 'event_type_price', 'event_type_currency',
+            'host_username', 'invitee_name', 'invitee_email', 'invitee_timezone',
+            'start_datetime', 'end_datetime', 'status', 'payment_status',
+            'notes', 'custom_answers', 'cancel_url', 'reschedule_url',
+            'cancel_token', 'reschedule_token',
+            'created_at', 'updated_at',
+        )
+        read_only_fields = (
+            'id', 'cancel_token', 'reschedule_token', 'created_at', 'updated_at',
+            'razorpay_order_id', 'razorpay_payment_id', 'razorpay_signature',
+            'payment_status', 'status',
+        )
 
     def get_cancel_url(self, obj):
         from django.conf import settings

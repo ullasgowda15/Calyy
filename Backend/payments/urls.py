@@ -6,6 +6,9 @@ from .views import (
     razorpay_webhook,
     refund_booking,
     cancel_pending_booking,
+    create_subscription_order,
+    verify_subscription,
+    subscription_status,
 )
 
 urlpatterns = [
@@ -15,4 +18,7 @@ urlpatterns = [
     path('webhook/', razorpay_webhook, name='razorpay_webhook'),
     path('<uuid:booking_id>/status/', payment_status, name='payment_status'),
     path('<uuid:booking_id>/refund/', refund_booking, name='refund_booking'),
+    path('subscription/create-order/', create_subscription_order, name='create_subscription_order'),
+    path('subscription/verify/', verify_subscription, name='verify_subscription'),
+    path('subscription/status/', subscription_status, name='subscription_status'),
 ]

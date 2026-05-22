@@ -17,9 +17,11 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     if (err.response && err.response.status === 401) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
+      if (localStorage.getItem('access_token')) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(err);
   }
@@ -37,6 +39,7 @@ export const auth = {
   updateProfile: (data) => api.patch('/auth/me/', data),
   uploadAvatar: (formData) => api.patch('/auth/me/avatar/', formData, { headers: { 'Content-Type': 'multipart/form-data' } }),
   checkUsername: (username) => api.get('/auth/check-username/', { params: { username } }),
+  checkPhone: (phone) => api.get('/auth/check-phone/', { params: { phone } }),
   passwordReset: (data) => api.post('/auth/password-reset/', data),
   passwordResetConfirm: (uidb64, token, data) => api.post(`/auth/password-reset/confirm/${uidb64}/${token}/`, data),
   verifyEmail: (data) => api.post('/auth/verify-email/', data),
@@ -82,6 +85,9 @@ export const payments = {
   getPaymentStatus: (id) => api.get(`/payments/${id}/status/`),
   refundBooking: (id) => api.post(`/payments/${id}/refund/`),
   cancelPendingBooking: (data) => api.post('/payments/cancel-pending/', data),
+  createSubscriptionOrder: () => api.post('/payments/subscription/create-order/'),
+  verifySubscription: (data) => api.post('/payments/subscription/verify/', data),
+  getSubscriptionStatus: () => api.get('/payments/subscription/status/'),
 };
 
 export const integrations = {

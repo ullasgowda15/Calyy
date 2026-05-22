@@ -35,7 +35,8 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
 
     existing_bookings = Booking.objects.filter(
         event_type__host=event_type.host,
-        start_datetime__date=target_date,
+        start_datetime__gte=day_start_utc,
+        start_datetime__lt=day_end_utc,
         status__in=['confirmed', 'pending'],
     ).values('start_datetime', 'end_datetime')
 
@@ -61,7 +62,8 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
     if event_type.max_bookings_per_day:
         confirmed_today = Booking.objects.filter(
             event_type__host=event_type.host,
-            start_datetime__date=target_date,
+            start_datetime__gte=day_start_utc,
+            start_datetime__lt=day_end_utc,
             status='confirmed',
         ).count()
         if confirmed_today >= event_type.max_bookings_per_day:

@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { availability } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
+import { getUserTimezone } from '../utils/datetime';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const HOURS = Array.from({ length: 48 }, (_, i) => {
@@ -96,10 +98,11 @@ export default function AvailabilityPage() {
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
-        <div style={{ padding: '28px 32px', maxWidth: '900px' }}>
+        <div className="page-content" style={{ maxWidth: '900px' }}>
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Availability</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Set your weekly hours and block out times you're unavailable.</p>
+            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '6px 0 0' }}>Times shown in <strong>{getUserTimezone()}</strong> — update your timezone in <Link to="/profile" style={{ color: 'var(--accent)' }}>Profile</Link> if this is wrong.</p>
           </div>
 
           {/* Weekly hours */}
@@ -200,7 +203,7 @@ export default function AvailabilityPage() {
           </div>
         </div>
       </main>
-      <style>{`@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }`}</style>
     </div>
   );
 }
+

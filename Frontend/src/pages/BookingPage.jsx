@@ -20,6 +20,7 @@ export default function BookingPage() {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookingId, setBookingId] = useState(null);
+  const [cancelToken, setCancelToken] = useState(null);
   const [form, setForm] = useState({ invitee_name: '', invitee_email: '', invitee_timezone: getUserTimezone(), notes: '', custom_answers: {} });
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -79,7 +80,7 @@ export default function BookingPage() {
     try {
       const data = { event_type_id: selectedEvent.id, ...form, start_datetime: selectedSlot.start };
       const res = await bookings.createBooking(data);
-      if (res.data.requires_payment) { setBookingId(res.data.booking_id); setShowForm(false); }
+      if (res.data.requires_payment) { setBookingId(res.data.booking_id); setCancelToken(res.data.cancel_token); setShowForm(false); }
       else navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
     } catch (err) {
       setError(err.response?.data?.detail || 'Booking failed. This slot may no longer be available.');
@@ -88,8 +89,8 @@ export default function BookingPage() {
 
   const handlePaymentSuccess = (booking) => navigate('/booking-confirmed', { state: { booking, paid: true, eventType: selectedEvent, host: username } });
   const handlePaymentCancel = async () => {
-    if (bookingId) { try { await payments.cancelPendingBooking({ booking_id: bookingId }); } catch {} }
-    setBookingId(null); setShowForm(false);
+    if (bookingId) { try { await payments.cancelPendingBooking({ booking_id: bookingId, cancel_token: cancelToken }); } catch {} }
+    setBookingId(null); setCancelToken(null); setShowForm(false);
   };
 
   const today = new Date();
@@ -139,7 +140,7 @@ export default function BookingPage() {
               {hostProfile?.avatar ? (
                 <img src={hostProfile.avatar} alt={username} style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover', border: '4px solid var(--surface)', boxShadow: 'var(--shadow-md)', display: 'block' }} />
               ) : (
-                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '28px', fontWeight: 700, border: '4px solid var(--surface)', boxShadow: 'var(--shadow-md)', display: 'block' }}>
+                <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '28px', fontWeight: 700, border: '4px solid var(--surface)', boxShadow: 'var(--shadow-md)' }}>
                   {username[0].toUpperCase()}
                 </div>
               )}

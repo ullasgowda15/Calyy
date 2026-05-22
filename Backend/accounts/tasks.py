@@ -1,23 +1,12 @@
 from celery import shared_task
 from django.conf import settings
-from django.core.mail import send_mail
 import logging
 import resend
-import random
+
+from bookings.email_templates import HTML_WRAP
 
 logger = logging.getLogger(__name__)
 resend.api_key = settings.RESEND_API_KEY
-
-HTML_WRAP = """<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:32px 16px"><tr><td align="center">
-<table width="560" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.06)">
-<tr><td style="padding:32px 32px 0">
-<h1 style="margin:0 0 4px;font-size:22px;font-weight:700;color:#1a1a2e">Caly</h1>
-<hr style="border:none;border-top:1px solid #eee;margin:16px 0 24px">
-</td></tr>
-<tr><td style="padding:0 32px 32px;font-size:15px;line-height:1.6;color:#333">{body}</td></tr>
-<tr><td style="padding:16px 32px;background:#fafafa;border-top:1px solid #eee;font-size:13px;color:#888;text-align:center">
-Caly &mdash; Modern Scheduling</td></tr></table></td></tr></table></body></html>"""
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
@@ -28,11 +17,11 @@ def send_verification_otp(user_id: str, otp: str):
     except User.DoesNotExist:
         return
     subject = 'Verify your Caly email'
-    html_body = f"""<p style="margin:0 0 16px">Hi <strong>{user.username}</strong>,</p>
-<p style="margin:0 0 16px">Your verification code is:</p>
-<div style="background:#f0f0f6;border-radius:8px;padding:16px;text-align:center;font-size:28px;font-weight:700;letter-spacing:8px;color:#7C3AED;margin:0 0 16px">{otp}</div>
-<p style="margin:0 0 8px;font-size:13px;color:#888">This code expires in <strong>10 minutes</strong>.</p>
-<p style="margin:16px 0 0;font-size:13px;color:#888">If you did not create an account, you can ignore this email.</p>"""
+    html_body = f'''<p style="margin:0 0 16px">Hi <strong>{user.username}</strong>,</p>
+<p style="margin:0 0 20px">Please use the code below to verify your email address.</p>
+<div style="background:#f4f0ff;border-radius:12px;padding:20px;text-align:center;font-size:32px;font-weight:700;letter-spacing:10px;color:#7C3AED;margin:0 0 16px;font-family:monospace">{otp}</div>
+<p style="margin:0 0 4px;font-size:13px;color:#999">This code expires in <strong>10 minutes</strong>.</p>
+<p style="margin:16px 0 0;font-size:13px;color:#999">If you did not create an account, you can ignore this email.</p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -48,10 +37,23 @@ def send_verification_otp(user_id: str, otp: str):
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def send_password_reset_email(email: str, reset_link: str):
-    send_mail(
-        'Reset your Caly password',
-        f'Click the link below to reset your password:\n\n{reset_link}\n\nIf you did not request this, ignore this email.',
-        settings.DEFAULT_FROM_EMAIL,
-        [email],
-        fail_silently=False,
-    )
+    html_body = f'''<p style="margin:0 0 16px">Hi,</p>
+<p style="margin:0 0 20px">We received a request to reset your Caly password. Click the button below to proceed.</p>
+<table cellpadding="0" cellspacing="0" style="margin:0 0 20px"><tr><td style="background:#7C3AED;border-radius:8px;padding:12px 28px">
+<a href="{reset_link}" style="color:#fff;text-decoration:none;font-size:15px;font-weight:600">Reset password</a>
+</td></tr></table>
+<p style="margin:0 0 4px;font-size:13px;color:#999">Or copy this link into your browser:</p>
+<p style="margin:0 0 16px;font-size:12px;color:#7C3AED;word-break:break-all">{reset_link}</p>
+<p style="margin:16px 0 0;font-size:13px;color:#999">If you did not request this, you can safely ignore this email.</p>'''
+    subject = 'Reset your Caly password'
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [email],
+            'subject': subject,
+            'html': HTML_WRAP.replace('{body}', html_body),
+        })
+        logger.info(f'Password reset email sent to {email}')
+    except Exception as e:
+        logger.error(f'Failed to send password reset email: {e}')
+        raise

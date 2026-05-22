@@ -21,3 +21,5 @@ django-filter
 pytz
 resend
 django-ratelimit
+pyotp
+qrcode

@@ -13,7 +13,14 @@ class EventTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = EventType
-        fields = '__all__'
+        fields = (
+            'id', 'host', 'host_username', 'host_avatar', 'host_bio', 'host_first_name',
+            'name', 'slug', 'description', 'duration', 'location_type', 'location_details',
+            'color', 'is_active', 'buffer_before', 'buffer_after',
+            'min_notice', 'max_advance_days', 'max_bookings_per_day',
+            'price', 'currency', 'custom_questions', 'booking_url',
+            'created_at', 'updated_at',
+        )
         read_only_fields = ('id', 'host', 'created_at', 'updated_at', 'host_username', 'host_avatar', 'host_bio', 'host_first_name', 'booking_url')
         extra_kwargs = {
             'slug': {'required': False, 'allow_blank': True},
@@ -26,6 +33,16 @@ class EventTypeSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if 'name' in data and not data.get('slug'):
             data['slug'] = slugify(data['name'])
+        if self.instance:
+            host = self.instance.host
+        else:
+            host = self.context['request'].user
+        slug = data.get('slug', self.instance.slug if self.instance else '')
+        qs = EventType.objects.filter(host=host, slug=slug)
+        if self.instance:
+            qs = qs.exclude(pk=self.instance.pk)
+        if qs.exists():
+            raise serializers.ValidationError({'slug': 'An event type with this name already exists.'})
         return data
 
     def create(self, validated_data):
@@ -36,7 +53,7 @@ class EventTypeSerializer(serializers.ModelSerializer):
 class AvailabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Availability
-        fields = '__all__'
+        fields = ('id', 'user', 'weekday', 'start_time', 'end_time', 'is_active')
         read_only_fields = ('id', 'user')
 
     def create(self, validated_data):
@@ -47,7 +64,7 @@ class AvailabilitySerializer(serializers.ModelSerializer):
 class BlockedTimeSerializer(serializers.ModelSerializer):
     class Meta:
         model = BlockedTime
-        fields = '__all__'
+        fields = ('id', 'user', 'start_datetime', 'end_datetime', 'reason')
         read_only_fields = ('id', 'user')
 
     def create(self, validated_data):

@@ -19,7 +19,7 @@ class EventTypeViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
     def slots(self, request, pk=None):
-        event_type = get_object_or_404(EventType, pk=pk, is_active=True)
+        event_type = get_object_or_404(EventType.objects.select_related('host'), pk=pk, is_active=True)
         date_str = request.query_params.get('date')
         if not date_str:
             return Response({'error': 'date parameter required (YYYY-MM-DD)'}, status=400)
@@ -39,6 +39,8 @@ class PublicEventTypeView(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         username = self.kwargs.get('username')
         user = get_object_or_404(User, username=username)
+        if not user.is_subscribed():
+            return EventType.objects.none()
         return EventType.objects.filter(host=user, is_active=True)
 
 
@@ -46,7 +48,7 @@ class PublicEventTypeView(viewsets.ReadOnlyModelViewSet):
 @permission_classes([permissions.AllowAny])
 @ratelimit(key='ip', rate='60/h', method='GET')
 def public_slots(request, username, pk):
-    event_type = get_object_or_404(EventType, pk=pk, is_active=True)
+    event_type = get_object_or_404(EventType.objects.select_related('host'), pk=pk, is_active=True)
     if event_type.host.username != username:
         return Response({'error': 'Event type not found'}, status=404)
     date_str = request.query_params.get('date')
@@ -56,6 +58,8 @@ def public_slots(request, username, pk):
         target_date = date.fromisoformat(date_str)
     except ValueError:
         return Response({'error': 'Invalid date format'}, status=400)
+    if not event_type.host.is_subscribed():
+        return Response({'error': 'This host\'s subscription has expired.'}, status=403)
     slots = get_available_slots(event_type, target_date, event_type.host.timezone)
     return Response({'date': date_str, 'slots': slots})
 

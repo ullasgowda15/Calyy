@@ -48,7 +48,7 @@ export default function EventTypes() {
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
-        <div style={{ padding: '28px 32px', maxWidth: '1280px' }}>
+        <div className="page-content" style={{ maxWidth: '1280px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
             <div>
               <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Event Types</h1>
@@ -130,7 +130,6 @@ export default function EventTypes() {
           )}
         </div>
       </main>
-      <style>{`@media (max-width: 767px) { .sidebar-main { margin-left: 0; padding-top: 64px; } }`}</style>
     </div>
   );
 }

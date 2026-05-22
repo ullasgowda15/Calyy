@@ -61,11 +61,24 @@ class CreateBookingView(generics.CreateAPIView):
         serializer.is_valid(raise_exception=True)
         event_type = serializer.validated_data.get('event_type')
 
+        if event_type and not event_type.host.is_subscribed():
+            return Response({'error': 'This host\'s subscription has expired. Please contact them directly.'}, status=403)
+
         with transaction.atomic():
+            from events.availability import get_available_slots
+            import pytz
+            start = serializer.validated_data['start_datetime']
+            if timezone.is_naive(start):
+                start = pytz.utc.localize(start)
+            target_date = start.date()
+            available_slots = get_available_slots(event_type, target_date, event_type.host.timezone)
+            slot_starts = [s['start'] for s in available_slots]
+            if start.isoformat() not in slot_starts:
+                return Response({'error': 'This time slot is no longer available.'}, status=409)
             Booking.objects.select_for_update().filter(
                 event_type=event_type,
                 status__in=['confirmed', 'pending'],
-                start_datetime=serializer.validated_data['start_datetime'],
+                start_datetime__date=target_date,
             ).first()
             self.perform_create(serializer)
 
@@ -79,6 +92,7 @@ class CreateBookingView(generics.CreateAPIView):
             return Response({
                 'requires_payment': True,
                 'booking_id': str(booking.id),
+                'cancel_token': str(booking.cancel_token),
                 'event_type_id': str(event_type.id),
                 'price': str(event_type.price),
                 'currency': event_type.currency,

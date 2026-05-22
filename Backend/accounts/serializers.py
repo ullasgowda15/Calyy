@@ -8,14 +8,17 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'timezone')
+        fields = ('email', 'username', 'password', 'timezone', 'phone')
 
     def create(self, validated_data):
+        from django.utils import timezone
         user = User.objects.create_user(
             email=validated_data['email'],
             username=validated_data['username'],
             password=validated_data['password'],
             timezone=validated_data.get('timezone', 'UTC'),
+            phone=validated_data.get('phone', None),
+            trial_started_at=timezone.now(),
         )
         return user
 
@@ -23,13 +26,20 @@ class RegisterSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'username', 'timezone', 'bio', 'avatar', 'first_name', 'last_name')
-        read_only_fields = ('id', 'email')
+        fields = ('id', 'email', 'username', 'timezone', 'bio', 'avatar', 'first_name', 'last_name',
+                  'phone', 'subscription_status', 'trial_started_at', 'subscribed_until')
+        read_only_fields = ('id', 'email', 'subscription_status', 'trial_started_at', 'subscribed_until')
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exclude(id=self.instance.id if self.instance else None).exists():
             raise serializers.ValidationError('This username is already taken.')
         return value
+
+
+class PublicUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'bio', 'avatar', 'first_name', 'last_name', 'timezone')
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
