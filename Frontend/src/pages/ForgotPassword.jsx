@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { auth } from '../api/client';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
@@ -80,6 +81,7 @@ export default function ForgotPassword() {
         </div>
       </div>
       <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 700px) { .auth-split { flex-direction: column !important; } }' }} />
+      <Footer />
     </div>
   );
 }

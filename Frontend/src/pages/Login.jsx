@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { integrations } from '../api/client';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -117,6 +118,7 @@ export default function Login() {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 700px) { .auth-split { flex-direction: column !important; } }' }} />
+      <Footer />
     </div>
   );
 }

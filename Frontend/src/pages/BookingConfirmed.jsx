@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { payments } from '../api/client';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function BookingConfirmed() {
   const location = useLocation();
@@ -18,11 +20,15 @@ export default function BookingConfirmed() {
 
   if (!state) {
     return (
-      <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '16px' }}>No booking information found.</p>
-          <Link to="/" className="btn btn-primary">Go home</Link>
+      <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
+        <Navbar />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <p style={{ fontSize: '15px', color: 'var(--text-secondary)', marginBottom: '16px' }}>No booking information found.</p>
+            <Link to="/" className="btn btn-primary">Go home</Link>
+          </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -33,14 +39,9 @@ export default function BookingConfirmed() {
   const endDate = booking?.end_datetime ? new Date(booking.end_datetime) : null;
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
-      {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '32px' }}>
-        <div style={{ width: '28px', height: '28px', background: 'var(--accent)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        </div>
-        <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>Caly</span>
-      </div>
+    <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
+      <Navbar />
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
 
       <div className="card fade-in" style={{ maxWidth: '440px', width: '100%', padding: '40px 32px', textAlign: 'center' }}>
         {/* Success animation */}
@@ -83,7 +84,9 @@ export default function BookingConfirmed() {
           )}
           <Link to={`/book/${host}`} className="btn btn-ghost" style={{ justifyContent: 'center' }}>Book another time</Link>
         </div>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 }
