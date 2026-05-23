@@ -6,6 +6,7 @@ from .models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
+    username = serializers.CharField(max_length=60)
 
     class Meta:
         model = User
