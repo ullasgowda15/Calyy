@@ -250,3 +250,9 @@ select {
 .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
 .stat-value { font-size: 28px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); }
+
+/* Booking detail grid — stack on mobile */
+@media (max-width: 767px) {
+  .booking-detail-grid { grid-template-columns: 1fr !important; }
+  .booking-detail-grid-2 { grid-template-columns: 1fr !important; gap: 14px !important; }
+}
