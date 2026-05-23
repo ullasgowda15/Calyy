@@ -55,16 +55,18 @@ def send_booking_confirmation(booking_id: str):
     host_body = f'''<p style="margin:0 0 20px">Hi {host_name},</p>
 <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">New booking received!</p>
 {detail_table(host_rows)}'''
-    try:
-        resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
-            'to': [host.email],
-            'subject': f'New booking: {booking.invitee_name}',
-            'html': HTML_WRAP.replace('{body}', host_body),
-        })
-    except Exception as e:
-        logger.error(f'Failed to send host confirmation email: {e}')
-        raise
+    if host.email:
+        try:
+            resend.Emails.send({
+                'from': settings.DEFAULT_FROM_EMAIL,
+                'to': [host.email],
+                'subject': f'New booking: {booking.invitee_name}',
+                'html': HTML_WRAP.replace('{body}', host_body),
+            })
+        except Exception as e:
+            logger.error(f'Failed to send host confirmation email to {host.email}: {e}')
+    else:
+        logger.warning(f'Host {host.id} has no email set, skipping host notification')
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)

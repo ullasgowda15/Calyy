@@ -19,6 +19,12 @@ function Skeleton({ w = '100%', h = '16px', style = {} }) {
   return <div className="skeleton" style={{ width: w, height: h, ...style }} />;
 }
 
+const isMeetingOver = (b) => {
+  if (!b.start_datetime) return false;
+  const end = new Date(b.start_datetime).getTime() + (b.event_type_duration || 0) * 60 * 1000;
+  return Date.now() > end;
+};
+
 function PaginationBtn({ page, totalPages, goToPage }) {
   if (totalPages <= 1) return null;
   return (
@@ -361,10 +367,10 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
                             {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                            {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}
                       </div>
@@ -423,10 +429,10 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
                             {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                            {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}
                       </div>
@@ -495,10 +501,10 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
                             {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                            {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}
                       </div>
