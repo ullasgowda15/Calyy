@@ -305,25 +305,27 @@ export default function BookingDetail() {
 
       {cancelModal.show && (
         <ConfirmModal
+          show
           title="Cancel this booking?"
+          message={cancelModal.reason ? '' : ''}
           confirmLabel="Cancel booking"
+          confirmDanger
           onConfirm={handleCancel}
           onCancel={() => setCancelModal({ show: false, reason: '' })}
-          variant="danger"
         >
           <input type="text" value={cancelModal.reason} onChange={(e) => setCancelModal((m) => ({ ...m, reason: e.target.value }))} placeholder="Reason for cancellation (optional)" className="field" style={{ width: '100%', padding: '9px 12px', fontSize: '13px', marginTop: '8px' }} />
         </ConfirmModal>
       )}
       {refundModal.show && (
         <ConfirmModal
+          show
           title="Refund this booking?"
+          message="This will cancel the booking and issue a full refund."
           confirmLabel="Process refund"
+          confirmDanger
           onConfirm={handleRefund}
           onCancel={() => setRefundModal({ show: false })}
-          variant="danger"
-        >
-          <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '8px 0 0' }}>This will cancel the booking and issue a full refund.</p>
-        </ConfirmModal>
+        />
       )}
     </div>
   );
