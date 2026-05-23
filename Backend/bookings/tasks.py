@@ -129,7 +129,7 @@ def send_cancellation_email(booking_id: str, reason: str = ''):
 <p style="margin:0 0 20px;font-size:16px;color:#dc2626;font-weight:600">Your booking has been cancelled.</p>
 {detail_table(rows)}
 <p style="margin:0;font-size:13px;color:#999">To book a new time:
-<a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Schedule a meeting</a></p>'''
+<a href="{settings.FRONTEND_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Schedule a meeting</a></p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -163,7 +163,7 @@ def send_no_show_email(booking_id: str):
 {detail_table(rows)}
 <p style="margin:0 0 4px;font-size:13px;color:#999">If you believe this is an error, please contact the host directly.</p>
 <p style="margin:0;font-size:13px;color:#999">To reschedule:
-<a href="{settings.BASE_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Book a new time</a></p>'''
+<a href="{settings.FRONTEND_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Book a new time</a></p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
