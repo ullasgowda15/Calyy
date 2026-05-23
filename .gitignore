@@ -65,6 +65,9 @@ htmlcov/
 *.bak
 *.tmp
 
+# Local dev scripts
+start-all.ps1
+
 # Cleanup
 /unwanted-stuff
 
