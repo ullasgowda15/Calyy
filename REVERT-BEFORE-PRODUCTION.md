@@ -27,6 +27,11 @@ if event_type.host.email == data.get('invitee_email', ''):
 **Revert to:** `DEBUG=False`
 (Also run `python manage.py collectstatic` before switching to False)
 
+### 5. Email timezone fix (safe for production — uses invitee/host timezone from DB)
+**File:** `Backend/bookings/tasks.py`
+This change adds `_format_dt()` helper that converts UTC datetimes to the recipient's timezone.
+It's actually a **bug fix**, not a testing change — keep this in production.
+
 ### 4. Resend from address
 **File:** `Backend/.env`
 **Line:** 23

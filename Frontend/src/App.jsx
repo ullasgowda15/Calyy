@@ -19,6 +19,7 @@ import Settings from './pages/Settings';
 import BookingDetail from './pages/BookingDetail';
 import BookingPage from './pages/BookingPage';
 import BookingConfirmed from './pages/BookingConfirmed';
+import BookingCancelled from './pages/BookingCancelled';
 import NotFound from './pages/NotFound';
 import GoogleCallback from './pages/GoogleCallback';
 import Privacy from './pages/Privacy';
@@ -65,6 +66,7 @@ export default function App() {
               <Route path="/book/:username" element={<BookingPage />} />
               <Route path="/book/:username/:slug" element={<BookingPage />} />
               <Route path="/booking-confirmed" element={<BookingConfirmed />} />
+              <Route path="/booking-cancelled" element={<BookingCancelled />} />
               <Route path="/auth/google-redirect" element={<GoogleCallback />} />
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
