@@ -65,6 +65,9 @@ htmlcov/
 *.bak
 *.tmp
 
+# Cleanup
+/unwanted-stuff
+
 
 /Audits
 /Extra
