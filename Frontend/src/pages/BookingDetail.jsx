@@ -231,7 +231,7 @@ export default function BookingDetail() {
                 {booking.reschedule_url && (
                   <a href={booking.reschedule_url} target="_blank" rel="noopener noreferrer" className="btn btn-sm" style={{ width: '100%', justifyContent: 'center', background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '13px', textDecoration: 'none' }}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ marginRight: '6px' }}><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                    Reschedule link
+                    Share reschedule link with client
                   </a>
                 )}
                 <a href={`mailto:${booking.invitee_email}?subject=Regarding%20your%20booking%20with%20${user?.username || 'Caly'}`} className="btn btn-sm" style={{ width: '100%', justifyContent: 'center', background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '13px', textDecoration: 'none' }}>

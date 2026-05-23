@@ -76,6 +76,7 @@ export const bookings = {
   updateBookingStatus: (id, data) => api.patch(`/bookings/${id}/status/`, data),
   getBookingDetail: (id) => api.get(`/bookings/${id}/`),
   hostCancelBooking: (id, data) => api.post(`/bookings/${id}/host-cancel/`, data),
+  getRescheduleInfo: (token) => api.get(`/bookings/reschedule/${token}/`),
   rescheduleBookingByToken: (token, data) => api.post(`/bookings/reschedule/${token}/`, data),
 };
 

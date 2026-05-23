@@ -203,11 +203,21 @@ def reschedule_booking(request, booking_id, token=None):
     return Response(BookingSerializer(booking).data, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([permissions.AllowAny])
-@ratelimit(key='ip', rate='10/h', method='POST')
+@ratelimit(key='ip', rate='10/h', method=('GET', 'POST'))
 def reschedule_by_token(request, reschedule_token):
     booking = get_object_or_404(BOOKING_SELECT, reschedule_token=reschedule_token)
+    if request.method == 'GET':
+        return Response({
+            'host_username': booking.event_type.host.username,
+            'event_type_id': str(booking.event_type.id),
+            'event_type_name': booking.event_type.name,
+            'event_type_duration': booking.event_type.duration,
+            'invitee_name': booking.invitee_name,
+            'invitee_email': booking.invitee_email,
+            'current_start': booking.start_datetime.isoformat(),
+        })
     return reschedule_booking(request._request, booking.id, token=str(reschedule_token))
 
 
