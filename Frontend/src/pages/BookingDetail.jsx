@@ -42,6 +42,9 @@ export default function BookingDetail() {
   const [booking, setBooking] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelModal, setCancelModal] = useState({ show: false, reason: '' });
+  const isMeetingOver = booking?.start_datetime
+    ? Date.now() > new Date(booking.start_datetime).getTime() + (booking.event_type_duration || 0) * 60 * 1000
+    : false;
   const [refundModal, setRefundModal] = useState({ show: false });
 
   useEffect(() => {
@@ -232,15 +235,19 @@ export default function BookingDetail() {
               <div style={{ padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {booking.status === 'confirmed' && (
                   <>
-                    <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>Status update</div>
-                    <button onClick={handleComplete} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: '#065F46', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>
-                      Mark completed
-                    </button>
-                    <button onClick={handleNoShow} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: '#92400E', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
-                      Mark no-show
-                    </button>
+                    {isMeetingOver && (
+                      <>
+                        <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>Status update</div>
+                        <button onClick={handleComplete} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: '#065F46', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>
+                          Mark completed
+                        </button>
+                        <button onClick={handleNoShow} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: '#92400E', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg>
+                          Mark no-show
+                        </button>
+                      </>
+                    )}
                     {booking.payment_status === 'paid' && (
                       <>
                         <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: '6px', marginBottom: '2px' }}>Payment</div>
@@ -250,11 +257,15 @@ export default function BookingDetail() {
                         </button>
                       </>
                     )}
-                    <div style={{ height: '1px', background: 'var(--border)', margin: '6px 0' }} />
-                    <button onClick={() => setCancelModal({ show: true, reason: '' })} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA', fontSize: '12px', padding: '8px 12px' }}>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
-                      Cancel booking
-                    </button>
+                    {!isMeetingOver && (
+                      <>
+                        <div style={{ height: '1px', background: 'var(--border)', margin: '6px 0' }} />
+                        <button onClick={() => setCancelModal({ show: true, reason: '' })} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA', fontSize: '12px', padding: '8px 12px' }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+                          Cancel booking
+                        </button>
+                      </>
+                    )}
                   </>
                 )}
                 {booking.status !== 'confirmed' && booking.status !== 'cancelled' && (
@@ -268,7 +279,7 @@ export default function BookingDetail() {
                   </div>
                 )}
               </div>
-              {booking.status === 'confirmed' && (
+              {booking.status === 'confirmed' && !isMeetingOver && (
                 <div style={{ padding: '12px 18px', borderTop: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Share</div>
                   {booking.reschedule_url && (

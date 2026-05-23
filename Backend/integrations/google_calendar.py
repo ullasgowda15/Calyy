@@ -64,9 +64,6 @@ def create_calendar_event(google_token, booking) -> str:
             'description': f'Booking ID: {booking.id}\nInvitee email: {booking.invitee_email}',
             'start': {'dateTime': booking.start_datetime.isoformat(), 'timeZone': 'UTC'},
             'end': {'dateTime': booking.end_datetime.isoformat(), 'timeZone': 'UTC'},
-            'attendees': [
-                {'email': booking.invitee_email},
-            ],
         }
         result = service.events().insert(calendarId=google_token.calendar_id, body=event).execute()
         return result.get('id', '')
