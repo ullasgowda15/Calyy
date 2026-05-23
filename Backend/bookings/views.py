@@ -128,9 +128,9 @@ class BookingDetailView(generics.RetrieveAPIView):
         return BOOKING_SELECT.filter(event_type__host=self.request.user)
 
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 @permission_classes([permissions.AllowAny])
-@ratelimit(key='ip', rate='10/h', method='POST')
+@ratelimit(key='ip', rate='10/h', method='GET')
 def cancel_booking(request, booking_id):
     booking = get_object_or_404(BOOKING_SELECT, id=booking_id)
     token = request.query_params.get('token') or request.data.get('token')
@@ -141,7 +141,7 @@ def cancel_booking(request, booking_id):
     if booking.status == 'cancelled':
         return Response({'error': 'Booking already cancelled'}, status=400)
 
-    reason = request.data.get('reason', '')
+    reason = request.data.get('reason', '') or request.query_params.get('reason', '')
     booking.status = 'cancelled'
     booking.save()
     host = booking.event_type.host
