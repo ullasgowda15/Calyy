@@ -24,6 +24,7 @@ class Booking(models.Model):
     custom_answers = models.JSONField(default=dict, blank=True)
     cancel_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     reschedule_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    reschedule_count = models.PositiveSmallIntegerField(default=0)
 
     razorpay_order_id = models.CharField(max_length=200, blank=True)
     razorpay_payment_id = models.CharField(max_length=200, blank=True)

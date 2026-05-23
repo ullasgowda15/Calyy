@@ -1,3 +1,4 @@
+import uuid
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -174,6 +175,9 @@ def reschedule_booking(request, booking_id, token=None):
     if booking.start_datetime <= timezone.now():
         return Response({'error': 'Cannot reschedule a meeting that has already started or ended'}, status=400)
 
+    if booking.reschedule_count >= 3:
+        return Response({'error': 'Maximum 3 reschedules allowed per booking'}, status=400)
+
     new_start = request.data.get('start_datetime')
     if not new_start:
         return Response({'error': 'start_datetime required'}, status=400)
@@ -202,6 +206,11 @@ def reschedule_booking(request, booking_id, token=None):
         booking.start_datetime = new_start_dt
         booking.end_datetime = new_end_dt
         booking.save(update_fields=['start_datetime', 'end_datetime'])
+
+    booking.refresh_from_db()
+    booking.reschedule_count += 1
+    booking.reschedule_token = uuid.uuid4()
+    booking.save(update_fields=['reschedule_count', 'reschedule_token'])
 
     host = booking.event_type.host
     if hasattr(host, 'google_token') and booking.google_calendar_event_id:
