@@ -53,6 +53,7 @@ class BookingSerializer(serializers.ModelSerializer):
     event_type_name = serializers.CharField(source='event_type.name', read_only=True)
     event_type_price = serializers.DecimalField(source='event_type.price', read_only=True, max_digits=10, decimal_places=2)
     event_type_currency = serializers.CharField(source='event_type.currency', read_only=True)
+    event_type_duration = serializers.IntegerField(source='event_type.duration', read_only=True)
     host_username = serializers.CharField(source='event_type.host.username', read_only=True)
     cancel_url = serializers.SerializerMethodField()
     reschedule_url = serializers.SerializerMethodField()
@@ -61,6 +62,7 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = (
             'id', 'event_type', 'event_type_name', 'event_type_price', 'event_type_currency',
+            'event_type_duration',
             'host_username', 'invitee_name', 'invitee_email', 'invitee_timezone',
             'start_datetime', 'end_datetime', 'status', 'payment_status',
             'notes', 'custom_answers', 'cancel_url', 'reschedule_url',
