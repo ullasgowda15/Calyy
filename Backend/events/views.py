@@ -17,6 +17,9 @@ class EventTypeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return EventType.objects.filter(host=self.request.user).select_related('host')
 
+    def perform_create(self, serializer):
+        serializer.save()
+
     @action(detail=True, methods=['get'], permission_classes=[permissions.AllowAny])
     def slots(self, request, pk=None):
         event_type = get_object_or_404(EventType.objects.select_related('host'), pk=pk, is_active=True)
