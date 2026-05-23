@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.db import transaction
 from datetime import timedelta
@@ -149,6 +149,8 @@ def cancel_booking(request, booking_id):
         _safe_delay(delete_google_calendar_event, str(host.id), booking.google_calendar_event_id)
     _safe_delay(send_cancellation_email, str(booking.id), reason)
     _safe_delay(deliver_webhook_task, str(host.id), 'booking.cancelled', BookingSerializer(booking).data)
+    if request.method == 'GET':
+        return redirect(f'{settings.FRONTEND_URL}/booking-cancelled')
     return Response({'message': 'Booking cancelled successfully'})
 
 
