@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { eventTypes, bookings, payments, integrations } from '../api/client';
 import { formatDateTimeUTC, formatDateLocal, formatTimeLocal, resolveTimezone } from '../utils/datetime';
@@ -42,6 +42,7 @@ function PaginationBtn({ page, totalPages, goToPage }) {
 export default function Dashboard() {
   const { user } = useAuth();
   const toast = useToast();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ total: 0, upcoming: 0, active: 0 });
   const [analytics, setAnalytics] = useState({ totalRevenue: 0, cancellationRate: 0, noShowRate: 0 });
   const [allBookings, setAllBookings] = useState([]);
@@ -356,14 +357,17 @@ export default function Dashboard() {
                     <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
-                      {b.status === 'confirmed' && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                          <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
-                          {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                          <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
-                        </div>
-                      )}
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
+                        {b.status === 'confirmed' && (
+                          <>
+                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
+                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -415,14 +419,17 @@ export default function Dashboard() {
                     <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
-                      {b.status === 'confirmed' && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                          <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
-                          {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                          <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
-                        </div>
-                      )}
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
+                        {b.status === 'confirmed' && (
+                          <>
+                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
+                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -484,14 +491,17 @@ export default function Dashboard() {
                     <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
-                      {b.status === 'confirmed' && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-                          <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
-                          <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
-                          {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
-                          <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
-                        </div>
-                      )}
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
+                        {b.status === 'confirmed' && (
+                          <>
+                            <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>
+                            <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>
+                          </>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

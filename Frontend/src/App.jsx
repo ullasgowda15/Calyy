@@ -16,6 +16,7 @@ import EditEventType from './pages/EditEventType';
 import Availability from './pages/Availability';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import BookingDetail from './pages/BookingDetail';
 import BookingPage from './pages/BookingPage';
 import BookingConfirmed from './pages/BookingConfirmed';
 import NotFound from './pages/NotFound';
@@ -60,6 +61,7 @@ export default function App() {
               <Route path="/availability" element={<ProtectedRoute><Availability /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/booking/:id" element={<ProtectedRoute><BookingDetail /></ProtectedRoute>} />
               <Route path="/book/:username" element={<BookingPage />} />
               <Route path="/book/:username/:slug" element={<BookingPage />} />
               <Route path="/booking-confirmed" element={<BookingConfirmed />} />
