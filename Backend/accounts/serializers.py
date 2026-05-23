@@ -1,3 +1,4 @@
+import re
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import User
@@ -9,6 +10,13 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('email', 'username', 'password', 'timezone', 'phone')
+
+    def validate_username(self, value):
+        if not re.match(r'^[a-zA-Z0-9_-]+\Z', value):
+            raise serializers.ValidationError('Username can only contain letters, numbers, underscores, and hyphens.')
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError('This username is already taken.')
+        return value
 
     def create(self, validated_data):
         from django.utils import timezone
