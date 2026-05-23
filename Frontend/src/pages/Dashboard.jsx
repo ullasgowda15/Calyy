@@ -252,13 +252,13 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {!/^active$/.test(subStatus?.subscription_status) && subStatus?.subscription_status !== 'free_trial' && (
+      {subStatus && !subStatus.is_subscribed && (
         <div style={{ background: '#FEF2F2', border: '1.5px solid #FECACA', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
           <p style={{ fontSize: '13px', color: '#991B1B', flex: 1, margin: 0 }}>Your subscription has expired — booking links are disabled. <Link to="/settings" style={{ color: '#991B1B', fontWeight: 600 }}>Resubscribe</Link> to re-enable them.</p>
         </div>
       )}
-      {subStatus?.subscription_status === 'free_trial' && subStatus?.trial_ends_at && new Date(subStatus.trial_ends_at) > new Date() && (
+      {subStatus && subStatus.is_subscribed && subStatus.subscription_status === 'free_trial' && subStatus.trial_ends_at && new Date(subStatus.trial_ends_at) > new Date() && (
         <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <p style={{ fontSize: '13px', color: '#92400E', flex: 1, margin: 0 }}>
@@ -266,7 +266,7 @@ export default function Dashboard() {
           </p>
         </div>
       )}
-      {subStatus?.subscription_status === 'active' && subStatus?.subscribed_until && (() => {
+      {subStatus && subStatus.is_subscribed && subStatus.subscription_status === 'active' && subStatus?.subscribed_until && (() => {
         const daysLeft = Math.ceil((new Date(subStatus.subscribed_until) - new Date()) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0 && daysLeft <= 14) {
           return (

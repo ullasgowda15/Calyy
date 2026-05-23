@@ -211,6 +211,35 @@ def deliver_webhook_task(user_id: str, event: str, payload: dict):
 
 
 @shared_task
+def expire_subscriptions():
+    from django.utils import timezone
+    from datetime import timedelta
+    from accounts.models import User
+
+    now = timezone.now()
+    expired = User.objects.filter(
+        subscription_status='active',
+        subscribed_until__lt=now,
+    )
+    count_active = expired.count()
+    if count_active:
+        expired.update(subscription_status='expired')
+
+    expired_trials = User.objects.filter(
+        subscription_status='free_trial',
+        trial_started_at__lt=now - timedelta(days=7),
+    )
+    count_trial = expired_trials.count()
+    if count_trial:
+        expired_trials.update(subscription_status='expired')
+
+    total = count_active + count_trial
+    if total:
+        logger.info(f'Expired {total} subscription(s) ({count_active} active, {count_trial} trial)')
+    return total
+
+
+@shared_task
 def release_expired_pending_bookings():
     from django.utils import timezone
     from .models import Booking
