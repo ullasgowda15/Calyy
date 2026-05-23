@@ -24,8 +24,8 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             event_type = EventType.objects.select_related('host').get(id=data['event_type_id'], is_active=True)
         except EventType.DoesNotExist:
             raise serializers.ValidationError('Event type not found or inactive.')
-        if event_type.host.email == data.get('invitee_email', ''):
-            raise serializers.ValidationError('You cannot book your own event.')
+        # if event_type.host.email == data.get('invitee_email', ''):
+        #     raise serializers.ValidationError('You cannot book your own event.')
 
         start = data['start_datetime']
         if timezone.is_naive(start):
