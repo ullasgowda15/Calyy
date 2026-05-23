@@ -74,7 +74,7 @@ export default function Register() {
     setLoading(true);
     try {
       await register({ ...form, phone: form.countryCode + form.phoneNumber });
-      navigate('/dashboard');
+      navigate(`/verify-email?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
       const data = err.response?.data;
       if (typeof data === 'object') {
