@@ -142,6 +142,9 @@ def cancel_booking(request, booking_id):
     if booking.status == 'cancelled':
         return Response({'error': 'Booking already cancelled'}, status=400)
 
+    if booking.start_datetime <= timezone.now():
+        return Response({'error': 'Cannot cancel a meeting that has already started or ended'}, status=400)
+
     reason = request.data.get('reason', '') or request.query_params.get('reason', '')
     booking.status = 'cancelled'
     booking.save()

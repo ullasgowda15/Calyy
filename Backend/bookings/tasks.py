@@ -41,8 +41,11 @@ def send_booking_confirmation(booking_id: str):
     invitee_body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
 <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Your meeting has been confirmed!</p>
 {detail_table(invitee_rows)}
-<p style="margin:0;font-size:13px;color:#999">Need to cancel?
-<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#7C3AED;text-decoration:none;font-weight:600">Cancel here</a></p>'''
+<p style="margin:0;font-size:13px;color:#999">
+<a href="{settings.FRONTEND_URL}/reschedule/{booking.reschedule_token}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Reschedule</a>
+&middot;
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#999;text-decoration:none;font-weight:600">Cancel</a>
+</p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
@@ -96,7 +99,12 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
     ])
     body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
 <p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Reminder: your meeting is coming up!</p>
-{detail_table(rows)}'''
+{detail_table(rows)}
+<p style="margin:0;font-size:13px;color:#999">
+<a href="{settings.FRONTEND_URL}/reschedule/{booking.reschedule_token}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Reschedule</a>
+&middot;
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#999;text-decoration:none;font-weight:600">Cancel</a>
+</p>'''
     try:
         resend.Emails.send({
             'from': settings.DEFAULT_FROM_EMAIL,
