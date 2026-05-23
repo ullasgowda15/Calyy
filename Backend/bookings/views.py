@@ -171,6 +171,9 @@ def reschedule_booking(request, booking_id, token=None):
     if booking.status == 'cancelled':
         return Response({'error': 'Cannot reschedule cancelled booking'}, status=400)
 
+    if booking.start_datetime <= timezone.now():
+        return Response({'error': 'Cannot reschedule a meeting that has already started or ended'}, status=400)
+
     new_start = request.data.get('start_datetime')
     if not new_start:
         return Response({'error': 'start_datetime required'}, status=400)
