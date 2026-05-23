@@ -72,7 +72,7 @@ htmlcov/
 /Audits
 /Extra
 
-.start-all.ps1
+start-all.ps1
 
 /.pytest_cache
 /.vscode
