@@ -8,8 +8,30 @@ import Footer from '../components/Footer';
 const BROWSER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
 
+const COUNTRIES = [
+  { code: '+1', label: 'US +1' },
+  { code: '+44', label: 'UK +44' },
+  { code: '+91', label: 'IN +91' },
+  { code: '+61', label: 'AU +61' },
+  { code: '+81', label: 'JP +81' },
+  { code: '+86', label: 'CN +86' },
+  { code: '+49', label: 'DE +49' },
+  { code: '+33', label: 'FR +33' },
+  { code: '+39', label: 'IT +39' },
+  { code: '+55', label: 'BR +55' },
+  { code: '+7', label: 'RU +7' },
+  { code: '+82', label: 'KR +82' },
+  { code: '+65', label: 'SG +65' },
+  { code: '+971', label: 'AE +971' },
+  { code: '+966', label: 'SA +966' },
+  { code: '+20', label: 'EG +20' },
+  { code: '+27', label: 'ZA +27' },
+  { code: '+52', label: 'MX +52' },
+  { code: '+1', label: 'CA +1' },
+];
+
 export default function Register() {
-  const [form, setForm] = useState({ email: '', username: '', password: '', timezone: BROWSER_TZ, phone: '' });
+  const [form, setForm] = useState({ email: '', username: '', password: '', timezone: BROWSER_TZ, countryCode: '+91', phoneNumber: '' });
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,13 +48,15 @@ export default function Register() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    if (name === 'phone') {
-      const p = value.trim();
-      if (!p) { setPhoneAvailable(null); return; }
+    if (name === 'countryCode' || name === 'phoneNumber') {
+      const cc = name === 'countryCode' ? value : form.countryCode;
+      const pn = name === 'phoneNumber' ? value : form.phoneNumber;
+      const full = cc + pn;
+      if (!full || !pn) { setPhoneAvailable(null); return; }
       if (phoneTimer.current) clearTimeout(phoneTimer.current);
       phoneTimer.current = setTimeout(async () => {
         setCheckingPhone(true);
-        try { const res = await auth.checkPhone(p); setPhoneAvailable(res.data.available); }
+        try { const res = await auth.checkPhone(full); setPhoneAvailable(res.data.available); }
         catch { setPhoneAvailable(null); }
         finally { setCheckingPhone(false); }
       }, 400);
@@ -42,10 +66,14 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!/^\d{10}$/.test(form.phoneNumber)) {
+      setError('Phone number must be exactly 10 digits after the country code.');
+      return;
+    }
     if (phoneAvailable === false) { setError('This phone number is already registered.'); return; }
     setLoading(true);
     try {
-      await register(form);
+      await register({ ...form, phone: form.countryCode + form.phoneNumber });
       navigate('/dashboard');
     } catch (err) {
       const data = err.response?.data;
@@ -111,9 +139,12 @@ export default function Register() {
               </div>
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Phone number</label>
-                <div style={{ position: 'relative' }}>
-                  <input type="tel" name="phone" value={form.phone} onChange={handleChange} required className="field" placeholder="+91 98765 43210" />
-                  {form.phone.trim() && (
+                <div style={{ display: 'flex', gap: '8px', position: 'relative' }}>
+                  <select name="countryCode" value={form.countryCode} onChange={handleChange} className="field" style={{ width: '120px', flexShrink: 0 }}>
+                    {COUNTRIES.map((c) => <option key={c.code} value={c.code}>{c.label}</option>)}
+                  </select>
+                  <input type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} pattern="\d{10}" maxLength={10} required className="field" placeholder="9876543210" style={{ flex: 1 }} />
+                  {form.phoneNumber && (
                     <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>
                       {checkingPhone ? '…' : phoneAvailable === true ? <span style={{ color: '#10B981' }}>✓</span> : phoneAvailable === false ? <span style={{ color: '#EF4444' }}>✗</span> : null}
                     </span>
