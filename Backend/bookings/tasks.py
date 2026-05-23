@@ -185,6 +185,69 @@ def send_no_show_email(booking_id: str):
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
+def send_rescheduled_email(booking_id: str):
+    from .models import Booking
+    try:
+        booking = Booking.objects.select_related('event_type__host').get(id=booking_id)
+    except Booking.DoesNotExist:
+        logger.warning(f'Booking {booking_id} not found for rescheduled email')
+        return
+
+    host = booking.event_type.host
+    host_name = host.get_full_name() or host.username
+    invitee_tz = booking.invitee_timezone or 'UTC'
+    host_tz = host.timezone or 'UTC'
+
+    invitee_rows = detail_rows([
+        ('Event', booking.event_type.name),
+        ('With', host_name),
+        ('When', _format_dt(booking.start_datetime, invitee_tz)),
+        ('Duration', f'{booking.event_type.duration} min'),
+        ('Location', booking.event_type.location_type.upper()),
+    ])
+    invitee_body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
+<p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Your meeting has been rescheduled!</p>
+{detail_table(invitee_rows)}
+<p style="margin:0;font-size:13px;color:#999">
+<a href="{settings.FRONTEND_URL}/reschedule/{booking.reschedule_token}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Reschedule</a>
+&middot;
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#EF4444;text-decoration:none;font-weight:600">Cancel</a>
+</p>'''
+    try:
+        resend.Emails.send({
+            'from': settings.DEFAULT_FROM_EMAIL,
+            'to': [booking.invitee_email],
+            'subject': f'Rescheduled: {booking.event_type.name}',
+            'html': HTML_WRAP.replace('{body}', invitee_body),
+        })
+    except Exception as e:
+        logger.error(f'Failed to send invitee rescheduled email: {e}')
+        raise
+
+    host_rows = detail_rows([
+        ('From', f'{booking.invitee_name} ({booking.invitee_email})'),
+        ('Event', booking.event_type.name),
+        ('When', _format_dt(booking.start_datetime, host_tz)),
+        ('Notes', booking.notes or 'None'),
+    ])
+    host_body = f'''<p style="margin:0 0 20px">Hi {host_name},</p>
+<p style="margin:0 0 20px;font-size:16px;color:#1a1a2e;font-weight:600">Meeting rescheduled!</p>
+{detail_table(host_rows)}'''
+    if host.email:
+        try:
+            resend.Emails.send({
+                'from': settings.DEFAULT_FROM_EMAIL,
+                'to': [host.email],
+                'subject': f'Rescheduled: {booking.event_type.name}',
+                'html': HTML_WRAP.replace('{body}', host_body),
+            })
+        except Exception as e:
+            logger.error(f'Failed to send host rescheduled email to {host.email}: {e}')
+    else:
+        logger.warning(f'Host {host.id} has no email set, skipping host rescheduled notification')
+
+
+@shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
 def sync_google_calendar_event(booking_id: str):
     from .models import Booking
     from integrations.google_calendar import create_calendar_event

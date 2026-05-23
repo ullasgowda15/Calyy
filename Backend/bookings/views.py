@@ -8,7 +8,7 @@ from django.db import transaction
 from datetime import timedelta
 from .models import Booking
 from .serializers import BookingCreateSerializer, BookingSerializer
-from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email, sync_google_calendar_event, delete_google_calendar_event, deliver_webhook_task
+from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email, send_rescheduled_email, sync_google_calendar_event, delete_google_calendar_event, deliver_webhook_task
 from django_ratelimit.decorators import ratelimit
 import logging
 
@@ -207,7 +207,7 @@ def reschedule_booking(request, booking_id, token=None):
     if hasattr(host, 'google_token') and booking.google_calendar_event_id:
         _safe_delay(delete_google_calendar_event, str(host.id), booking.google_calendar_event_id)
     _safe_delay(sync_google_calendar_event, str(booking.id))
-    _safe_delay(send_booking_confirmation, str(booking.id))
+    _safe_delay(send_rescheduled_email, str(booking.id))
     _safe_delay(deliver_webhook_task, str(host.id), 'booking.rescheduled', BookingSerializer(booking).data)
     return Response(BookingSerializer(booking).data, status=status.HTTP_200_OK)
 
