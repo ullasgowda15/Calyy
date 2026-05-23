@@ -2,10 +2,9 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib.staticfiles.views import serve
+from django.views.static import serve
 from django.views.generic import TemplateView
 from django.http import JsonResponse
-from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 def api_404(request, exception=None):
     return JsonResponse({'error': 'Not found'}, status=404)
@@ -24,8 +23,14 @@ urlpatterns = [
     path('api/payments/', include('payments.urls')),
     path('api/integrations/', include('integrations.urls')),
     path('api/adkrish/', include('admin_panel.urls')),
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     re_path(r'^api/.*$', api_404, name='api_catch_all'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
+
+if settings.DEBUG:
+    from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+    urlpatterns += [
+        path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+        path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    ]

@@ -1,8 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function GoogleCallback() {
   const navigate = useNavigate();
+  const { loadProfile } = useAuth();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -12,11 +14,15 @@ export default function GoogleCallback() {
     if (access && refresh) {
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
-      navigate('/dashboard', { replace: true });
+      loadProfile().then(() => navigate('/dashboard', { replace: true })).catch(() => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        navigate('/login?error=session_failed', { replace: true });
+      });
     } else {
       navigate('/login?error=google_auth_failed', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, loadProfile]);
 
   return (
     <div style={{
