@@ -5,8 +5,23 @@ from .models import Availability, BlockedTime
 from bookings.models import Booking
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
+def _safe_localize(tz, dt_val):
+    try:
+        return tz.localize(dt_val)
+    except (pytz.NonExistentTimeError, pytz.AmbiguousTimeError):
+        return tz.localize(dt_val, is_dst=False)
+
+
 def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC') -> list:
-    host_tz = pytz.timezone(host_timezone)
+    try:
+        host_tz = pytz.timezone(host_timezone)
+    except pytz.UnknownTimeZoneError:
+        logger.warning(f'Unknown timezone "{host_timezone}", falling back to UTC')
+        host_tz = pytz.utc
 
     now = timezone.now()
     min_dt = now + timedelta(minutes=event_type.min_notice)
@@ -28,8 +43,8 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
     buffer_before = timedelta(minutes=event_type.buffer_before)
     buffer_after = timedelta(minutes=event_type.buffer_after)
 
-    day_start_host = host_tz.localize(datetime.combine(target_date, time.min))
-    day_end_host = host_tz.localize(datetime.combine(target_date, time.max))
+    day_start_host = _safe_localize(host_tz, datetime.combine(target_date, time.min))
+    day_end_host = _safe_localize(host_tz, datetime.combine(target_date, time.max))
     day_start_utc = day_start_host.astimezone(pytz.utc)
     day_end_utc = day_end_host.astimezone(pytz.utc)
 
@@ -52,9 +67,12 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
         google_token = GoogleCalendarToken.objects.get(user=event_type.host)
         google_busy = get_busy_slots(google_token, day_start_utc, day_end_utc)
         for busy in google_busy:
+            def _parse_gc_dt(s):
+                s = s.replace('Z', '+00:00').replace('+00:00+00:00', '+00:00')
+                return pytz.utc.localize(datetime.fromisoformat(s)) if 'T' in s else pytz.utc.localize(datetime.combine(datetime.fromisoformat(s).date(), time.min))
             blocked_times = list(blocked_times) + [{
-                'start_datetime': pytz.utc.localize(datetime.fromisoformat(busy['start'].replace('Z', '+00:00').replace('+00:00', ''))) if 'T' not in busy['start'] else pytz.utc.localize(datetime.fromisoformat(busy['start'].rstrip('Z'))),
-                'end_datetime': pytz.utc.localize(datetime.fromisoformat(busy['end'].replace('Z', '+00:00').replace('+00:00', ''))) if 'T' not in busy['end'] else pytz.utc.localize(datetime.fromisoformat(busy['end'].rstrip('Z'))),
+                'start_datetime': _parse_gc_dt(busy['start']),
+                'end_datetime': _parse_gc_dt(busy['end']),
             }]
     except (GoogleCalendarToken.DoesNotExist, ImportError):
         pass
@@ -70,8 +88,8 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
             return []
 
     for window in availability_windows:
-        window_start = host_tz.localize(datetime.combine(target_date, window.start_time))
-        window_end = host_tz.localize(datetime.combine(target_date, window.end_time))
+        window_start = _safe_localize(host_tz, datetime.combine(target_date, window.start_time))
+        window_end = _safe_localize(host_tz, datetime.combine(target_date, window.end_time))
 
         current = window_start
         while current + slot_duration <= window_end:

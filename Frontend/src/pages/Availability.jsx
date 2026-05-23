@@ -20,7 +20,9 @@ const TimeSelect = ({ value, onChange }) => (
 
 function localToUTC(localDatetime) {
   if (!localDatetime) return '';
-  const d = new Date(localDatetime);
+  const parts = localDatetime.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
+  if (!parts) return localDatetime;
+  const d = new Date(Date.UTC(+parts[1], +parts[2] - 1, +parts[3], +parts[4], +parts[5]));
   if (isNaN(d.getTime())) return localDatetime;
   return d.toISOString().slice(0, 19);
 }
@@ -138,7 +140,7 @@ export default function AvailabilityPage() {
                               <TimeSelect value={w.start_time} onChange={(v) => updateWindow(idx, 'start_time', v)} />
                               <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>→</span>
                               <TimeSelect value={w.end_time} onChange={(v) => updateWindow(idx, 'end_time', v)} />
-                              <button onClick={() => removeWindow(idx)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                              <button onClick={() => removeWindow(idx)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
                                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                               </button>
                             </div>
@@ -192,7 +194,7 @@ export default function AvailabilityPage() {
                         </span>
                         {b.reason && <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>({b.reason})</span>}
                       </div>
-                      <button onClick={() => removeBlocked(b.id)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
+                      <button onClick={() => removeBlocked(b.id)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
                       </button>
                     </div>

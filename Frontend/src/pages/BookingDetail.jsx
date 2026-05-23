@@ -7,9 +7,9 @@ import { useToast } from '../components/Toast';
 import ConfirmModal from '../components/ConfirmModal';
 
 const STATUS_STYLES = {
-  confirmed: { bg: '#ECFDF5', text: '#065F46', label: 'Confirmed' },
+  confirmed: { bg: 'var(--surface-success)', text: 'var(--text-success)', label: 'Confirmed' },
   pending: { bg: '#FEF3C7', text: '#92400E', label: 'Pending' },
-  cancelled: { bg: '#FEF2F2', text: '#991B1B', label: 'Cancelled' },
+  cancelled: { bg: 'var(--surface-error)', text: 'var(--text-error)', label: 'Cancelled' },
   completed: { bg: '#EFF6FF', text: '#1E40AF', label: 'Completed' },
   no_show: { bg: '#F5F5F4', text: '#78716C', label: 'No-show' },
 };
@@ -144,7 +144,7 @@ export default function BookingDetail() {
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: 600, background: sc.bg, color: sc.text }}>{sc.label}</span>
               {booking.payment_status && booking.payment_status !== 'unpaid' && (
-                <span style={{ padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: 600, background: booking.payment_status === 'paid' ? '#ECFDF5' : '#FEF2F2', color: booking.payment_status === 'paid' ? '#065F46' : '#991B1B' }}>
+                <span style={{ padding: '4px 12px', borderRadius: '99px', fontSize: '12px', fontWeight: 600, background: booking.payment_status === 'paid' ? 'var(--surface-success)' : 'var(--surface-error)', color: booking.payment_status === 'paid' ? 'var(--text-success)' : 'var(--text-error)' }}>
                   {booking.payment_status}
                 </span>
               )}
@@ -238,7 +238,7 @@ export default function BookingDetail() {
                     {isMeetingOver && (
                       <>
                         <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>Status update</div>
-                        <button onClick={handleComplete} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: '#065F46', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
+                        <button onClick={handleComplete} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-2)', color: 'var(--text-success)', border: '1px solid var(--border)', fontSize: '12px', padding: '8px 12px' }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>
                           Mark completed
                         </button>
@@ -260,7 +260,7 @@ export default function BookingDetail() {
                     {!isMeetingOver && (
                       <>
                         <div style={{ height: '1px', background: 'var(--border)', margin: '6px 0' }} />
-                        <button onClick={() => setCancelModal({ show: true, reason: '' })} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA', fontSize: '12px', padding: '8px 12px' }}>
+                        <button onClick={() => setCancelModal({ show: true, reason: '' })} className="btn btn-sm" style={{ width: '100%', justifyContent: 'flex-start', gap: '8px', background: 'var(--surface-error)', color: 'var(--text-error)', border: '1px solid var(--border-error)', fontSize: '12px', padding: '8px 12px' }}>
                           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
                           Cancel booking
                         </button>

@@ -4,9 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import { auth, integrations } from '../api/client';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { ALL_TIMEZONES, getUserTimezone } from '../utils/datetime';
 
-const BROWSER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
+const BROWSER_TZ = getUserTimezone();
 
 const COUNTRIES = [
   { code: '+1', label: 'US +1' },
@@ -130,7 +130,7 @@ export default function Register() {
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 24px' }}>Sign up with email</p>
 
             {error && (
-              <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '12px 14px', marginBottom: '20px', fontSize: '13px', color: '#991B1B' }}>{error}</div>
+              <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '12px 14px', marginBottom: '20px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>
             )}
             <form onSubmit={handleSubmit}>
               <div style={{ marginBottom: '14px' }}>
@@ -146,11 +146,11 @@ export default function Register() {
                   <input type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} pattern="\d{10}" maxLength={10} required className="field" placeholder="9876543210" style={{ flex: 1 }} />
                   {form.phoneNumber && (
                     <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>
-                      {checkingPhone ? '…' : phoneAvailable === true ? <span style={{ color: '#10B981' }}>✓</span> : phoneAvailable === false ? <span style={{ color: '#EF4444' }}>✗</span> : null}
+                      {checkingPhone ? '…' : phoneAvailable === true ? <span style={{ color: 'var(--success)' }}>✓</span> : phoneAvailable === false ? <span style={{ color: 'var(--danger)' }}>✗</span> : null}
                     </span>
                   )}
                 </div>
-                {phoneAvailable === false && <p style={{ fontSize: '11px', color: '#EF4444', marginTop: '4px', marginBottom: 0 }}>Phone already registered</p>}
+                {phoneAvailable === false && <p style={{ fontSize: '11px', color: 'var(--danger)', marginTop: '4px', marginBottom: 0 }}>Phone already registered</p>}
               </div>
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
@@ -170,7 +170,7 @@ export default function Register() {
               <div style={{ marginBottom: '24px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Your timezone</label>
                 <select name="timezone" value={form.timezone} onChange={handleChange} className="field">
-                  {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
+                  {ALL_TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                 </select>
               </div>
               <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '11px', fontSize: '15px', justifyContent: 'center' }}>

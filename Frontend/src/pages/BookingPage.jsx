@@ -4,11 +4,10 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { eventTypes, bookings, payments } from '../api/client';
 import RazorpayPayment from '../components/RazorpayPayment';
-import { formatTimeLocal, getUserTimezone } from '../utils/datetime';
+import { formatTimeLocal, getUserTimezone, ALL_TIMEZONES } from '../utils/datetime';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Asia/Tokyo','Asia/Kolkata','Australia/Sydney'];
 
 export default function BookingPage() {
   const { username, slug } = useParams();
@@ -169,7 +168,7 @@ export default function BookingPage() {
                             <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{selectedEvent.duration} min · {selectedEvent.location_type.replace('_', ' ')}</div>
                           </div>
                           {selectedEvent.price && (
-                            <div style={{ fontSize: '15px', fontWeight: 700, color: '#10B981' }}>₹{selectedEvent.price}</div>
+                            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--success)' }}>₹{selectedEvent.price}</div>
                           )}
                         </div>
                       </div>
@@ -200,7 +199,7 @@ export default function BookingPage() {
                             <span>{ev.location_type.replace('_', ' ')}</span>
                           </div>
                         </div>
-                        {ev.price && <span style={{ fontSize: '15px', fontWeight: 700, color: '#10B981' }}>₹{ev.price}</span>}
+                        {ev.price && <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--success)' }}>₹{ev.price}</span>}
                       </button>
                     ))}
                   </div>
@@ -309,7 +308,7 @@ export default function BookingPage() {
                         {formatTimeLocal(selectedSlot.start, form.invitee_timezone)}
                       </div>
                       <form onSubmit={handleSubmit}>
-                        {error && <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '11px 14px', marginBottom: '14px', fontSize: '13px', color: '#991B1B' }}>{error}</div>}
+                        {error && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '11px 14px', marginBottom: '14px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>}
                         {[['invitee_name','Name','text','Jane Smith'],['invitee_email','Email','email','you@example.com']].map(([name, label, type, ph]) => (
                           <div key={name} style={{ marginBottom: '12px' }}>
                             <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '5px' }}>{label}</label>
@@ -319,7 +318,7 @@ export default function BookingPage() {
                         <div style={{ marginBottom: '12px' }}>
                           <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '5px' }}>Timezone</label>
                           <select name="invitee_timezone" value={form.invitee_timezone} onChange={(e) => setForm({ ...form, invitee_timezone: e.target.value })} className="field">
-                            {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
+                            {ALL_TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                           </select>
                         </div>
                         <div style={{ marginBottom: '14px' }}>
@@ -328,7 +327,7 @@ export default function BookingPage() {
                         </div>
                         {selectedEvent.custom_questions?.map((q, i) => (
                           <div key={i} style={{ marginBottom: '12px' }}>
-                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '5px' }}>{q.label}{q.required && <span style={{ color: '#EF4444' }}> *</span>}</label>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '5px' }}>{q.label}{q.required && <span style={{ color: 'var(--danger)' }}> *</span>}</label>
                             {q.type === 'select' ? (
                               <select onChange={(e) => setForm({ ...form, custom_answers: { ...form.custom_answers, [q.label]: e.target.value } })} required={q.required} className="field">
                                 <option value="">Select&hellip;</option>

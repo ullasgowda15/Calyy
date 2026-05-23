@@ -93,7 +93,7 @@ export default function RazorpayPayment({ eventTypeId, bookingId, bookingData, p
       </div>
 
       {error && (
-        <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '11px 14px', marginBottom: '16px', fontSize: '13px', color: '#991B1B' }}>{error}</div>
+        <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '11px 14px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>
       )}
 
       <button onClick={handlePayNow} disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '15px', justifyContent: 'center' }}>

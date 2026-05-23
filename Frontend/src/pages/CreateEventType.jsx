@@ -33,7 +33,7 @@ function EventTypeForm({ form, setForm, questions, setQuestions, error, loading,
 
   return (
     <form onSubmit={onSubmit}>
-      {error && <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: '#991B1B' }}>{error}</div>}
+      {error && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>}
 
       <Section title="Basic details">
         <Field label="Event name">
@@ -117,7 +117,7 @@ function EventTypeForm({ form, setForm, questions, setQuestions, error, loading,
                   </label>
                 </div>
               </div>
-              <button type="button" onClick={() => removeQuestion(i)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: '#FEF2F2', border: '1px solid #FECACA', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: '2px' }}>
+              <button type="button" onClick={() => removeQuestion(i)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, marginTop: '2px' }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
               </button>
             </div>

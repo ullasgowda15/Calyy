@@ -45,8 +45,8 @@ export default function BookingConfirmed() {
 
       <div className="card fade-in" style={{ maxWidth: '440px', width: '100%', padding: '40px 32px', textAlign: 'center' }}>
         {/* Success animation */}
-        <div style={{ width: '64px', height: '64px', background: '#ECFDF5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '3px solid #A7F3D0' }}>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5"><path d="M5 13l4 4L19 7"/></svg>
+        <div style={{ width: '64px', height: '64px', background: 'var(--surface-success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', border: '3px solid var(--border-success)' }}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5"><path d="M5 13l4 4L19 7"/></svg>
         </div>
 
         <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 8px', letterSpacing: '-0.02em' }}>You're scheduled!</h1>

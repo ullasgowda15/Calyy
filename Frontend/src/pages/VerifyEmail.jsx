@@ -43,8 +43,8 @@ export default function VerifyEmail() {
       <div style={{ maxWidth: '420px', margin: '0 auto', padding: '48px 24px' }}>
         <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', marginBottom: '8px' }}>Verify Your Email</h1>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Enter the 6-digit code sent to {email || 'your email'}.</p>
-        {error && <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: '#991B1B' }}>{error}</div>}
-        {message && <div style={{ background: '#ECFDF5', border: '1px solid #A7F3D0', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: '#065F46' }}>{message}</div>}
+        {error && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>}
+        {message && <div style={{ background: 'var(--surface-success)', border: '1px solid var(--border-success)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-success)' }}>{message}</div>}
         {!message?.includes('successfully') ? (
           <form onSubmit={handleVerify}>
             <div style={{ marginBottom: '16px' }}>

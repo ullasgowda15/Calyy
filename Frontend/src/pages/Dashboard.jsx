@@ -217,20 +217,20 @@ export default function Dashboard() {
 
   const statItems = [
     { label: 'Total bookings', value: stats.total, color: 'var(--accent)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> },
-    { label: 'Upcoming', value: stats.upcoming, color: '#10B981', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
-    { label: 'Active event types', value: stats.active, color: '#8B5CF6', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> },
-    { label: 'Total revenue', value: `\u20B9${analytics.totalRevenue.toFixed(2)}`, color: '#10B981', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-    { label: 'Cancellation rate', value: `${analytics.cancellationRate}%`, color: '#EF4444', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-    { label: 'No-show rate', value: `${analytics.noShowRate}%`, color: '#F59E0B', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg> },
+    { label: 'Upcoming', value: stats.upcoming, color: 'var(--success)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
+    { label: 'Active event types', value: stats.active, color: 'var(--accent)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> },
+    { label: 'Total revenue', value: `\u20B9${analytics.totalRevenue.toFixed(2)}`, color: 'var(--success)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
+    { label: 'Cancellation rate', value: `${analytics.cancellationRate}%`, color: 'var(--danger)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
+    { label: 'No-show rate', value: `${analytics.noShowRate}%`, color: 'var(--warning)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg> },
   ];
 
   const pastStatItems = [
     { label: 'Past bookings', value: pastAnalytics.total, color: 'var(--accent)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-    { label: 'Completed', value: pastAnalytics.completed, color: '#10B981', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg> },
-    { label: 'Cancelled', value: pastAnalytics.cancelled, color: '#EF4444', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> },
-    { label: 'No-show', value: pastAnalytics.noShow, color: '#F59E0B', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> },
-    { label: 'Revenue', value: `\u20B9${pastAnalytics.paidRevenue.toFixed(2)}`, color: '#10B981', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-    { label: 'Completion rate', value: `${pastAnalytics.completionRate}%`, color: '#8B5CF6', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> },
+    { label: 'Completed', value: pastAnalytics.completed, color: 'var(--success)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg> },
+    { label: 'Cancelled', value: pastAnalytics.cancelled, color: 'var(--danger)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> },
+    { label: 'No-show', value: pastAnalytics.noShow, color: 'var(--warning)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> },
+    { label: 'Revenue', value: `\u20B9${pastAnalytics.paidRevenue.toFixed(2)}`, color: 'var(--success)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
+    { label: 'Completion rate', value: `${pastAnalytics.completionRate}%`, color: 'var(--accent)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> },
   ];
 
   const mainContent = (
@@ -260,16 +260,16 @@ export default function Dashboard() {
       </div>
 
       {subStatus && !subStatus.is_subscribed && (
-        <div style={{ background: '#FEF2F2', border: '1.5px solid #FECACA', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-          <p style={{ fontSize: '13px', color: '#991B1B', flex: 1, margin: 0 }}>Your subscription has expired — booking links are disabled. <Link to="/settings" style={{ color: '#991B1B', fontWeight: 600 }}>Resubscribe</Link> to re-enable them.</p>
+        <div style={{ background: 'var(--surface-error)', border: '1.5px solid var(--border-error)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <p style={{ fontSize: '13px', color: 'var(--text-error)', flex: 1, margin: 0 }}>Your subscription has expired — booking links are disabled. <Link to="/settings" style={{ color: 'var(--text-error)', fontWeight: 600 }}>Resubscribe</Link> to re-enable them.</p>
         </div>
       )}
       {subStatus && subStatus.is_subscribed && subStatus.subscription_status === 'free_trial' && subStatus.trial_ends_at && new Date(subStatus.trial_ends_at) > new Date() && (
-        <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <p style={{ fontSize: '13px', color: '#92400E', flex: 1, margin: 0 }}>
-            Free trial ends {new Date(subStatus.trial_ends_at).toLocaleDateString()} — <Link to="/settings" style={{ color: '#92400E', fontWeight: 600 }}>subscribe</Link> to keep your booking links active.
+        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>
+            Free trial ends {new Date(subStatus.trial_ends_at).toLocaleDateString()} — <Link to="/settings" style={{ color: 'var(--text-info)', fontWeight: 600 }}>subscribe</Link> to keep your booking links active.
           </p>
         </div>
       )}
@@ -277,10 +277,10 @@ export default function Dashboard() {
         const daysLeft = Math.ceil((new Date(subStatus.subscribed_until) - new Date()) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0 && daysLeft <= 14) {
           return (
-            <div style={{ background: '#EFF6FF', border: '1.5px solid #BFDBFE', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              <p style={{ fontSize: '13px', color: '#1E40AF', flex: 1, margin: 0 }}>
-                Your subscription ends in {daysLeft} day{daysLeft > 1 ? 's' : ''} — <Link to="/settings" style={{ color: '#1E40AF', fontWeight: 600 }}>renew</Link> to avoid interruption.
+            <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>
+                Your subscription ends in {daysLeft} day{daysLeft > 1 ? 's' : ''} — <Link to="/settings" style={{ color: 'var(--text-info)', fontWeight: 600 }}>renew</Link> to avoid interruption.
               </p>
             </div>
           );
@@ -288,10 +288,12 @@ export default function Dashboard() {
         return null;
       })()}
       {!googleConnected && (
-        <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97706" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <p style={{ fontSize: '13px', color: '#92400E', flex: 1, margin: 0 }}>Connect Google Calendar to sync bookings and check for conflicts automatically.</p>
-          <Link to="/settings" className="btn btn-sm" style={{ background: '#D97706', color: '#fff', border: 'none' }}>Connect</Link>
+        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>Connect Google Calendar to sync bookings and check for conflicts automatically.</p>
+          <Link to="/settings" className="btn btn-sm" style={{ background: 'var(--surface-2)', color: 'var(--text-secondary)', border: '1px solid var(--border)', fontWeight: 600 }}
+            onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
+            onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-2)'}>Connect</Link>
         </div>
       )}
 
@@ -336,7 +338,7 @@ export default function Dashboard() {
         <div className="card" style={{ marginBottom: '20px', overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }} className="pulse-dot" />
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }} className="pulse-dot" />
               <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>Today's Schedule</h2>
             </div>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{todaysBookings.length} {todaysBookings.length === 1 ? 'booking' : 'bookings'}</span>
@@ -367,9 +369,9 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
-                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: 'var(--surface-success)', color: 'var(--text-success)', border: '1px solid var(--border-success)', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: 'var(--surface-warning)', color: 'var(--text-warning)', border: '1px solid var(--border-warning)', fontSize: '11px' }}>No-show</button>}
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: 'var(--surface-info)', color: 'var(--text-info)', border: '1px solid var(--border-info)', fontSize: '11px' }}>Refund</button>}
                             {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}
@@ -429,9 +431,9 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
-                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: 'var(--surface-success)', color: 'var(--text-success)', border: '1px solid var(--border-success)', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: 'var(--surface-warning)', color: 'var(--text-warning)', border: '1px solid var(--border-warning)', fontSize: '11px' }}>No-show</button>}
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: 'var(--surface-info)', color: 'var(--text-info)', border: '1px solid var(--border-info)', fontSize: '11px' }}>Refund</button>}
                             {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}
@@ -501,9 +503,9 @@ export default function Dashboard() {
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: '#ECFDF5', color: '#065F46', border: '1px solid #A7F3D0', fontSize: '11px' }}>Complete</button>}
-                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A', fontSize: '11px' }}>No-show</button>}
-                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: '#EFF6FF', color: '#1E40AF', border: '1px solid #BFDBFE', fontSize: '11px' }}>Refund</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'completed')} className="btn btn-sm" style={{ background: 'var(--surface-success)', color: 'var(--text-success)', border: '1px solid var(--border-success)', fontSize: '11px' }}>Complete</button>}
+                            {isMeetingOver(b) && <button onClick={() => handleStatusUpdate(b.id, 'no_show')} className="btn btn-sm" style={{ background: 'var(--surface-warning)', color: 'var(--text-warning)', border: '1px solid var(--border-warning)', fontSize: '11px' }}>No-show</button>}
+                            {b.payment_status === 'paid' && <button onClick={() => handleRefund(b.id)} className="btn btn-sm" style={{ background: 'var(--surface-info)', color: 'var(--text-info)', border: '1px solid var(--border-info)', fontSize: '11px' }}>Refund</button>}
                             {!isMeetingOver(b) && <button onClick={() => handleHostCancel(b.id)} className="btn btn-danger btn-sm" style={{ fontSize: '11px' }}>Cancel</button>}
                           </>
                         )}

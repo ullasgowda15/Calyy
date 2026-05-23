@@ -1,13 +1,22 @@
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+import pytz
+
+VALID_TIMEZONES = pytz.all_timezones
+
+
+def validate_timezone(value):
+    import django.core.exceptions
+    if value not in VALID_TIMEZONES:
+        raise django.core.exceptions.ValidationError(f'"{value}" is not a valid timezone.')
 
 
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
     username = models.SlugField(unique=True, max_length=60, error_messages={'invalid': 'Enter a valid username consisting of letters, numbers, underscores or hyphens.'})
-    timezone = models.CharField(max_length=64, default='UTC')
+    timezone = models.CharField(max_length=64, default='UTC', validators=[validate_timezone])
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
 

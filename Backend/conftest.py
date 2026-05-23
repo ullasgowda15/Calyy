@@ -8,6 +8,7 @@ from decimal import Decimal
 @pytest.fixture
 def create_user(db):
     from accounts.models import User
+    from django.utils import timezone as dj_tz
 
     def _create_user(
         email='host@test.com',
@@ -16,6 +17,8 @@ def create_user(db):
         timezone='UTC',
         **kwargs
     ):
+        kwargs.setdefault('subscription_status', 'free_trial')
+        kwargs.setdefault('trial_started_at', dj_tz.now())
         user = User.objects.create_user(
             email=email,
             username=username,

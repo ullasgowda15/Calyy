@@ -26,6 +26,7 @@ import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import ReschedulePage from './pages/ReschedulePage';
 import VerifyEmail from './pages/VerifyEmail';
+import HowItWorks from './pages/HowItWorks';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminVerify2FA from './pages/admin/AdminVerify2FA';
@@ -72,6 +73,7 @@ export default function App() {
               <Route path="/terms" element={<Terms />} />
               <Route path="/reschedule/:rescheduleToken" element={<ReschedulePage />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/how-it-works" element={<HowItWorks />} />
               <Route path="/adkrish/login" element={<AdminLogin />} />
               <Route path="/adkrish/verify-2fa" element={<AdminVerify2FA />} />
               <Route path="/adkrish" element={<AdminGuard><AdminLayout /></AdminGuard>}>

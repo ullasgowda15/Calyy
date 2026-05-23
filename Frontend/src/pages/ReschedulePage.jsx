@@ -91,9 +91,9 @@ export default function ReschedulePage() {
 
           {/* Error */}
           {status === 'error' && (
-            <div style={{ background: 'var(--surface)', borderRadius: '16px', border: '1px solid #FECACA', padding: '40px 32px', textAlign: 'center' }}>
-              <div style={{ width: '48px', height: '48px', background: '#FEF2F2', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
+            <div style={{ background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--border-error)', padding: '40px 32px', textAlign: 'center' }}>
+              <div style={{ width: '48px', height: '48px', background: 'var(--surface-error)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>
               </div>
               <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)', margin: '0 0 6px' }}>Link invalid or expired</h2>
               <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 20px', lineHeight: 1.5 }}>{error}</p>
@@ -103,12 +103,12 @@ export default function ReschedulePage() {
 
           {/* Success */}
           {status === 'done' && (
-            <div style={{ background: 'var(--surface)', borderRadius: '16px', border: '1px solid #A7F3D0', padding: '48px 32px', textAlign: 'center' }}>
-              <div style={{ width: '56px', height: '56px', background: '#ECFDF5', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+            <div style={{ background: 'var(--surface)', borderRadius: '16px', border: '1px solid var(--border-success)', padding: '48px 32px', textAlign: 'center' }}>
+              <div style={{ width: '56px', height: '56px', background: 'var(--surface-success)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2.5"><path d="M20 6L9 17l-5-5"/></svg>
               </div>
-              <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '20px', color: '#065F46', margin: '0 0 6px' }}>Booking rescheduled!</h2>
-              <p style={{ fontSize: '14px', color: '#047857', margin: '0 0 24px' }}>A new confirmation email has been sent.</p>
+              <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '20px', color: 'var(--text-success)', margin: '0 0 6px' }}>Booking rescheduled!</h2>
+              <p style={{ fontSize: '14px', color: 'var(--success)', margin: '0 0 24px' }}>A new confirmation email has been sent.</p>
               <button onClick={() => navigate('/')} className="btn btn-primary btn-sm">Go home</button>
             </div>
           )}
@@ -219,7 +219,7 @@ export default function ReschedulePage() {
                         </div>
 
                         {error && (
-                          <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '8px', padding: '10px 12px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: '#991B1B' }}>
+                          <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '8px', padding: '10px 12px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-error)' }}>
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ flexShrink: 0 }}><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
                             {error}
                           </div>

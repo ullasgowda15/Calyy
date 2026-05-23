@@ -104,7 +104,7 @@ export default function Home() {
                   Get started free
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </Link>
-                <a href="#features" className="btn btn-ghost btn-lg">See how it works</a>
+                <Link to="/how-it-works" className="btn btn-ghost btn-lg">See how it works</Link>
               </div>
             </div>
 
@@ -171,7 +171,7 @@ export default function Home() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ display: 'flex' }}>
                 {brandColors.slice(0,5).map((c,i) => (
-                  <div key={i} style={{ width: '26px', height: '26px', borderRadius: '50%', background: c, border: '2px solid var(--surface)', marginLeft: i > 0 ? '-8px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', color: '#fff', fontWeight: 700 }}>
+                  <div key={i} style={{ width: '32px', height: '32px', borderRadius: '50%', background: c, border: '2px solid var(--surface)', marginLeft: i > 0 ? '-10px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#fff', fontWeight: 700, boxShadow: '0 0 10px rgba(0,0,0,0.15)' }}>
                     {String.fromCharCode(65 + i)}
                   </div>
                 ))}
@@ -187,7 +187,7 @@ export default function Home() {
       </section>
 
       {/* Features */}
-      <section id="features" style={{ padding: '80px 24px' }}>
+      <section id="features" style={{ padding: '80px 24px', background: 'var(--surface-2)' }}>
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -214,7 +214,7 @@ export default function Home() {
       </section>
 
       {/* How it works */}
-      <section style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '80px 24px' }}>
+      <section style={{ padding: '80px 24px', background: 'var(--surface)' }}>
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -242,7 +242,7 @@ export default function Home() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" style={{ padding: '80px 24px' }}>
+      <section id="pricing" style={{ padding: '80px 24px', background: 'var(--surface-2)' }}>
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
@@ -299,7 +299,7 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '80px 24px' }}>
+      <section style={{ padding: '80px 24px', background: 'var(--surface)' }}>
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 40px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Loved by thousands</h2>
@@ -325,8 +325,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* FAQ */}
+      <section style={{ padding: '60px 24px', background: 'var(--surface-2)' }}>
+        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+            <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(24px, 2.5vw, 30px)', color: 'var(--text-primary)', margin: '0 0 8px', letterSpacing: '-0.02em' }}>Frequently asked questions</h2>
+            <p style={{ fontSize: '16px', color: 'var(--text-secondary)' }}>Quick answers to common questions.</p>
+          </div>
+          <div style={{ borderTop: '1px solid var(--border)' }}>
+            {[
+              { q: 'How do invitees book a meeting?', a: 'They visit your public booking link, pick an event type, select an available time slot, fill in their details, and confirm. If the event has a price, they pay first.' },
+              { q: 'Can I sync with Google Calendar?', a: 'Yes. Go to Settings and connect your Google Calendar. Events you create on Caly will automatically appear in your Google Calendar and vice versa.' },
+              { q: 'What payment methods are supported?', a: 'Payments are processed through Razorpay. Invitees can pay via UPI, credit/debit cards, net banking, and popular Indian wallets.' },
+              { q: 'Can I customise my booking page?', a: 'Your booking page uses your name, username, and event type details. More customisation options are coming soon.' },
+              { q: 'Is there a mobile app?', a: 'Not yet — but the web app is fully responsive and works great on mobile browsers.' },
+            ].map((item, i) => (
+              <details key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                <summary style={{ padding: '18px 0', cursor: 'pointer', fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', listStyle: 'none', display: 'flex', alignItems: 'center', gap: '10px', userSelect: 'none' }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2" className="faq-chevron" style={{ flexShrink: 0, transition: 'transform 0.2s' }}>
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                  {item.q}
+                </summary>
+                <div style={{ padding: '0 0 18px 26px', fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{item.a}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section style={{ padding: '80px 24px' }}>
+      <section style={{ padding: '80px 24px', background: 'var(--surface)' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div className="card" style={{ padding: '56px 40px', background: 'var(--accent)', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Start scheduling smarter today</h2>
