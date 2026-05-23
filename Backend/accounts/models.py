@@ -6,7 +6,7 @@ from django.db import models
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
-    username = models.SlugField(unique=True, max_length=60)
+    username = models.SlugField(unique=True, max_length=60, error_messages={'invalid': 'Enter a valid username consisting of letters, numbers, underscores or hyphens.'})
     timezone = models.CharField(max_length=64, default='UTC')
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
