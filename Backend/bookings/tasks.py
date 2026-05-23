@@ -3,11 +3,18 @@ from django.conf import settings
 import logging
 import resend
 import requests
+import pytz
 
 from .email_templates import HTML_WRAP, detail_rows, detail_table
 
 logger = logging.getLogger(__name__)
 resend.api_key = settings.RESEND_API_KEY
+
+
+def _format_dt(dt, tz_name):
+    tz = pytz.timezone(tz_name)
+    local = dt.astimezone(tz)
+    return local.strftime('%A, %B %d %Y at %I:%M %p') + f' {local.strftime("%Z")}'
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3, retry_backoff=True, retry_backoff_max=300, retry_jitter=True)
@@ -21,12 +28,13 @@ def send_booking_confirmation(booking_id: str):
 
     host = booking.event_type.host
     host_name = host.get_full_name() or host.username
-    dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
+    invitee_tz = booking.invitee_timezone or 'UTC'
+    host_tz = host.timezone or 'UTC'
 
     invitee_rows = detail_rows([
         ('Event', booking.event_type.name),
         ('With', host_name),
-        ('When', f'{dt} UTC'),
+        ('When', _format_dt(booking.start_datetime, invitee_tz)),
         ('Duration', f'{booking.event_type.duration} min'),
         ('Location', booking.event_type.location_type.upper()),
     ])
@@ -49,7 +57,7 @@ def send_booking_confirmation(booking_id: str):
     host_rows = detail_rows([
         ('From', f'{booking.invitee_name} ({booking.invitee_email})'),
         ('Event', booking.event_type.name),
-        ('When', f'{dt} UTC'),
+        ('When', _format_dt(booking.start_datetime, host_tz)),
         ('Notes', booking.notes or 'None'),
     ])
     host_body = f'''<p style="margin:0 0 20px">Hi {host_name},</p>
@@ -80,10 +88,10 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
     if booking.status != 'confirmed':
         return
 
-    dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
+    tz_name = booking.invitee_timezone or 'UTC'
     rows = detail_rows([
         ('Event', booking.event_type.name),
-        ('When', f'{dt} UTC'),
+        ('When', _format_dt(booking.start_datetime, tz_name)),
         ('Location', booking.event_type.location_type.upper()),
     ])
     body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
@@ -109,10 +117,10 @@ def send_cancellation_email(booking_id: str, reason: str = ''):
     except Booking.DoesNotExist:
         return
 
-    dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
+    tz_name = booking.invitee_timezone or 'UTC'
     items = [
         ('Event', booking.event_type.name),
-        ('Original time', f'{dt} UTC'),
+        ('Original time', _format_dt(booking.start_datetime, tz_name)),
     ]
     if reason:
         items.append(('Reason', reason))
@@ -144,11 +152,11 @@ def send_no_show_email(booking_id: str):
 
     host = booking.event_type.host
     host_name = host.get_full_name() or host.username
-    dt = booking.start_datetime.strftime('%A, %B %d %Y at %I:%M %p')
+    tz_name = booking.invitee_timezone or 'UTC'
     rows = detail_rows([
         ('Event', booking.event_type.name),
         ('With', host_name),
-        ('Scheduled', f'{dt} UTC'),
+        ('Scheduled', _format_dt(booking.start_datetime, tz_name)),
     ])
     body = f'''<p style="margin:0 0 20px">Hi <strong>{booking.invitee_name}</strong>,</p>
 <p style="margin:0 0 20px;font-size:16px;color:#dc2626;font-weight:600">Marked as no-show</p>
