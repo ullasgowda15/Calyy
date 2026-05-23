@@ -44,7 +44,7 @@ def send_booking_confirmation(booking_id: str):
 <p style="margin:0;font-size:13px;color:#999">
 <a href="{settings.FRONTEND_URL}/reschedule/{booking.reschedule_token}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Reschedule</a>
 &middot;
-<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#999;text-decoration:none;font-weight:600">Cancel</a>
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#EF4444;text-decoration:none;font-weight:600">Cancel</a>
 </p>'''
     try:
         resend.Emails.send({
@@ -103,7 +103,7 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
 <p style="margin:0;font-size:13px;color:#999">
 <a href="{settings.FRONTEND_URL}/reschedule/{booking.reschedule_token}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Reschedule</a>
 &middot;
-<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#999;text-decoration:none;font-weight:600">Cancel</a>
+<a href="{settings.BASE_URL}/api/bookings/{booking.id}/cancel/?token={booking.cancel_token}" style="color:#EF4444;text-decoration:none;font-weight:600">Cancel</a>
 </p>'''
     try:
         resend.Emails.send({
