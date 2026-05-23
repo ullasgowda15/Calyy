@@ -18,8 +18,8 @@ export function ToastProvider({ children }) {
   };
 
   const colors = {
-    success: { bg: '#ECFDF5', border: '#A7F3D0', text: '#065F46', icon: '#10B981' },
-    error: { bg: '#FEF2F2', border: '#FECACA', text: '#991B1B', icon: '#EF4444' },
+    success: { bg: 'var(--surface-success)', border: 'var(--border-success)', text: 'var(--text-success)', icon: 'var(--success)' },
+    error: { bg: 'var(--surface-error)', border: 'var(--border-error)', text: 'var(--text-error)', icon: 'var(--danger)' },
     info: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF', icon: '#3B82F6' },
   };
 

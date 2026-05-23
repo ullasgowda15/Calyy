@@ -12,7 +12,11 @@ resend.api_key = settings.RESEND_API_KEY
 
 
 def _format_dt(dt, tz_name):
-    tz = pytz.timezone(tz_name)
+    try:
+        tz = pytz.timezone(tz_name)
+    except pytz.UnknownTimeZoneError:
+        logger.warning(f'Unknown timezone "{tz_name}" in email, falling back to UTC')
+        tz = pytz.utc
     local = dt.astimezone(tz)
     return local.strftime('%A, %B %d %Y at %I:%M %p') + f' {local.strftime("%Z")}'
 

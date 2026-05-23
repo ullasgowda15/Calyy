@@ -3,9 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { auth } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
-import { getUserTimezone, resolveTimezone } from '../utils/datetime';
-
-const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
+import { getUserTimezone, resolveTimezone, ALL_TIMEZONES } from '../utils/datetime';
 
 export default function Profile() {
   const { user, loadProfile, logout } = useAuth();
@@ -148,8 +146,8 @@ export default function Profile() {
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
                     <div style={{ position: 'relative' }}>
                       <input name="username" value={profile.username} onChange={handleProfileChange} className="field"
-                        style={{ borderColor: usernameAvailable === true ? '#10B981' : usernameAvailable === false ? '#EF4444' : undefined, paddingRight: '90px' }} />
-                      <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '11px', fontWeight: 600, color: checkingUsername ? 'var(--text-muted)' : usernameAvailable === true ? '#10B981' : usernameAvailable === false ? '#EF4444' : 'transparent' }}>
+                        style={{ borderColor: usernameAvailable === true ? 'var(--success)' : usernameAvailable === false ? 'var(--danger)' : undefined, paddingRight: '90px' }} />
+                      <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '11px', fontWeight: 600, color: checkingUsername ? 'var(--text-muted)' : usernameAvailable === true ? 'var(--success)' : usernameAvailable === false ? 'var(--danger)' : 'transparent' }}>
                         {checkingUsername ? 'Checking…' : usernameAvailable === true ? '✓ Available' : usernameAvailable === false ? '✗ Taken' : ''}
                       </span>
                     </div>
@@ -157,7 +155,7 @@ export default function Profile() {
                   <div style={{ marginBottom: '14px' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Timezone</label>
                     <select name="timezone" value={profile.timezone} onChange={handleProfileChange} className="field">
-                      {TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
+                      {ALL_TIMEZONES.map((tz) => <option key={tz} value={tz}>{tz}</option>)}
                     </select>
                     <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>Browser detects <strong>{getUserTimezone()}</strong>. This timezone is used for computing your availability.</div>
                   </div>

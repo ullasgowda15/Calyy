@@ -1,4 +1,5 @@
 import re
+import pytz
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 from .models import User
@@ -7,10 +8,16 @@ from .models import User
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, validators=[validate_password])
     username = serializers.CharField(max_length=60)
+    timezone = serializers.CharField()
 
     class Meta:
         model = User
         fields = ('email', 'username', 'password', 'timezone', 'phone')
+
+    def validate_timezone(self, value):
+        if value not in pytz.all_timezones:
+            raise serializers.ValidationError(f'"{value}" is not a valid timezone.')
+        return value
 
     def validate_username(self, value):
         if not re.match(r'^[a-zA-Z0-9_-]+\Z', value):
@@ -33,11 +40,18 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    timezone = serializers.CharField()
+
     class Meta:
         model = User
         fields = ('id', 'email', 'username', 'timezone', 'bio', 'avatar', 'first_name', 'last_name',
                   'phone', 'subscription_status', 'trial_started_at', 'subscribed_until')
         read_only_fields = ('id', 'email', 'subscription_status', 'trial_started_at', 'subscribed_until')
+
+    def validate_timezone(self, value):
+        if value not in pytz.all_timezones:
+            raise serializers.ValidationError(f'"{value}" is not a valid timezone.')
+        return value
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exclude(id=self.instance.id if self.instance else None).exists():

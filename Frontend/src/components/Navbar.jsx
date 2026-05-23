@@ -110,10 +110,10 @@ export default function Navbar() {
                     <button onClick={() => { setDropdownOpen(false); logout(); }}
                       style={{
                         width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '8px',
-                        fontSize: '13px', fontWeight: 500, color: 'var(--danger)', background: 'transparent',
+                        fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', background: 'transparent',
                         border: 'none', cursor: 'pointer', transition: 'background 0.1s',
                       }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = '#FEF2F2'}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >Sign out</button>
                   </div>

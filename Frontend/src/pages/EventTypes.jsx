@@ -95,7 +95,7 @@ export default function EventTypes() {
                         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{et.duration} min</span>
                         <span style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'var(--text-muted)' }} />
                         <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{locationIcons[et.location_type] || '📍'} {et.location_type.replace('_', ' ')}</span>
-                        {et.price && <span style={{ fontSize: '13px', fontWeight: 600, color: '#10B981' }}>₹{et.price}</span>}
+                        {et.price && <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--success)' }}>₹{et.price}</span>}
                       </div>
                     </div>
                     <label className="toggle" title={et.is_active ? 'Active — click to deactivate' : 'Inactive — click to activate'}>

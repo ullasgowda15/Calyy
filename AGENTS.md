@@ -18,7 +18,7 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 
 ## Progress
 ### Done
-- **34 backend tests passing** (events, accounts, bookings, integrations — payments test not discovered)
+- **96 backend tests passing** (accounts, events, bookings — run with `pytest`; `manage.py test` doesn't disable throttling)
 - **Frontend builds clean** (462KB JS, 15KB CSS)
 - **Redis + Celery running**: `docker compose up -d` for db + redis; Celery worker started with `--pool=solo` on Windows
 - **Google sign-in**: endpoint returns auth URL correctly; was failing because Django server was killed
@@ -58,9 +58,10 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 - **Login/Register/ForgotPassword**: all use same `Navbar` component as Home page
 
 ### Done (this session)
-- **Admin dashboard enhanced**: backend `admin_revenue` now returns `booking_revenue`, `platform_revenue`, `combined_revenue` (stacked), `per_user_revenue` breakdown, and support for `group=day|week|month` filter. Backend `admin_analytics` returns `bookings_by_week`, `revenue_by_week`, `top_users_by_bookings`, `top_users_by_revenue`.
-- **Frontend AdminDashboard.jsx**: new combined revenue chart (booking + platform stacked), per-user revenue breakdown table, daily/weekly/monthly group toggle alongside the days filter. Stat cards now show "Booking Revenue" and "Platform Revenue" separately.
-- **43 backend tests passing**, **Frontend builds clean** (914KB JS)
+- **96 tests all passing** (0 failures). Fixed two bugs preventing test suite from running clean:
+  - `bookings/serializers.py`: `pytz.utc.localize()` on timezone-aware datetime → strip tzinfo before localizing
+  - `conftest.py`: `create_user` fixture missing subscription → added `subscription_status='free_trial'` so `is_subscribed()` passes; fixed `timezone` param shadowing module
+- Tests must use `pytest` (reads `pytest.ini` → `core.test_settings` disables throttling); `manage.py test` uses `core.settings` with active throttling
 
 ### Blocked
 - Google Calendar token expired — user must re-connect

@@ -1,5 +1,5 @@
 import html
-from datetime import timedelta
+from datetime import datetime, timedelta
 from rest_framework import serializers
 from django.utils import timezone
 from .models import Booking
@@ -31,13 +31,13 @@ class BookingCreateSerializer(serializers.ModelSerializer):
         if timezone.is_naive(start):
             start = pytz.utc.localize(start)
 
-        target_date = start.date()
+        start_utc = start.astimezone(pytz.utc)
+        target_date = start_utc.date()
         available_slots = get_available_slots(event_type, target_date, event_type.host.timezone)
-        slot_starts = [s['start'] for s in available_slots]
-        if start.isoformat() not in slot_starts:
+        slot_parsed = [pytz.utc.localize(datetime.fromisoformat(s['start'].replace('Z', '+00:00')).replace(tzinfo=None)) for s in available_slots]
+        if start_utc not in slot_parsed:
             raise serializers.ValidationError('This time slot is no longer available.')
 
-        from datetime import timedelta
         data['event_type'] = event_type
         data['end_datetime'] = start + timedelta(minutes=event_type.duration)
         data['start_datetime'] = start

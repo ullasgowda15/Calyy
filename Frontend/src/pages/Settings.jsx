@@ -85,8 +85,8 @@ export default function Settings() {
             ) : googleStatus?.connected ? (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
                   </div>
                   <div>
                     <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Connected</div>
@@ -139,7 +139,7 @@ export default function Settings() {
                 {webhooks.map((w) => (
                   <div key={w.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: w.is_active ? '#10B981' : '#EF4444', flexShrink: 0 }} />
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: w.is_active ? 'var(--success)' : 'var(--danger)', flexShrink: 0 }} />
                       <span style={{ fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.url}</span>
                       <span style={{ fontSize: '11px', background: 'var(--surface-3)', color: 'var(--text-muted)', padding: '2px 8px', borderRadius: '99px', flexShrink: 0 }}>{w.event}</span>
                     </div>
@@ -163,7 +163,7 @@ export default function Settings() {
               } catch (err) { setPwdError(err.response?.data?.error || 'Failed to change password'); }
               finally { setPwdLoading(false); }
             }} style={{ maxWidth: '360px' }}>
-              {pwdError && <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '10px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: '#991B1B' }}>{pwdError}</div>}
+              {pwdError && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-error)' }}>{pwdError}</div>}
               <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Current password</label>
                 <input type="password" value={pwdForm.old_password} onChange={(e) => setPwdForm({...pwdForm, old_password: e.target.value})} required className="field" style={{ width: '100%', padding: '8px 12px', fontSize: '13px', boxSizing: 'border-box' }} />
@@ -271,8 +271,8 @@ function SubscriptionContent() {
       {sub?.is_subscribed ? (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#ECFDF5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
             </div>
             <div>
               <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
@@ -295,8 +295,8 @@ function SubscriptionContent() {
       ) : (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-error)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
             </div>
             <div>
               <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Expired</div>
