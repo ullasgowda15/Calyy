@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { auth, integrations } from '../api/client';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const BROWSER_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone;
 const TIMEZONES = ['UTC','America/New_York','America/Chicago','America/Denver','America/Los_Angeles','Europe/London','Europe/Paris','Europe/Berlin','Asia/Tokyo','Asia/Shanghai','Asia/Kolkata','Australia/Sydney','Pacific/Auckland','Africa/Cairo'];
@@ -159,6 +160,7 @@ export default function Register() {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 700px) { .auth-split { flex-direction: column !important; } }' }} />
+      <Footer />
     </div>
   );
 }

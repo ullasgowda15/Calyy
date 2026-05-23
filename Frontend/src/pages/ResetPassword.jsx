@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { auth } from '../api/client';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 export default function ResetPassword() {
   const { uidb64, token } = useParams();
@@ -94,6 +95,7 @@ export default function ResetPassword() {
         </div>
       </div>
       <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 700px) { .auth-split { flex-direction: column !important; } }' }} />
+      <Footer />
     </div>
   );
 }
