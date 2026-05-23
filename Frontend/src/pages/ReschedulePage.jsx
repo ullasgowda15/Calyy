@@ -202,16 +202,20 @@ export default function ReschedulePage() {
                       <div className="card" style={{ padding: '20px' }}>
                         <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '12px' }}>Available times</div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '16px' }}>
-                          {slots.map((slot, idx) => (
+                          {slots.map((slot, idx) => {
+                            const isSelected = selectedSlot?.start === slot.start;
+                            return (
                             <button key={idx} onClick={() => setSelectedSlot(slot)} style={{
-                              padding: '10px', border: '1.5px solid var(--border)', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', background: 'var(--surface)', color: 'var(--text-primary)', transition: 'all 0.15s',
+                              padding: '10px', border: `1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`, borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
+                              background: isSelected ? 'var(--accent)' : 'var(--surface)', color: isSelected ? '#fff' : 'var(--text-primary)', transition: 'all 0.15s',
                             }}
-                              onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; }}
-                              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--surface)'; }}
+                              onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; }}}
+                              onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--surface)'; }}}
                             >
                               {formatTimeLocal(slot.start, booking.invitee_timezone)}
                             </button>
-                          ))}
+                            );
+                          })}
                         </div>
 
                         {error && (
