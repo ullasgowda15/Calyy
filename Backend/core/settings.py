@@ -66,6 +66,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': env.db('DATABASE_URL', default='sqlite:///db.sqlite3')
 }
+db_url = env('DATABASE_URL', default='')
+if not DATABASES['default'].get('ENGINE') and db_url.startswith('postgres'):
+    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
 
 AUTH_USER_MODEL = 'accounts.User'
 
