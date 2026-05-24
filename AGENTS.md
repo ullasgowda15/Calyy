@@ -11,7 +11,7 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 - Frontend uses Vite 8 + React 19; oxc parser has issues with JS template literals inside `<style>` — use `dangerouslySetInnerHTML` instead
 - Celery on Windows requires `--pool=solo` to avoid `billiard` `PermissionError` crashes
 - `@import url(...)` cannot come after `@import "tailwindcss"` in CSS — use `<link>` tag for Google Fonts instead
-- `docker-compose.yml` is in `Backend/` directory, not project root
+- Production `docker-compose.yml` is at project root (DO deploy); `Backend/docker-compose.yml` is for local dev only
 - `calyenv` venv is at project root (`Caly/calyenv/`), not inside `Backend/`
 - Razorpay amounts in **paise** (`int(float(price) * 100)`)
 - Pricing displayed in INR (₹) only — USD option removed from currency dropdowns
