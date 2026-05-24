@@ -92,7 +92,9 @@ export default function Navbar() {
                     boxShadow: 'var(--shadow-lg)', padding: '6px', zIndex: 50,
                   }}>
                     {[
-                      { to: '/dashboard', label: 'Dashboard' },
+                      ...(user?.email_verified
+                        ? [{ to: '/dashboard', label: 'Dashboard' }]
+                        : [{ to: `/verify-email?email=${encodeURIComponent(user?.email || '')}`, label: 'Verify email' }]),
                       { to: '/profile', label: 'Profile' },
                       { to: '/settings', label: 'Settings' },
                     ].map((item) => (

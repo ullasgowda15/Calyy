@@ -49,6 +49,13 @@ export default function Dashboard() {
   const { user } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user && !user.email_verified) {
+      navigate(`/verify-email?email=${encodeURIComponent(user.email)}`, { replace: true });
+    }
+  }, [user, navigate]);
+
   const [stats, setStats] = useState({ total: 0, upcoming: 0, active: 0 });
   const [analytics, setAnalytics] = useState({ totalRevenue: 0, cancellationRate: 0, noShowRate: 0 });
   const [allBookings, setAllBookings] = useState([]);
