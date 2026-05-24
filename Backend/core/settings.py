@@ -65,8 +65,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
+from django.core.exceptions import ImproperlyConfigured
 from urllib.parse import urlparse
-_db_url = env('DATABASE_URL', default='sqlite:///db.sqlite3')
+_db_url = env('DATABASE_URL', default='')
+if not _db_url:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            "DATABASE_URL environment variable is missing. "
+            "Please ensure you have added a PostgreSQL database plugin in Railway, "
+            "and defined `DATABASE_URL` in your backend service's Variables tab."
+        )
+    # Default to absolute path SQLite for local development
+    _db_url = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
+
 _p = urlparse(_db_url)
 if _p.scheme.startswith('postgres'):
     DATABASES = {
@@ -172,18 +183,29 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
 CORS_ALLOW_ALL_ORIGINS = env.bool('CORS_ALLOW_ALL_ORIGINS', default=False)
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', default=[
+raw_csrf_origins = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ])
 _frontend_url = env('FRONTEND_URL', default='')
-if _frontend_url and _frontend_url not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append(_frontend_url)
+if _frontend_url and _frontend_url not in raw_csrf_origins:
+    raw_csrf_origins.append(_frontend_url)
 _base_url = env('BASE_URL', default='')
-if _base_url and _base_url not in CSRF_TRUSTED_ORIGINS:
-    CSRF_TRUSTED_ORIGINS.append(_base_url)
+if _base_url and _base_url not in raw_csrf_origins:
+    raw_csrf_origins.append(_base_url)
+
+CSRF_TRUSTED_ORIGINS = []
+for origin in raw_csrf_origins:
+    origin = origin.strip()
+    if not origin:
+        continue
+    if not (origin.startswith('http://') or origin.startswith('https://')):
+        # Automatically prepend https:// if scheme is missing
+        CSRF_TRUSTED_ORIGINS.append(f"https://{origin}")
+    else:
+        CSRF_TRUSTED_ORIGINS.append(origin)
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
