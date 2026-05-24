@@ -64,9 +64,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-import re
 _db_url = env('DATABASE_URL', default='sqlite:///db.sqlite3')
-_m = re.match(r'postgres(?:ql)?://(.+):(.+)@(.+):(\d+)/(.+)', _db_url)
+_m = re.match(r'postgres(?:ql)?://([^:]+):([^@]+)@([^:]+):(\d+)/(.+)', _db_url)
 if _m:
     DATABASES = {
         'default': {
