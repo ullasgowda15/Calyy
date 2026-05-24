@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 import environ
 
@@ -63,12 +64,22 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'core.wsgi.application'
 
-DATABASES = {
-    'default': env.db('DATABASE_URL', default='sqlite:///db.sqlite3')
-}
-db_url = env('DATABASE_URL', default='')
-if not DATABASES['default'].get('ENGINE') and db_url.startswith('postgres'):
-    DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql'
+import re
+_db_url = env('DATABASE_URL', default='sqlite:///db.sqlite3')
+_m = re.match(r'postgres(?:ql)?://(.+):(.+)@(.+):(\d+)/(.+)', _db_url)
+if _m:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': _m.group(5),
+            'USER': _m.group(1),
+            'PASSWORD': _m.group(2),
+            'HOST': _m.group(3),
+            'PORT': _m.group(4),
+        }
+    }
+else:
+    DATABASES = {'default': env.db('DATABASE_URL', default='sqlite:///db.sqlite3')}
 
 AUTH_USER_MODEL = 'accounts.User'
 
