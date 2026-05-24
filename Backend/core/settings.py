@@ -67,15 +67,16 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 from django.core.exceptions import ImproperlyConfigured
 from urllib.parse import urlparse
+import sys
 _db_url = env('DATABASE_URL', default='')
 if not _db_url:
-    if not DEBUG:
+    if not DEBUG and 'collectstatic' not in sys.argv:
         raise ImproperlyConfigured(
             "DATABASE_URL environment variable is missing. "
             "Please ensure you have added a PostgreSQL database plugin in Railway, "
             "and defined `DATABASE_URL` in your backend service's Variables tab."
         )
-    # Default to absolute path SQLite for local development
+    # Default to absolute path SQLite for local development or collectstatic build
     _db_url = 'sqlite:///' + str(BASE_DIR / 'db.sqlite3')
 
 _p = urlparse(_db_url)
@@ -183,13 +184,17 @@ CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS', default=[
 CORS_ALLOW_ALL_ORIGINS = env.bool('CORS_ALLOW_ALL_ORIGINS', default=False)
 CORS_ALLOW_CREDENTIALS = True
 
+# auto-add FRONTEND_URL to CORS
+_frontend_url = env('FRONTEND_URL', default='')
+if _frontend_url and _frontend_url not in CORS_ALLOWED_ORIGINS:
+    CORS_ALLOWED_ORIGINS.append(_frontend_url)
+
 raw_csrf_origins = env.list('CSRF_TRUSTED_ORIGINS', default=[
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://localhost:3000',
     'http://127.0.0.1:3000',
 ])
-_frontend_url = env('FRONTEND_URL', default='')
 if _frontend_url and _frontend_url not in raw_csrf_origins:
     raw_csrf_origins.append(_frontend_url)
 _base_url = env('BASE_URL', default='')
