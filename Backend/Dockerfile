@@ -13,6 +13,7 @@ COPY Backend/ .
 
 ARG SECRET_KEY=dummy-build-key
 ENV SECRET_KEY=${SECRET_KEY}
+ENV DEBUG=True
 RUN python manage.py collectstatic --noinput
 
 RUN chmod +x entrypoint.sh
