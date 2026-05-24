@@ -77,10 +77,11 @@ export default function Register() {
       navigate(`/verify-email?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
       const data = err.response?.data;
-      if (typeof data === 'object') {
-        setError(Object.values(data).flat().join(', ') || 'Registration failed');
+      if (typeof data === 'object' && data !== null) {
+        const flat = (o) => Object.values(o).map(v => typeof v === 'object' && v !== null ? flat(v) : String(v)).join(', ');
+        setError(flat(data) || 'Registration failed');
       } else {
-        setError('Registration failed. Please try again.');
+        setError(typeof data === 'string' ? data : 'Registration failed');
       }
     } finally {
       setLoading(false);

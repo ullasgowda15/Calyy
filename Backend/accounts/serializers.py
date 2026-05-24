@@ -19,6 +19,16 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(f'"{value}" is not a valid timezone.')
         return value
 
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError('A user with this email already exists.')
+        return value
+
+    def validate_phone(self, value):
+        if value and User.objects.filter(phone=value).exists():
+            raise serializers.ValidationError('This phone number is already registered.')
+        return value
+
     def validate_username(self, value):
         if not re.match(r'^[a-zA-Z0-9_-]+\Z', value):
             raise serializers.ValidationError('Username can only contain letters, numbers, underscores, and hyphens.')

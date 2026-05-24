@@ -155,7 +155,12 @@ export default function CreateEventType() {
       navigate('/event-types');
     } catch (err) {
       const d = err.response?.data;
-      setError(d ? Object.values(d).flat().join(', ') : 'Failed to create event type');
+      if (d && typeof d === 'object') {
+        const flat = (o) => Object.values(o).map(v => typeof v === 'object' && v !== null ? flat(v) : String(v)).join(', ');
+        setError(flat(d));
+      } else {
+        setError(d ? String(d) : 'Failed to create event type');
+      }
     } finally { setLoading(false); }
   };
 
