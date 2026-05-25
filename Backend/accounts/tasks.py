@@ -24,7 +24,7 @@ def send_verification_otp(user_id: str, otp: str):
 <p style="margin:16px 0 0;font-size:13px;color:#999">If you did not create an account, you can ignore this email.</p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [user.email],
             'subject': subject,
             'html': HTML_WRAP.replace('{body}', html_body),
@@ -48,7 +48,7 @@ def send_password_reset_email(email: str, reset_link: str):
     subject = 'Reset your Caly password'
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [email],
             'subject': subject,
             'html': HTML_WRAP.replace('{body}', html_body),

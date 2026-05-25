@@ -52,7 +52,7 @@ def send_booking_confirmation(booking_id: str):
 </p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.BOOKINGS_EMAIL,
             'to': [booking.invitee_email],
             'subject': f'Booking confirmed: {booking.event_type.name}',
             'html': HTML_WRAP.replace('{body}', invitee_body),
@@ -73,7 +73,7 @@ def send_booking_confirmation(booking_id: str):
     if host.email:
         try:
             resend.Emails.send({
-                'from': settings.DEFAULT_FROM_EMAIL,
+                'from': settings.BOOKINGS_EMAIL,
                 'to': [host.email],
                 'subject': f'New booking: {booking.invitee_name}',
                 'html': HTML_WRAP.replace('{body}', host_body),
@@ -111,7 +111,7 @@ def send_booking_reminder(booking_id: str, hours_before: int = 24):
 </p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [booking.invitee_email],
             'subject': f'Reminder: {booking.event_type.name} in {hours_before} hour{"s" if hours_before != 1 else ""}',
             'html': HTML_WRAP.replace('{body}', body),
@@ -144,7 +144,7 @@ def send_cancellation_email(booking_id: str, reason: str = ''):
 <a href="{settings.FRONTEND_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Schedule a meeting</a></p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [booking.invitee_email],
             'subject': f'Cancelled: {booking.event_type.name}',
             'html': HTML_WRAP.replace('{body}', body),
@@ -178,7 +178,7 @@ def send_no_show_email(booking_id: str):
 <a href="{settings.FRONTEND_URL}/book/{booking.event_type.host.username}/{booking.event_type.slug}/" style="color:#7C3AED;text-decoration:none;font-weight:600">Book a new time</a></p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [booking.invitee_email],
             'subject': f'Missed meeting: {booking.event_type.name}',
             'html': HTML_WRAP.replace('{body}', body),
@@ -219,7 +219,7 @@ def send_rescheduled_email(booking_id: str):
 </p>'''
     try:
         resend.Emails.send({
-            'from': settings.DEFAULT_FROM_EMAIL,
+            'from': settings.NOREPLY_EMAIL,
             'to': [booking.invitee_email],
             'subject': f'Rescheduled: {booking.event_type.name}',
             'html': HTML_WRAP.replace('{body}', invitee_body),
@@ -240,7 +240,7 @@ def send_rescheduled_email(booking_id: str):
     if host.email:
         try:
             resend.Emails.send({
-                'from': settings.DEFAULT_FROM_EMAIL,
+                'from': settings.BOOKINGS_EMAIL,
                 'to': [host.email],
                 'subject': f'Rescheduled: {booking.event_type.name}',
                 'html': HTML_WRAP.replace('{body}', host_body),
