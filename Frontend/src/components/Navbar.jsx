@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from './ThemeToggle';
 
-export default function Navbar() {
+export default function Navbar({ simple }) {
   const { isAuthenticated, user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,93 +49,96 @@ export default function Navbar() {
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <ThemeToggle />
 
-          {!isAuthenticated ? (
-            <>
-              <Link to="/login" className="btn btn-ghost btn-sm nav-login">Sign in</Link>
-              <Link to="/register" className="btn btn-primary btn-sm">Get started free</Link>
-            </>
-          ) : (
-            <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px',
-                  borderRadius: '10px', background: 'var(--surface-3)', border: '1.5px solid var(--border)',
-                  cursor: 'pointer', transition: 'background 0.15s',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--border)'}
-                onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
-              >
-                <div style={{
-                  width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '11px', fontWeight: 700, color: '#fff',
-                }}>
-                  {(user?.username || 'U')[0].toUpperCase()}
-                </div>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{user?.username}</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-              </button>
-              {dropdownOpen && (
-                <>
-                  <div onClick={() => setDropdownOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+          {!simple && (
+            !isAuthenticated ? (
+              <>
+                <Link to="/login" className="btn btn-ghost btn-sm nav-login">Sign in</Link>
+                <Link to="/register" className="btn btn-primary btn-sm">Get started free</Link>
+              </>
+            ) : (
+              <div style={{ position: 'relative' }}>
+                <button
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 10px',
+                    borderRadius: '10px', background: 'var(--surface-3)', border: '1.5px solid var(--border)',
+                    cursor: 'pointer', transition: 'background 0.15s',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.background = 'var(--border)'}
+                  onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
+                >
                   <div style={{
-                    position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '180px',
-                    background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '12px',
-                    boxShadow: 'var(--shadow-lg)', padding: '6px', zIndex: 50,
+                    width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: '11px', fontWeight: 700, color: '#fff',
                   }}>
-                    {[
-                      { to: '/dashboard', label: 'Dashboard' },
-                      { to: '/profile', label: 'Profile' },
-                      { to: '/settings', label: 'Settings' },
-                    ].map((item) => (
-                      <Link key={item.to} to={item.to} onClick={() => setDropdownOpen(false)}
+                    {(user?.username || 'U')[0].toUpperCase()}
+                  </div>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{user?.username}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                </button>
+                {dropdownOpen && (
+                  <>
+                    <div onClick={() => setDropdownOpen(false)} style={{ position: 'fixed', inset: 0, zIndex: 40 }} />
+                    <div style={{
+                      position: 'absolute', right: 0, top: 'calc(100% + 8px)', width: '180px',
+                      background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '12px',
+                      boxShadow: 'var(--shadow-lg)', padding: '6px', zIndex: 50,
+                    }}>
+                      {[
+                        { to: '/dashboard', label: 'Dashboard' },
+                        { to: '/profile', label: 'Profile' },
+                        { to: '/settings', label: 'Settings' },
+                      ].map((item) => (
+                        <Link key={item.to} to={item.to} onClick={() => setDropdownOpen(false)}
+                          style={{
+                            display: 'block', padding: '8px 12px', borderRadius: '8px',
+                            fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)',
+                            textDecoration: 'none', transition: 'background 0.1s',
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
+                          onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                        >{item.label}</Link>
+                      ))}
+                      <div style={{ height: '1px', background: 'var(--border)', margin: '6px 0' }} />
+                      <button onClick={() => { setDropdownOpen(false); logout(); }}
                         style={{
-                          display: 'block', padding: '8px 12px', borderRadius: '8px',
-                          fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)',
-                          textDecoration: 'none', transition: 'background 0.1s',
+                          width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '8px',
+                          fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', background: 'transparent',
+                          border: 'none', cursor: 'pointer', transition: 'background 0.1s',
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
                         onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                      >{item.label}</Link>
-                    ))}
-                    <div style={{ height: '1px', background: 'var(--border)', margin: '6px 0' }} />
-                    <button onClick={() => { setDropdownOpen(false); logout(); }}
-                      style={{
-                        width: '100%', textAlign: 'left', padding: '8px 12px', borderRadius: '8px',
-                        fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)', background: 'transparent',
-                        border: 'none', cursor: 'pointer', transition: 'background 0.1s',
-                      }}
-                      onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
-                      onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                    >Sign out</button>
-                  </div>
-                </>
-              )}
-            </div>
+                      >Sign out</button>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
           )}
 
-          {/* Mobile hamburger */}
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="nav-hamburger"
-            style={{
-              width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center',
-              justifyContent: 'center', background: 'var(--surface-3)', border: '1.5px solid var(--border)',
-              cursor: 'pointer', color: 'var(--text-primary)',
-            }}
-            aria-label="Toggle menu"
-          >
-            {menuOpen
-              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-            }
-          </button>
+          {!simple && (
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="nav-hamburger"
+              style={{
+                width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center',
+                justifyContent: 'center', background: 'var(--surface-3)', border: '1.5px solid var(--border)',
+                cursor: 'pointer', color: 'var(--text-primary)',
+              }}
+              aria-label="Toggle menu"
+            >
+              {menuOpen
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              }
+            </button>
+          )}
         </div>
       </div>
 
       {/* Mobile menu */}
-      {menuOpen && (
+      {menuOpen && !simple && (
         <div style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', padding: '12px 24px 16px' }} className="nav-mobile-menu">
           {!isAuthenticated && (
             <>

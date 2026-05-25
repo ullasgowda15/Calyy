@@ -39,7 +39,7 @@ export default function VerifyEmail() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)' }}>
-      <Navbar />
+      <Navbar simple />
       <div style={{ maxWidth: '420px', margin: '0 auto', padding: '48px 24px' }}>
         <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', marginBottom: '8px' }}>Verify Your Email</h1>
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '24px' }}>Enter the 6-digit code sent to {email || 'your email'}.</p>
