@@ -9,7 +9,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from django_ratelimit.decorators import ratelimit
 from google_auth_oauthlib.flow import Flow
-from .models import GoogleCalendarToken, WebhookSubscription
+from .models import GoogleCalendarToken, GoogleOAuthState, WebhookSubscription
 from .serializers import WebhookSubscriptionSerializer
 from bookings.tasks import sync_google_calendar_event
 
@@ -42,13 +42,17 @@ def _make_flow(state=None):
 @api_view(['GET'])
 @permission_classes([permissions.IsAuthenticated])
 def google_auth_url(request):
-    flow = _make_flow(state=str(request.user.id))
+    full_state = f"{request.user.id}:{secrets.token_urlsafe(32)}"
+    flow = _make_flow(state=full_state)
     auth_url, _ = flow.authorization_url(
         access_type='offline',
         include_granted_scopes='true',
         prompt='consent',
     )
-    request.session['google_code_verifier'] = flow.code_verifier
+    GoogleOAuthState.objects.update_or_create(
+        state_token=full_state,
+        defaults={'code_verifier': flow.code_verifier}
+    )
     return Response({'auth_url': auth_url})
 
 
@@ -56,14 +60,17 @@ def google_auth_url(request):
 @permission_classes([permissions.AllowAny])
 def google_register_url(request):
     nonce = secrets.token_urlsafe(32)
-    flow = _make_flow(state=f'register:{nonce}')
+    full_state = f'register:{nonce}'
+    flow = _make_flow(state=full_state)
     auth_url, _ = flow.authorization_url(
         access_type='offline',
         include_granted_scopes='true',
         prompt='consent',
     )
-    request.session['google_code_verifier'] = flow.code_verifier
-    request.session['google_register_nonce'] = nonce
+    GoogleOAuthState.objects.update_or_create(
+        state_token=full_state,
+        defaults={'code_verifier': flow.code_verifier}
+    )
     return Response({'auth_url': auth_url})
 
 
@@ -79,25 +86,26 @@ def google_callback(request):
         frontend_url = settings.FRONTEND_URL.rstrip('/')
         return redirect(f'{frontend_url}/login?error=google_auth_denied')
 
-    code_verifier = request.session.pop('google_code_verifier', None)
+    oauth_state = GoogleOAuthState.objects.filter(state_token=state).first()
+    if not oauth_state:
+        frontend_url = settings.FRONTEND_URL.rstrip('/')
+        return redirect(f'{frontend_url}/login?error=google_auth_failed')
+    code_verifier = oauth_state.code_verifier
+
     flow = _make_flow(state=state)
 
     try:
         flow.fetch_token(code=code, code_verifier=code_verifier)
-    except Exception as e:
+    except Exception:
         frontend_url = settings.FRONTEND_URL.rstrip('/')
         return redirect(f'{frontend_url}/login?error=google_auth_failed')
 
     credentials = flow.credentials
+    oauth_state.delete()
 
     from accounts.models import User
 
     if state.startswith('register:'):
-        nonce = request.session.pop('google_register_nonce', None)
-        reg_state = state[len('register:'):]
-        if not nonce or nonce != reg_state:
-            return Response({'error': 'Invalid state'}, status=400)
-
         userinfo_resp = requests.get(
             'https://www.googleapis.com/oauth2/v2/userinfo',
             headers={'Authorization': f'Bearer {credentials.token}'},
@@ -156,8 +164,9 @@ def google_callback(request):
         return redirect(f'{frontend_url}/auth/google-redirect?{params}')
 
     try:
-        user = User.objects.get(id=state)
-    except User.DoesNotExist:
+        uid = state.split(':')[0]
+        user = User.objects.get(id=uid)
+    except (User.DoesNotExist, ValueError, IndexError):
         return Response({'error': 'Invalid state'}, status=400)
 
     GoogleCalendarToken.objects.update_or_create(
