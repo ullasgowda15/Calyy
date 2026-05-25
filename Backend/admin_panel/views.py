@@ -89,7 +89,7 @@ def admin_setup_2fa(request):
     )
     uri = pyotp.TOTP(secret).provisioning_uri(
         name=request.user.email,
-        issuer_name='Caly Admin',
+        issuer_name='YourCaly Admin',
     )
     qr = qrcode.make(uri)
     buf = io.BytesIO()

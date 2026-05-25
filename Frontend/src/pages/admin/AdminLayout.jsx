@@ -20,7 +20,7 @@ export default function AdminLayout() {
       <aside style={{ width: '240px', flexShrink: 0, background: '#0F0F11', borderRight: '1px solid #1F1F23', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
         <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '15px', fontWeight: 700 }}>C</div>
-          <span style={{ color: '#fff', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em' }}>Caly Admin</span>
+          <span style={{ color: '#fff', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em' }}>YourCaly Admin</span>
         </div>
         <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
           {NAV.map((item) => {

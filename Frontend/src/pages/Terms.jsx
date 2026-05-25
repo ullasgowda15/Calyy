@@ -11,15 +11,15 @@ export default function Terms() {
         <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '28px' }}>Last updated: May 2026</p>
         <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: '1.8' }}>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>1. Acceptance of Terms</h2>
-          <p>By creating a Caly account, you agree to these terms. If you do not agree, do not use the service.</p>
+          <p>By creating a YourCaly account, you agree to these terms. If you do not agree, do not use the service.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>2. Description of Service</h2>
-          <p>Caly provides scheduling infrastructure, allowing users to create event types, manage availability, and accept bookings from invitees.</p>
+          <p>YourCaly provides scheduling infrastructure, allowing users to create event types, manage availability, and accept bookings from invitees.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>3. User Responsibilities</h2>
-          <p>You are responsible for maintaining the confidentiality of your account credentials and for all activity under your account. You agree not to use Caly for spam, fraud, or unlawful purposes.</p>
+          <p>You are responsible for maintaining the confidentiality of your account credentials and for all activity under your account. You agree not to use YourCaly for spam, fraud, or unlawful purposes.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>4. Payments & Refunds</h2>
-          <p>Paid bookings are processed via Razorpay. Refunds are at the host's discretion. Caly is not responsible for disputes between hosts and invitees.</p>
+          <p>Paid bookings are processed via Razorpay. Refunds are at the host's discretion. YourCaly is not responsible for disputes between hosts and invitees.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>5. Limitation of Liability</h2>
-          <p>Caly is provided "as is" without warranties. We are not liable for damages arising from use of the service.</p>
+          <p>YourCaly is provided "as is" without warranties. We are not liable for damages arising from use of the service.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>6. Changes</h2>
           <p>We may update these terms. Continued use after changes constitutes acceptance.</p>
         </div>

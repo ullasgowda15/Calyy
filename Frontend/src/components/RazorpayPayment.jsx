@@ -31,7 +31,7 @@ export default function RazorpayPayment({ eventTypeId, bookingId, bookingData, p
 
     const options = {
       key: order.key_id, amount: order.amount, currency: order.currency,
-      name: 'Caly', description: order.event_type_name, order_id: order.order_id,
+      name: 'YourCaly', description: order.event_type_name, order_id: order.order_id,
       prefill: { name: order.prefill?.name || '', email: order.prefill?.email || '' },
       theme: { color: '#2563EB' },
       modal: { ondismiss: () => { setLoading(false); onCancel?.(); } },

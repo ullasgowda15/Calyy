@@ -10,7 +10,7 @@ const features = [
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>,
-    title: 'Smart availability', desc: 'Set your hours once. Caly ensures you never get double-booked again.',
+    title: 'Smart availability', desc: 'Set your hours once. YourCaly ensures you never get double-booked again.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>,
@@ -31,8 +31,8 @@ const features = [
 ];
 
 const steps = [
-  { num: '01', title: 'Set your availability', desc: 'Tell Caly when you\'re free. Customize buffers, blackout dates, and max bookings per day.' },
-  { num: '02', title: 'Share your link', desc: 'Get a beautiful personal booking page at caly.app/yourname. Share it everywhere.' },
+  { num: '01', title: 'Set your availability', desc: 'Tell YourCaly when you\'re free. Customize buffers, blackout dates, and max bookings per day.' },
+  { num: '02', title: 'Share your link', desc: 'Get a beautiful personal booking page at yourcaly.com/yourname. Share it everywhere.' },
   { num: '03', title: 'Get booked', desc: 'Invitees pick a time that works. You get notified. Done.' },
 ];
 
@@ -43,7 +43,7 @@ const plans = [
 ];
 
 const testimonials = [
-  { initials: 'JD', name: 'Jane Doe', role: 'CEO, StartupCo', quote: 'Caly transformed how we schedule meetings. Our booking rate increased by 40% in the first month.' },
+  { initials: 'JD', name: 'Jane Doe', role: 'CEO, StartupCo', quote: 'YourCaly transformed how we schedule meetings. Our booking rate increased by 40% in the first month.' },
   { initials: 'MK', name: 'Mike Kim', role: 'Freelance Designer', quote: 'The automated reminders alone saved me hours of manual follow-up every week. Worth every rupee.' },
   { initials: 'SL', name: 'Sarah Lee', role: 'Sales Manager', quote: 'Setting up payment collection for consultations was effortless. It just works, every time.' },
 ];
@@ -97,7 +97,7 @@ export default function Home() {
                 <span style={{ color: 'var(--accent)' }}>for everyone.</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
-                Share your Caly link. Your invitees pick a time. Collect payment. All in one elegant flow.
+                Share your YourCaly link. Your invitees pick a time. Collect payment. All in one elegant flow.
               </p>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/register" className="btn btn-primary btn-lg">
@@ -116,7 +116,7 @@ export default function Home() {
                     {['#FF5F57','#FEBC2E','#28C840'].map((c,i) => <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: c }} />)}
                   </div>
                   <div style={{ flex: 1, height: '28px', background: 'var(--surface)', borderRadius: '6px', display: 'flex', alignItems: 'center', paddingLeft: '10px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                    caly.app/sarah-chen
+                    yourcaly.com/sarah-chen
                   </div>
                 </div>
                 <div style={{ padding: '24px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
@@ -176,7 +176,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>2,400+</strong> professionals use Caly</span>
+              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>2,400+</strong> professionals use YourCaly</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
@@ -303,7 +303,7 @@ export default function Home() {
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
           <div style={{ textAlign: 'center', marginBottom: '56px' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 40px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Loved by thousands</h2>
-            <p style={{ fontSize: '17px', color: 'var(--text-secondary)' }}>Join professionals who schedule smarter with Caly.</p>
+            <p style={{ fontSize: '17px', color: 'var(--text-secondary)' }}>Join professionals who schedule smarter with YourCaly.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
             {testimonials.map((t) => (
@@ -335,7 +335,7 @@ export default function Home() {
           <div style={{ borderTop: '1px solid var(--border)' }}>
             {[
               { q: 'How do invitees book a meeting?', a: 'They visit your public booking link, pick an event type, select an available time slot, fill in their details, and confirm. If the event has a price, they pay first.' },
-              { q: 'Can I sync with Google Calendar?', a: 'Yes. Go to Settings and connect your Google Calendar. Events you create on Caly will automatically appear in your Google Calendar and vice versa.' },
+              { q: 'Can I sync with Google Calendar?', a: 'Yes. Go to Settings and connect your Google Calendar. Events you create on YourCaly will automatically appear in your Google Calendar and vice versa.' },
               { q: 'What payment methods are supported?', a: 'Payments are processed through Razorpay. Invitees can pay via UPI, credit/debit cards, net banking, and popular Indian wallets.' },
               { q: 'Can I customise my booking page?', a: 'Your booking page uses your name, username, and event type details. More customisation options are coming soon.' },
               { q: 'Is there a mobile app?', a: 'Not yet — but the web app is fully responsive and works great on mobile browsers.' },
@@ -359,7 +359,7 @@ export default function Home() {
         <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div className="card" style={{ padding: '56px 40px', background: 'var(--accent)', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Start scheduling smarter today</h2>
-            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ professionals using Caly to save time and get paid for their time.</p>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ professionals using YourCaly to save time and get paid for their time.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/register" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '13px 28px',

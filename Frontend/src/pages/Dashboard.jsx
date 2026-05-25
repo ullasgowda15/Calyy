@@ -322,7 +322,7 @@ export default function Dashboard() {
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
             </div>
             <div style={{ flex: 1, minWidth: '200px' }}>
-              <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>Welcome to Caly!</h3>
+              <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>Welcome to YourCaly!</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0' }}>Create your first event type so people can book time with you.</p>
             </div>
             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>

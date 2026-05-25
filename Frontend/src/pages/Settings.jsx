@@ -112,7 +112,7 @@ export default function Settings() {
           </Section>
 
           {/* Platform Subscription */}
-          <Section title="Subscription" desc="Your Caly platform subscription plan.">
+          <Section title="Subscription" desc="Your YourCaly platform subscription plan.">
             <SubscriptionContent />
           </Section>
           {/* Webhooks */}
@@ -235,7 +235,7 @@ function SubscriptionContent() {
         key: key_id,
         amount,
         currency: 'INR',
-        name: 'Caly',
+        name: 'YourCaly',
         description: 'Monthly subscription',
         order_id,
         handler: async (response) => {

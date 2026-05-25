@@ -156,7 +156,7 @@ export default function Register() {
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
                 <input type="text" name="username" value={form.username} onChange={handleChange} required className="field" placeholder="your-username" />
-                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px', marginBottom: 0 }}>caly.app/{form.username || 'your-username'}</p>
+                <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '5px', marginBottom: 0 }}>yourcaly.com/{form.username || 'your-username'}</p>
               </div>
               <div style={{ marginBottom: '14px' }}>
                 <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>Password</label>

@@ -17,7 +17,7 @@ const steps = [
   {
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v16h16"/><polyline points="20 10 12 18 8 14"/></svg>,
     title: 'Share your booking link',
-    desc: 'Each event type gets a unique link like caly.app/your-username/meeting. Share it with clients, colleagues, or anyone who needs to book time with you.',
+    desc: 'Each event type gets a unique link like yourcaly.com/your-username/meeting. Share it with clients, colleagues, or anyone who needs to book time with you.',
   },
   {
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>,
@@ -71,7 +71,7 @@ export default function HowItWorks() {
       <div style={{ flex: 1, padding: '48px 24px' }}>
         <div className="page-content" style={{ maxWidth: '800px', margin: '0 auto' }}>
           <div style={{ marginBottom: '32px' }}>
-            <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>How Caly works</h1>
+            <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>How YourCaly works</h1>
             <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Everything you need to know to get started.</p>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

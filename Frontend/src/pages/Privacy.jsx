@@ -19,7 +19,7 @@ export default function Privacy() {
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>4. Data Retention</h2>
           <p>We retain your data as long as your account is active. You may request deletion by contacting us.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>5. Contact</h2>
-          <p>For questions about this policy, contact us at privacy@caly.app.</p>
+           <p>For questions about this policy, contact us at privacy@yourcaly.com.</p>
         </div>
         <Link to="/" style={{ display: 'inline-block', marginTop: '24px', color: 'var(--accent)', fontSize: '14px', textDecoration: 'none' }}>&larr; Back to home</Link>
       </div>
