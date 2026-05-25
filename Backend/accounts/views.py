@@ -16,13 +16,11 @@ from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 
 
-from admin_panel.permissions import IsAdminStaff
-
-
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-    permission_classes = (IsAdminStaff,)
+    permission_classes = (permissions.AllowAny,)
+    throttle_scope = 'register'
 
     def perform_create(self, serializer):
         user = serializer.save()
