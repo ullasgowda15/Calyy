@@ -13,6 +13,7 @@ export default function BookingPage() {
   const { username, slug } = useParams();
   const navigate = useNavigate();
   const [hostEvents, setHostEvents] = useState([]);
+  const [eventsLoaded, setEventsLoaded] = useState(false);
   const [hostProfile, setHostProfile] = useState(null);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
@@ -31,11 +32,12 @@ export default function BookingPage() {
   useEffect(() => {
     eventTypes.getPublicEventTypes(username).then((res) => {
       setHostEvents(res.data);
+      setEventsLoaded(true);
       if (res.data.length > 0) {
         const ev = res.data[0];
         setHostProfile({ username: ev.host_username, avatar: ev.host_avatar, bio: ev.host_bio, first_name: ev.host_first_name });
       }
-    }).catch(() => setHostEvents([]));
+    }).catch(() => { setHostEvents([]); setEventsLoaded(true); });
   }, [username]);
 
   useEffect(() => {
@@ -99,12 +101,30 @@ export default function BookingPage() {
   const daysInMonth = getDaysInMonth(currentMonth, currentYear);
   const firstDay = getFirstDay(currentMonth, currentYear);
 
-  if (!hostEvents.length) {
+  if (!eventsLoaded) {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
         <Navbar />
         <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <svg className="spin" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!hostEvents.length) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex', flexDirection: 'column' }}>
+        <Navbar />
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            </div>
+            <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)', margin: '0 0 6px' }}>No events to book</h2>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>This user hasn't set up any public event types yet.</p>
+          </div>
         </div>
         <Footer />
       </div>
