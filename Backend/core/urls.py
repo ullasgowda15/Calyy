@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
@@ -16,7 +15,6 @@ handler404 = 'core.urls.api_404'
 handler500 = 'core.urls.api_500'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
     path('api/events/', include('events.urls')),
     path('api/bookings/', include('bookings.urls')),

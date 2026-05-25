@@ -53,7 +53,7 @@ export default function AdminVerify2FA() {
     <div style={{ minHeight: '100vh', background: '#0F0F11', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
       <div style={{ width: '100%', maxWidth: '380px' }}>
         <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '22px', fontWeight: 700, margin: '0 auto 16px' }}>C</div>
+          <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '48px', height: '48px', borderRadius: '12px', objectFit: 'cover', margin: '0 auto 16px' }} />
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 6px', letterSpacing: '-0.02em' }}>Two-Factor Auth</h1>
           <p style={{ fontSize: '13px', color: '#7F7F8C', margin: 0 }}>Enter the 6-digit code from your authenticator app</p>
         </div>
