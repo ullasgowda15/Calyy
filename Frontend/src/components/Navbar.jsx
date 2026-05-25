@@ -92,10 +92,10 @@ export default function Navbar() {
                     boxShadow: 'var(--shadow-lg)', padding: '6px', zIndex: 50,
                   }}>
                     {[
-                      ...(user?.email_verified
-                        ? [{ to: '/dashboard', label: 'Dashboard' }, { to: '/profile', label: 'Profile' }, { to: '/settings', label: 'Settings' }]
-                        : [{ to: `/verify-email?email=${encodeURIComponent(user?.email || '')}`, label: 'Verify email' }]),
-                    ].flat().map((item) => (
+                      { to: '/dashboard', label: 'Dashboard' },
+                      { to: '/profile', label: 'Profile' },
+                      { to: '/settings', label: 'Settings' },
+                    ].map((item) => (
                       <Link key={item.to} to={item.to} onClick={() => setDropdownOpen(false)}
                         style={{
                           display: 'block', padding: '8px 12px', borderRadius: '8px',
