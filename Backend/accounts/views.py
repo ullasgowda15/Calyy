@@ -24,12 +24,8 @@ class RegisterView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()
-        otp = f'{secrets.randbelow(900000) + 100000}'
-        EmailVerificationOTP.objects.create(user=user, otp=otp)
-        try:
-            send_verification_otp.delay(str(user.id), otp)
-        except Exception:
-            pass
+        user.email_verified = True
+        user.save(update_fields=['email_verified'])
         return user
 
 
