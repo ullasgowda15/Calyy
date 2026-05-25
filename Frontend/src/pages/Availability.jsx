@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { availability } from '../api/client';
 import Sidebar from '../components/Sidebar';
 import { useToast } from '../components/Toast';
-import { getUserTimezone } from '../utils/datetime';
+import { getUserTimezone, formatDateTimeUTC } from '../utils/datetime';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const HOURS = Array.from({ length: 48 }, (_, i) => {
@@ -27,11 +27,53 @@ function localToUTC(localDatetime) {
   return d.toISOString().slice(0, 19);
 }
 
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+function BlockCard({ block, onRemove }) {
+  const [confirming, setConfirming] = useState(false);
+  const start = formatDateTimeUTC(block.start_datetime);
+  const end = formatDateTimeUTC(block.end_datetime);
+
+  if (confirming) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-error)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border-error)' }}>
+        <span style={{ fontSize: '13px', color: 'var(--text-error)', fontWeight: 500 }}>Remove this block?</span>
+        <div style={{ display: 'flex', gap: '6px' }}>
+          <button onClick={() => { onRemove(block.id); setConfirming(false); }} className="btn btn-sm" style={{ background: 'var(--danger)', color: '#fff', border: 'none', padding: '5px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer' }}>Yes</button>
+          <button onClick={() => setConfirming(false)} className="btn btn-sm" style={{ background: 'var(--surface-3)', border: '1px solid var(--border)', padding: '5px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 600, cursor: 'pointer', color: 'var(--text-secondary)' }}>No</button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border)', borderLeft: '3px solid var(--danger)', transition: 'box-shadow 0.15s', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+        <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--danger)', flexShrink: 0 }} />
+        <div style={{ minWidth: 0 }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+            {start} — {end}
+          </span>
+          {block.reason && <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>({block.reason})</span>}
+        </div>
+      </div>
+      <button onClick={() => setConfirming(true)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s' }}
+        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--danger)'; e.currentTarget.style.color = '#fff'; e.currentTarget.style.borderColor = 'var(--danger)'; }}
+        onMouseLeave={(e) => { e.currentTarget.style.background = 'var(--surface-3)'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border)'; }}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  );
+}
+
 export default function AvailabilityPage() {
   const toast = useToast();
   const [windows, setWindows] = useState([]);
   const [blocked, setBlocked] = useState([]);
-  const [blockForm, setBlockForm] = useState({ start_datetime: '', end_datetime: '', reason: '' });
+  const [blockForm, setBlockForm] = useState({ start_date: todayStr(), start_time: '09:00', end_date: todayStr(), end_time: '10:00', reason: '' });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -79,9 +121,11 @@ export default function AvailabilityPage() {
 
   const addBlocked = async () => {
     try {
-      const payload = { start_datetime: localToUTC(blockForm.start_datetime), end_datetime: localToUTC(blockForm.end_datetime), reason: blockForm.reason };
+      const start = `${blockForm.start_date}T${blockForm.start_time}`;
+      const end = `${blockForm.end_date}T${blockForm.end_time}`;
+      const payload = { start_datetime: localToUTC(start), end_datetime: localToUTC(end), reason: blockForm.reason };
       await availability.createBlockedTime(payload);
-      setBlockForm({ start_datetime: '', end_datetime: '', reason: '' });
+      setBlockForm({ start_date: todayStr(), start_time: '09:00', end_date: todayStr(), end_time: '10:00', reason: '' });
       const fresh = await availability.getBlockedTimes();
       setBlocked(fresh.data);
       toast('Time blocked!', 'success');
@@ -168,36 +212,47 @@ export default function AvailabilityPage() {
               <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>Blocked times</h2>
             </div>
             <div style={{ padding: '20px' }}>
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'flex-end' }}>
-                {[['start_datetime','Start'],['end_datetime','End']].map(([key, label]) => (
-                  <div key={key}>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>{label}</label>
-                    <input type="datetime-local" value={blockForm[key]} onChange={(e) => setBlockForm({ ...blockForm, [key]: e.target.value })} className="field" style={{ width: '200px', padding: '8px 10px', fontSize: '13px' }} />
-                  </div>
-                ))}
-                <div style={{ flex: 1, minWidth: '140px' }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Reason (optional)</label>
-                  <input type="text" value={blockForm.reason} onChange={(e) => setBlockForm({ ...blockForm, reason: e.target.value })} className="field" style={{ padding: '8px 10px', fontSize: '13px' }} placeholder="e.g. Lunch break" />
+              {/* Add block form */}
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'flex-end' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start date</label>
+                  <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field" style={{ width: '160px', padding: '8px 10px', fontSize: '13px' }} />
                 </div>
-                <button onClick={addBlocked} className="btn btn-primary btn-sm" style={{ marginBottom: '1px' }}>Block time</button>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start time</label>
+                  <input type="time" value={blockForm.start_time} onChange={(e) => setBlockForm({ ...blockForm, start_time: e.target.value })} className="field" style={{ width: '130px', padding: '8px 10px', fontSize: '13px' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End date</label>
+                  <input type="date" value={blockForm.end_date} onChange={(e) => setBlockForm({ ...blockForm, end_date: e.target.value })} className="field" style={{ width: '160px', padding: '8px 10px', fontSize: '13px' }} />
+                </div>
+                <div>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End time</label>
+                  <input type="time" value={blockForm.end_time} onChange={(e) => setBlockForm({ ...blockForm, end_time: e.target.value })} className="field" style={{ width: '130px', padding: '8px 10px', fontSize: '13px' }} />
+                </div>
+                <div style={{ flex: 1, minWidth: '140px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Reason</label>
+                  <input type="text" value={blockForm.reason} onChange={(e) => setBlockForm({ ...blockForm, reason: e.target.value })} className="field" style={{ padding: '8px 10px', fontSize: '13px' }} placeholder="e.g. Lunch break, PTO" />
+                </div>
+                <button onClick={addBlocked} className="btn btn-primary btn-sm" style={{ marginBottom: '1px', height: '36px' }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '5px' }}><path d="M12 5v14M5 12h14"/></svg>
+                  Block
+                </button>
               </div>
 
+              {/* Blocked list */}
               {blocked.length === 0 ? (
-                <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>No blocked times configured.</p>
+                <div style={{ textAlign: 'center', padding: '32px 16px' }}>
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="1.5" style={{ marginBottom: '12px', opacity: 0.4 }}>
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="8" y2="18"/><line x1="12" y1="18" x2="12" y2="18"/>
+                  </svg>
+                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: '0 0 4px', fontWeight: 500 }}>No blocked times</p>
+                  <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: 0 }}>Use the form above to block out personal time, breaks, or days off.</p>
+                </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                   {blocked.map((b) => (
-                    <div key={b.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface-2)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border)' }}>
-                      <div>
-                        <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)' }}>
-                          {new Date(b.start_datetime).toLocaleString()} — {new Date(b.end_datetime).toLocaleString()}
-                        </span>
-                        {b.reason && <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>({b.reason})</span>}
-                      </div>
-                      <button onClick={() => removeBlocked(b.id)} style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', flexShrink: 0 }}>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                      </button>
-                    </div>
+                    <BlockCard key={b.id} block={b} onRemove={removeBlocked} />
                   ))}
                 </div>
               )}
@@ -208,4 +263,3 @@ export default function AvailabilityPage() {
     </div>
   );
 }
-
