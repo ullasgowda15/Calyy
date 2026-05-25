@@ -6,7 +6,7 @@ const RADIAN = Math.PI / 180;
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
 const StatCard = ({ label, value, sub, color }) => (
-  <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+  <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
     <div style={{ fontSize: '12px', fontWeight: 500, color: '#7F7F8C', marginBottom: '6px' }}>{label}</div>
     <div style={{ fontSize: '28px', fontWeight: 800, color: color || '#fff', letterSpacing: '-0.02em' }}>{value}</div>
     {sub != null && <div style={{ fontSize: '12px', color: '#52525B', marginTop: '4px' }}>{sub}</div>}
@@ -52,12 +52,12 @@ export default function AdminDashboard() {
           <p style={{ fontSize: '13px', color: '#7F7F8C', margin: 0 }}>Platform overview and key metrics</p>
         </div>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <select value={group} onChange={(e) => setGroup(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
+          <select value={group} onChange={(e) => setGroup(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
             <option value="day">Daily</option>
             <option value="week">Weekly</option>
             <option value="month">Monthly</option>
           </select>
-          <select value={days} onChange={(e) => setDays(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
+          <select value={days} onChange={(e) => setDays(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
             <option value={7}>Last 7 days</option>
             <option value={30}>Last 30 days</option>
             <option value={90}>Last 90 days</option>
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Revenue — Booking vs Platform</h3>
           <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '12px' }}>
             <span><span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: '#F59E0B', marginRight: 6 }}></span> Booking: ₹{(revenue?.total_booking || 0).toLocaleString()}</span>
@@ -91,14 +91,14 @@ export default function AdminDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey={group === 'month' ? 'month' : group === 'week' ? 'week' : 'date'} tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => `₹${v}`} />
-              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
               <Bar dataKey="booking" name="Booking Revenue" fill="#F59E0B" stackId="a" radius={[0, 0, 0, 0]} />
               <Bar dataKey="platform" name="Platform Revenue" fill="#10B981" stackId="a" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Bookings per {group === 'month' ? 'month' : group === 'week' ? 'week' : 'day'}</h3>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={
@@ -108,7 +108,7 @@ export default function AdminDashboard() {
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey={group === 'week' ? 'week' : 'date'} tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
               <Bar dataKey="count" fill="#3B82F6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -116,20 +116,20 @@ export default function AdminDashboard() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Users over time</h3>
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={analytics?.users_by_day || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey="date" tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
               <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
 
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Booking Status Distribution</h3>
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
@@ -149,14 +149,14 @@ export default function AdminDashboard() {
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
+              <Tooltip contentStyle={{ backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', fontSize: '12px', color: '#fff' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Top Users by Bookings</h3>
           {analytics?.top_users_by_bookings?.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
           ) : <p style={{ fontSize: '13px', color: '#52525B', margin: 0 }}>No bookings in this period.</p>}
         </div>
 
-        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Top Users by Revenue</h3>
           {analytics?.top_users_by_revenue?.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -197,7 +197,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+      <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
         <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>
           Per-User Revenue Breakdown <span style={{ fontWeight: 400, color: '#52525B', fontSize: '12px' }}>(last {days} days)</span>
         </h3>

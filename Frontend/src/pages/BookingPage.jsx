@@ -210,102 +210,116 @@ export default function BookingPage() {
               {selectedEvent && (
                 <div>
                   <div style={{ borderTop: '1px solid var(--border)', marginBottom: '20px' }} />
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="booking-bottom">
-                    {/* Calendar */}
-                    <div className="card" style={{ padding: '20px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                        <button onClick={() => changeMonth(-1)} style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
-                        </button>
-                        <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>{MONTHS[currentMonth]} {currentYear}</span>
-                        <button onClick={() => changeMonth(1)} style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
-                        </button>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center', marginBottom: '6px' }}>
-                        {DAYS_SHORT.map((d) => <div key={d} style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>)}
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center' }}>
-                        {Array.from({ length: firstDay }).map((_, i) => <div key={`e${i}`} />)}
-                        {Array.from({ length: daysInMonth }).map((_, i) => {
-                          const day = i + 1;
-                          const d = new Date(currentYear, currentMonth, day);
-                          const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                          const isPast = d < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                          const isSelected = selectedDate === dateStr;
-                          const isToday = dateStr === todayStr;
-                          return (
-                            <button key={day} onClick={() => !isPast && selectDate(day)} disabled={isPast} style={{
-                              padding: '7px 2px', borderRadius: '8px', fontSize: '13px', fontWeight: isToday ? 700 : 400, border: isToday && !isSelected ? '1.5px solid var(--accent)' : 'none',
-                              cursor: isPast ? 'not-allowed' : 'pointer', transition: 'all 0.1s',
-                              background: isSelected ? 'var(--accent)' : 'transparent',
-                              color: isPast ? 'var(--text-muted)' : isSelected ? '#fff' : 'var(--text-primary)',
-                              opacity: isPast ? 0.4 : 1,
-                            }}
-                              onMouseEnter={(e) => { if (!isPast && !isSelected) e.currentTarget.style.background = 'var(--surface-3)'; }}
-                              onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
-                            >{day}</button>
-                          );
-                        })}
-                      </div>
-                    </div>
 
-                    {/* Slots */}
-                    <div>
-                      {!selectedDate ? (
-                        <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
-                          <div style={{ padding: '32px 0', color: 'var(--text-muted)' }}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 12px', display: 'block' }}><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                            <p style={{ fontSize: '14px', margin: 0 }}>Select a date to see available times</p>
-                          </div>
+                  {!showForm ? (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }} className="booking-bottom">
+                      {/* Calendar */}
+                      <div className="card" style={{ padding: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                          <button onClick={() => changeMonth(-1)} style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M15 18l-6-6 6-6"/></svg>
+                          </button>
+                          <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>{MONTHS[currentMonth]} {currentYear}</span>
+                          <button onClick={() => changeMonth(1)} style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'var(--surface-3)', border: '1px solid var(--border)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 18l6-6-6-6"/></svg>
+                          </button>
                         </div>
-                      ) : loadingSlots ? (
-                        <div className="card" style={{ padding: '20px' }}>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '12px' }}>Loading times&hellip;</div>
-                          {Array(5).fill(0).map((_, i) => <div key={i} className="skeleton" style={{ height: '40px', borderRadius: '8px', marginBottom: '8px' }} />)}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center', marginBottom: '6px' }}>
+                          {DAYS_SHORT.map((d) => <div key={d} style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', padding: '4px 0', textTransform: 'uppercase' }}>{d}</div>)}
                         </div>
-                      ) : slots.length === 0 ? (
-                        <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
-                          <div style={{ padding: '32px 0', color: 'var(--text-muted)' }}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 12px', display: 'block' }}><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-                            <p style={{ fontSize: '14px', margin: 0 }}>No available slots for this date.</p>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="card" style={{ padding: '20px' }}>
-                          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '12px' }}>Available times</div>
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-                            {slots.map((slot, idx) => {
-                              const isSelected = selectedSlot?.start === slot.start;
-                              return (
-                              <button key={idx} onClick={() => selectSlot(slot)} style={{
-                                padding: '10px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
-                                border: `1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
-                                background: isSelected ? 'var(--accent)' : 'var(--surface)',
-                                color: isSelected ? '#fff' : 'var(--text-primary)',
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '2px', textAlign: 'center' }}>
+                          {Array.from({ length: firstDay }).map((_, i) => <div key={`e${i}`} />)}
+                          {Array.from({ length: daysInMonth }).map((_, i) => {
+                            const day = i + 1;
+                            const d = new Date(currentYear, currentMonth, day);
+                            const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                            const isPast = d < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                            const isSelected = selectedDate === dateStr;
+                            const isToday = dateStr === todayStr;
+                            return (
+                              <button key={day} onClick={() => !isPast && selectDate(day)} disabled={isPast} style={{
+                                padding: '7px 2px', borderRadius: '8px', fontSize: '13px', fontWeight: isToday ? 700 : 400, border: isToday && !isSelected ? '1.5px solid var(--accent)' : 'none',
+                                cursor: isPast ? 'not-allowed' : 'pointer', transition: 'all 0.1s',
+                                background: isSelected ? 'var(--accent)' : 'transparent',
+                                color: isPast ? 'var(--text-muted)' : isSelected ? '#fff' : 'var(--text-primary)',
+                                opacity: isPast ? 0.4 : 1,
                               }}
-                                onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; } }}
-                                onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--surface)'; } }}
-                              >
-                                {formatTimeLocal(slot.start, form.invitee_timezone)}
-                              </button>
-                            );})}
+                                onMouseEnter={(e) => { if (!isPast && !isSelected) e.currentTarget.style.background = 'var(--surface-3)'; }}
+                                onMouseLeave={(e) => { if (!isSelected) e.currentTarget.style.background = 'transparent'; }}
+                              >{day}</button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Slots */}
+                      <div>
+                        {!selectedDate ? (
+                          <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                            <div style={{ padding: '32px 0', color: 'var(--text-muted)' }}>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 12px', display: 'block' }}><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                              <p style={{ fontSize: '14px', margin: 0 }}>Select a date to see available times</p>
+                            </div>
+                          </div>
+                        ) : loadingSlots ? (
+                          <div className="card" style={{ padding: '20px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '12px' }}>Loading times&hellip;</div>
+                            {Array(5).fill(0).map((_, i) => <div key={i} className="skeleton" style={{ height: '40px', borderRadius: '8px', marginBottom: '8px' }} />)}
+                          </div>
+                        ) : slots.length === 0 ? (
+                          <div className="card" style={{ padding: '20px', textAlign: 'center' }}>
+                            <div style={{ padding: '32px 0', color: 'var(--text-muted)' }}>
+                              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ margin: '0 auto 12px', display: 'block' }}><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+                              <p style={{ fontSize: '14px', margin: 0 }}>No available slots for this date.</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="card" style={{ padding: '20px' }}>
+                            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '12px' }}>Available times</div>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                              {slots.map((slot, idx) => {
+                                const isSelected = selectedSlot?.start === slot.start;
+                                return (
+                                <button key={idx} onClick={() => selectSlot(slot)} style={{
+                                  padding: '10px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.15s',
+                                  border: `1.5px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                                  background: isSelected ? 'var(--accent)' : 'var(--surface)',
+                                  color: isSelected ? '#fff' : 'var(--text-primary)',
+                                }}
+                                  onMouseEnter={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; } }}
+                                  onMouseLeave={(e) => { if (!isSelected) { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--surface)'; } }}
+                                >
+                                  {formatTimeLocal(slot.start, form.invitee_timezone)}
+                                </button>
+                              );})}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    /* Selected time summary card */
+                    <div className="card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--accent)' }} />
+                        <div>
+                          <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                            {selectedDate ? new Date(selectedDate + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }) : ''}
+                          </div>
+                          <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                            {selectedSlot ? formatTimeLocal(selectedSlot.start, form.invitee_timezone) : ''}
                           </div>
                         </div>
-                      )}
+                      </div>
+                      <button onClick={() => setShowForm(false)} style={{ fontSize: '13px', color: 'var(--accent)', background: 'none', border: '1px solid var(--accent)', borderRadius: '8px', padding: '6px 14px', cursor: 'pointer', fontWeight: 600 }}>Change time</button>
                     </div>
-                  </div>
+                  )}
 
                   {/* Form - shows inline below when a slot is selected */}
                   {showForm && (
                     <div className="card" style={{ padding: '20px', marginTop: '16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                         <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>Your details</h3>
-                        <button onClick={() => setShowForm(false)} style={{ fontSize: '13px', color: 'var(--accent)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}>← Change time</button>
-                      </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--accent-light)', color: 'var(--accent)', padding: '8px 12px', borderRadius: '8px', fontSize: '13px', fontWeight: 600, marginBottom: '16px' }}>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                        {formatTimeLocal(selectedSlot.start, form.invitee_timezone)}
                       </div>
                       <form onSubmit={handleSubmit}>
                         {error && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '11px 14px', marginBottom: '14px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>}
