@@ -130,6 +130,11 @@ select {
   padding-right: 32px !important;
 }
 
+/* Date/time picker icons */
+input[type="date"], input[type="time"] {
+  color-scheme: dark;
+}
+
 /* Input/Select/Textarea base */
 .field {
   width: 100%;
