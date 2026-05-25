@@ -32,7 +32,7 @@ export default function AdminAnalytics() {
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Analytics</h1>
           <p style={{ fontSize: '13px', color: '#7F7F8C', margin: 0 }}>Detailed platform metrics and trends</p>
         </div>
-        <select value={days} onChange={(e) => setDays(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', background: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
+        <select value={days} onChange={(e) => setDays(Number(e.target.value))} style={{ padding: '8px 12px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
           <option value={7}>7 days</option>
           <option value={30}>30 days</option>
           <option value={90}>90 days</option>
@@ -40,26 +40,26 @@ export default function AdminAnalytics() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
-        <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Bookings Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={analytics?.bookings_by_day || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey="date" tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
+              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
               <Line type="monotone" dataKey="count" stroke="#3B82F6" strokeWidth={2} dot={false} />
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>New Users Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={analytics?.users_by_day || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey="date" tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} />
-              <Tooltip contentStyle={{ background: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
+              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
               <Bar dataKey="count" fill="#8B5CF6" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -67,19 +67,19 @@ export default function AdminAnalytics() {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
-        <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Revenue Trend</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={revenue?.daily_revenue || []}>
               <CartesianGrid strokeDasharray="3 3" stroke="#2A2A30" />
               <XAxis dataKey="date" tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => v?.slice(5) || ''} />
               <YAxis tick={{ fill: '#7F7F8C', fontSize: 11 }} tickFormatter={(v) => `₹${v}`} />
-              <Tooltip contentStyle={{ background: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
+              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
               <Bar dataKey="amount" fill="#F59E0B" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
+        <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Booking Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
@@ -88,7 +88,7 @@ export default function AdminAnalytics() {
                   <Cell key={i} fill={COLORS[i % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ background: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
+              <Tooltip contentStyle={{ background-color: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '8px', color: '#fff', fontSize: '12px' }} />
               <Legend wrapperStyle={{ fontSize: '12px', color: '#A1A1AA' }} />
             </PieChart>
           </ResponsiveContainer>

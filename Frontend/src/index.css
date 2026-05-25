@@ -136,7 +136,7 @@ select {
   padding: 10px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
-  background: var(--surface);
+  background-color: var(--surface);
   color: var(--text-primary);
   font-size: 14px;
   font-family: 'Inter', sans-serif;

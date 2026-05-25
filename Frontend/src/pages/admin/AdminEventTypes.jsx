@@ -43,8 +43,8 @@ export default function AdminEventTypes() {
       {error && <div style={{ background: '#7F1D1D', border: '1px solid #991B1B', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', fontSize: '13px', color: '#FCA5A5' }}>{error}</div>}
 
       <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
-        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search event name or host…" style={{ flex: 1, minWidth: '200px', padding: '9px 12px', borderRadius: '8px', background: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }} />
-        <select value={isActive} onChange={(e) => { setIsActive(e.target.value); setPage(1); }} style={{ padding: '9px 12px', borderRadius: '8px', background: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
+        <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search event name or host…" style={{ flex: 1, minWidth: '200px', padding: '9px 12px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }} />
+        <select value={isActive} onChange={(e) => { setIsActive(e.target.value); setPage(1); }} style={{ padding: '9px 12px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
           <option value="">All</option>
           <option value="true">Active</option>
           <option value="false">Inactive</option>
@@ -52,7 +52,7 @@ export default function AdminEventTypes() {
         <button type="submit" style={{ padding: '9px 16px', borderRadius: '8px', background: '#2563EB', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Search</button>
       </form>
 
-      <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'hidden' }}>
+      <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'hidden' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A30' }}>
@@ -91,9 +91,9 @@ export default function AdminEventTypes() {
 
       {total > 15 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '16px' }}>
-          <button disabled={page <= 1} onClick={() => setPage(page - 1)} style={{ padding: '8px 14px', borderRadius: '8px', background: '#1A1A1F', border: '1px solid #2A2A30', color: page <= 1 ? '#52525B' : '#fff', fontSize: '13px', cursor: page <= 1 ? 'not-allowed' : 'pointer' }}>Previous</button>
+          <button disabled={page <= 1} onClick={() => setPage(page - 1)} style={{ padding: '8px 14px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: page <= 1 ? '#52525B' : '#fff', fontSize: '13px', cursor: page <= 1 ? 'not-allowed' : 'pointer' }}>Previous</button>
           <span style={{ padding: '8px 14px', color: '#7F7F8C', fontSize: '13px' }}>Page {page} of {Math.ceil(total / 15)}</span>
-          <button disabled={page >= Math.ceil(total / 15)} onClick={() => setPage(page + 1)} style={{ padding: '8px 14px', borderRadius: '8px', background: '#1A1A1F', border: '1px solid #2A2A30', color: page >= Math.ceil(total / 15) ? '#52525B' : '#fff', fontSize: '13px', cursor: page >= Math.ceil(total / 15) ? 'not-allowed' : 'pointer' }}>Next</button>
+          <button disabled={page >= Math.ceil(total / 15)} onClick={() => setPage(page + 1)} style={{ padding: '8px 14px', borderRadius: '8px', background-color: '#1A1A1F', border: '1px solid #2A2A30', color: page >= Math.ceil(total / 15) ? '#52525B' : '#fff', fontSize: '13px', cursor: page >= Math.ceil(total / 15) ? 'not-allowed' : 'pointer' }}>Next</button>
         </div>
       )}
     </div>

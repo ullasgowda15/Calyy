@@ -51,7 +51,7 @@ export default function AdminSettings() {
     <div>
       <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 20px', letterSpacing: '-0.02em' }}>Settings</h1>
 
-      <div style={{ background: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'hidden', maxWidth: '600px' }}>
+      <div style={{ background-color: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'hidden', maxWidth: '600px' }}>
         <div style={{ padding: '20px 24px', borderBottom: '1px solid #2A2A30' }}>
           <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: '#E4E4E7', margin: 0 }}>Two-Factor Authentication</h2>
         </div>
