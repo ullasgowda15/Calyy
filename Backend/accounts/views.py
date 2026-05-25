@@ -16,11 +16,13 @@ from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 
 
+from admin_panel.permissions import IsAdminStaff
+
+
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
-    permission_classes = (permissions.AllowAny,)
-    throttle_scope = 'register'
+    permission_classes = (IsAdminStaff,)
 
     def perform_create(self, serializer):
         user = serializer.save()
@@ -182,6 +184,7 @@ def resend_otp(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
+@ratelimit(key='user', rate='5/h', method='POST')
 def change_password(request):
     serializer = ChangePasswordSerializer(data=request.data, context={'request': request})
     serializer.is_valid(raise_exception=True)

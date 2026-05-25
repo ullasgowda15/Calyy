@@ -14,6 +14,7 @@ from rest_framework import status, permissions
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django_ratelimit.decorators import ratelimit
 
 from .models import TOTPSecret, AdminActionLog
 from .permissions import IsAdminStaff
@@ -37,6 +38,7 @@ def _log_action(admin, action, target_type='', target_id='', details=None):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='10/h', method='POST')
 def admin_login(request):
     email = request.data.get('email', '')
     password = request.data.get('password', '')
@@ -56,6 +58,7 @@ def admin_login(request):
 
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='10/h', method='POST')
 def admin_verify_2fa(request):
     user_id = request.data.get('user_id', '')
     code = request.data.get('code', '')
@@ -166,9 +169,18 @@ def admin_dashboard(request):
 
 # ── Users ────────────────────────────────────────────
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAdminStaff])
 def admin_users(request):
+    if request.method == 'POST':
+        from accounts.serializers import RegisterSerializer
+        ser = RegisterSerializer(data=request.data)
+        if ser.is_valid():
+            user = ser.save()
+            user.email_verified = True
+            user.save(update_fields=['email_verified'])
+            return Response(AdminUserDetailSerializer(user).data, status=201)
+        return Response(ser.errors, status=400)
     qs = User.objects.annotate(
         event_types_count=Count('event_types', distinct=True),
         bookings_count=Count('event_types__bookings', distinct=True),
@@ -191,8 +203,11 @@ def admin_users(request):
                      'username', '-username', 'last_login', '-last_login']
     if sort_by in allowed_sorts:
         qs = qs.order_by(sort_by)
-    page = int(request.query_params.get('page', 1))
-    per_page = int(request.query_params.get('per_page', 20))
+    try:
+        page = int(request.query_params.get('page', 1))
+        per_page = int(request.query_params.get('per_page', 20))
+    except (ValueError, TypeError):
+        page, per_page = 1, 20
     total = qs.count()
     qs = qs[(page - 1) * per_page:page * per_page]
     return Response({
@@ -267,8 +282,11 @@ def admin_bookings(request):
                      'invitee_name', '-invitee_name']
     if sort_by in allowed_sorts:
         qs = qs.order_by(sort_by)
-    page = int(request.query_params.get('page', 1))
-    per_page = int(request.query_params.get('per_page', 20))
+    try:
+        page = int(request.query_params.get('page', 1))
+        per_page = int(request.query_params.get('per_page', 20))
+    except (ValueError, TypeError):
+        page, per_page = 1, 20
     total = qs.count()
     qs = qs[(page - 1) * per_page:page * per_page]
     return Response({
@@ -296,8 +314,11 @@ def admin_event_types(request):
         allowed_sorts = ['created_at', '-created_at', 'name', '-name', 'duration', '-duration']
         if sort_by in allowed_sorts:
             qs = qs.order_by(sort_by)
-        page = int(request.query_params.get('page', 1))
-        per_page = int(request.query_params.get('per_page', 20))
+        try:
+            page = int(request.query_params.get('page', 1))
+            per_page = int(request.query_params.get('per_page', 20))
+        except (ValueError, TypeError):
+            page, per_page = 1, 20
         total = qs.count()
         qs = qs[(page - 1) * per_page:page * per_page]
         return Response({
@@ -325,7 +346,10 @@ def admin_event_types(request):
 @permission_classes([IsAdminStaff])
 def admin_revenue(request):
     from django.db.models.functions import TruncWeek, TruncMonth
-    days = int(request.query_params.get('days', 30))
+    try:
+        days = int(request.query_params.get('days', 30))
+    except (ValueError, TypeError):
+        days = 30
     group = request.query_params.get('group', 'day')
     since = tz_utils.now() - timedelta(days=days)
 
@@ -417,7 +441,10 @@ def _merge_revenue_series(booking_series, platform_series, label_key='date'):
 @permission_classes([IsAdminStaff])
 def admin_analytics(request):
     from django.db.models.functions import TruncWeek
-    days = int(request.query_params.get('days', 30))
+    try:
+        days = int(request.query_params.get('days', 30))
+    except (ValueError, TypeError):
+        days = 30
     since = tz_utils.now() - timedelta(days=days)
     bookings_by_day = (
         Booking.objects.filter(created_at__gte=since)
@@ -501,8 +528,11 @@ def admin_analytics(request):
 @permission_classes([IsAdminStaff])
 def admin_action_log(request):
     qs = AdminActionLog.objects.select_related('admin')
-    page = int(request.query_params.get('page', 1))
-    per_page = int(request.query_params.get('per_page', 30))
+    try:
+        page = int(request.query_params.get('page', 1))
+        per_page = int(request.query_params.get('per_page', 30))
+    except (ValueError, TypeError):
+        page, per_page = 1, 30
     total = qs.count()
     qs = qs[(page - 1) * per_page:page * per_page]
     return Response({

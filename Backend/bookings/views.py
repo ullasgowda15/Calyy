@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.db import transaction
 from datetime import timedelta
 from .models import Booking
-from .serializers import BookingCreateSerializer, BookingSerializer
+from .serializers import BookingCreateSerializer, BookingSerializer, BookingListSerializer
 from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email, send_rescheduled_email, sync_google_calendar_event, delete_google_calendar_event, deliver_webhook_task
 from django_ratelimit.decorators import ratelimit
 import logging
@@ -108,7 +108,7 @@ class CreateBookingView(generics.CreateAPIView):
 
 
 class HostBookingListView(generics.ListAPIView):
-    serializer_class = BookingSerializer
+    serializer_class = BookingListSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
