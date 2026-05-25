@@ -1,4 +1,4 @@
-# Caly — Manual Testing Checklist
+# YourCaly — Manual Testing Checklist
 
 ## 1. Authentication
 
@@ -8,14 +8,16 @@
 - [ ] Submit with valid name, email, password, timezone
 - [ ] Submit with duplicate email → error shown
 - [ ] Submit with duplicate phone → error shown
-- [ ] Submit with weak password → error shown
+- [ ] Submit with weak password → error shown (min 8 chars, uppercase, lowercase, digit, special char)
 - [ ] After registration, redirected to `/verify-email`
-- [ ] Email is auto-verified (temporary — no OTP sent)
+- [ ] OTP sent via email — enter OTP to verify
 
 ### 1.2 Email Verification
-- [ ] `/verify-email` page renders
-- [ ] After auto-verify, can access authenticated pages
-- [ ] (When re-enabled) OTP input works, 10-min expiry enforced
+- [ ] `/verify-email` page renders with OTP input
+- [ ] OTP sent via Resend — enter 6-digit code
+- [ ] Wrong OTP → error shown
+- [ ] OTP expires after 10 min → "Request new OTP"
+- [ ] Resend OTP button works (5/h rate limited)
 
 ### 1.3 Login
 - [ ] Navigate to `/login`
@@ -24,6 +26,7 @@
 - [ ] On login, if timezone is `'UTC'`, auto-updated to browser timezone
 - [ ] Tokens stored in localStorage
 - [ ] Refresh token works (no 401 loop)
+- [ ] Admin login at `/adkrish` (not `/admin/`) — `/admin/` returns 404
 
 ### 1.4 Google OAuth
 - [ ] Click "Sign in with Google"
@@ -37,10 +40,10 @@
 - [ ] Reset link works
 - [ ] New password can be used to login
 
-### 1.6 Password Change (Settings)
+### 1.6 Password Change & Complexity (Settings)
 - [ ] Old password + new password + confirm
 - [ ] Wrong old password → error
-- [ ] Weak new password → error
+- [ ] Weak new password → error (needs uppercase, lowercase, digit, special char)
 
 ### 1.7 Logout
 - [ ] Clears tokens from localStorage
@@ -217,8 +220,9 @@
 ## 10. Admin Panel
 
 ### 10.1 Dashboard
-- [ ] `/admin` shows stats (users, bookings, revenue)
+- [ ] `/adkrish` shows stats (users, bookings, revenue)
 - [ ] Charts render correctly
+- [ ] Eye toggle on password field works
 
 ### 10.2 Users
 - [ ] Search by email/username
@@ -226,6 +230,7 @@
 - [ ] Filter by staff/non-staff
 - [ ] Pagination works
 - [ ] View user details modal
+- [ ] Create user via `POST /api/adkrish/users/` (admin creates accounts with email_verified=True)
 
 ### 10.3 Event Types
 - [ ] Search by name or host
@@ -274,6 +279,9 @@
 - [ ] `/nonexistent-page` → custom 404 page (not blank)
 - [ ] Server error → custom 500 page (not stack trace)
 - [ ] `robots.txt` accessible at `/robots.txt`
+- [ ] `calyy-production.up.railway.app/admin/` returns 404 (Django admin hidden)
+- [ ] Response headers include `X-Content-Type-Options: nosniff`
+- [ ] Response headers include `Strict-Transport-Security` (when HSTS enabled)
 
 ---
 
@@ -290,7 +298,7 @@
 
 - [ ] `/privacy` — Privacy Policy renders
 - [ ] `/terms` — Terms of Service renders
-- [ ] Pricing page shows Standard ₹499/mo, Teams ₹5,999/mo
+- [ ] Pricing page shows Standard ₹499/mo, Teams ₹5,999/mo (Upcoming badge)
 - [ ] Free CTA button is blue
 
 ---
@@ -298,8 +306,9 @@
 ## 16. Edge Cases
 
 - [ ] Rapid double-click on "Confirm booking" → no duplicate
-- [ ] Register 6+ times in an hour → throttled (429)
-- [ ] Login 11+ times in an hour → throttled
+- [ ] Register 6+ times in an hour → throttled (429, scope `register: 5/h`)
+- [ ] Login 11+ times in an hour → throttled (scope `login: 10/h`)
+- [ ] Admin login 11+ times in an hour → throttled (`@ratelimit 10/h`)
 - [ ] JWT token expired → redirect to login (not infinite loop)
 - [ ] Network error during booking → user-friendly message
 - [ ] Payment window closed → booking page handles gracefully
