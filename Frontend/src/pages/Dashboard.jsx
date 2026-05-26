@@ -617,33 +617,39 @@ export default function Dashboard() {
           .dash-onboarding-btns { grid-column: 1 / span 2 !important; grid-row: 2 !important; display: flex !important; flex-direction: column !important; gap: 8px !important; width: 100% !important; margin-top: 4px !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; margin: 0 !important; }
           
-          .dash-page .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-          .dash-page .table { min-width: 700px; }
+          .dash-page .table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; width: 100% !important; max-width: 100% !important; }
+          .dash-page .table { table-layout: auto !important; min-width: 600px !important; }
         }
-        @media (max-width: 680px) {
+        @media (max-width: 600px) {
           .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
           .dash-past-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
           
-          /* Table to Cards layout */
-          .dash-page table.table thead { display: none !important; }
-          .dash-page table.table, 
-          .dash-page table.table tbody, 
-          .dash-page table.table tr, 
-          .dash-page table.table td { display: block !important; width: 100% !important; box-sizing: border-box !important; }
-          .dash-page table.table tbody tr { background: var(--surface) !important; border: 1.5px solid var(--border) !important; border-radius: var(--radius) !important; padding: 14px 16px !important; margin-bottom: 12px !important; box-shadow: var(--shadow-sm) !important; }
-          .dash-page table.table tbody tr:hover { background: var(--surface) !important; }
-          .dash-page table.table td { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 8px 0 !important; border-bottom: 1px dashed var(--border) !important; font-size: 13px !important; text-align: right !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
-          .dash-page table.table td:last-child { border-bottom: none !important; flex-direction: column !important; align-items: stretch !important; text-align: left !important; padding-bottom: 0 !important; }
+          /* Keep standard table layout but force it to fit phone screen width without horizontal scroll */
+          .dash-page .table-wrap { overflow-x: hidden !important; width: 100% !important; max-width: 100% !important; }
+          .dash-page .table { table-layout: auto !important; width: 100% !important; min-width: 100% !important; }
           
-          .dash-page table.table td[data-label]::before { content: attr(data-label) !important; font-weight: 600 !important; color: var(--text-secondary) !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 12px !important; text-transform: uppercase !important; letter-spacing: 0.03em !important; text-align: left !important; margin-right: 16px !important; flex-shrink: 0 !important; }
-          .dash-page table.table td[data-label="Actions"]::before { margin-bottom: 8px !important; }
-          .dash-page table.table td[data-label=""]::before,
-          .dash-page table.table td:not([data-label])::before { display: none !important; }
-          .dash-page table.table td[data-label=""] { justify-content: center !important; text-align: center !important; border: none !important; }
+          /* Hide 'Event' column on phones to make everything fit neatly */
+          .dash-page .table th[data-label="Event"],
+          .dash-page .table td[data-label="Event"] { display: none !important; }
 
-          .dash-actions { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; justify-content: flex-end !important; }
-          .dash-actions > * { flex: 1 1 calc(50% - 4px) !important; min-width: 80px !important; justify-content: center !important; padding: 6px 10px !important; font-size: 11px !important; width: auto !important; }
-          .dash-actions > *:only-child { flex: 1 !important; }
+          /* Wrap cell text nicely instead of cutting off */
+          .dash-page .table th, 
+          .dash-page .table td { 
+            font-size: 11px !important; 
+            padding: 8px 4px !important; 
+            white-space: normal !important; 
+            word-break: break-word !important; 
+            overflow: visible !important; 
+            text-overflow: clip !important; 
+          }
+          
+          .dash-page .table td[data-label="Time"] { font-size: 10px !important; font-weight: 700 !important; }
+          .dash-page .badge { padding: 2px 6px !important; font-size: 9px !important; }
+
+          /* Stack action buttons vertically so they fit in a narrow actions column */
+          .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
+          .dash-actions > * { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 4px 6px !important; font-size: 10px !important; margin: 0 !important; }
+          .dash-actions .btn { padding: 4px 6px !important; font-size: 10px !important; }
         }
       ` }} />
       {cancelModal.show && (
