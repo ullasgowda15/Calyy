@@ -575,9 +575,12 @@ export default function Dashboard() {
         .dash-page .table td { padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page .table th[data-label],
         .dash-page .table td[data-label] { width: auto; min-width: 80px; }
+        .dash-page .table th[data-label="Status"],
+        .dash-page .table td[data-label="Status"] { min-width: 110px; white-space: nowrap; }
         .dash-page .table th[data-label="Actions"],
-        .dash-page .table td[data-label="Actions"] { width: 100px; }
-        .dash-actions .btn { padding: 3px 6px !important; font-size: 9px !important; max-width: 70px !important; }
+        .dash-page .table td[data-label="Actions"] { min-width: 130px; white-space: normal; }
+        .dash-actions { display: flex !important; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
+        .dash-actions .btn { padding: 2px 4px !important; font-size: 9px !important; width: auto !important; max-width: 100% !important; box-sizing: border-box; }
         .dash-page .table-wrap { overflow-x: auto; max-width: 100%; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
