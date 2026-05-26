@@ -25,7 +25,7 @@ export default function Navbar({ simple }) {
       background: 'var(--surface)', borderBottom: '1px solid var(--border)',
       position: 'sticky', top: 0, zIndex: 40,
     }}>
-      <div style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 24px', height: '60px', display: 'flex', alignItems: 'center', gap: '32px' }}>
+      <div className="nav-inner" style={{ maxWidth: '1120px', margin: '0 auto', padding: '0 24px', height: '60px', display: 'flex', alignItems: 'center', gap: '32px' }}>
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
           <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '30px', height: '30px', borderRadius: '8px', objectFit: 'cover' }} />
@@ -70,12 +70,12 @@ export default function Navbar({ simple }) {
                   <div style={{
                     width: '24px', height: '24px', borderRadius: '50%', background: 'var(--accent)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: '11px', fontWeight: 700, color: '#fff',
+                    fontSize: '11px', fontWeight: 700, color: '#fff', flexShrink: 0,
                   }}>
                     {(user?.username || 'U')[0].toUpperCase()}
                   </div>
-                  <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{user?.username}</span>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                  <span className="nav-user-name" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{user?.username}</span>
+                  <svg className="nav-user-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
                 </button>
                 {dropdownOpen && (
                   <>
@@ -154,7 +154,7 @@ export default function Navbar({ simple }) {
         </div>
       )}
 
-      <style dangerouslySetInnerHTML={{ __html: '@media (min-width: 768px) { .nav-hamburger { display: none !important; } .nav-links { display: flex; gap: 24px; } .nav-mobile-menu { display: none !important; } .nav-login { display: flex; } } @media (max-width: 767px) { .nav-hamburger { display: flex !important; } .nav-links { display: none; } .nav-login { display: none; } }' }} />
+      <style dangerouslySetInnerHTML={{ __html: '@media (min-width: 768px) { .nav-hamburger { display: none !important; } .nav-links { display: flex; gap: 24px; } .nav-mobile-menu { display: none !important; } .nav-login { display: flex; } } @media (max-width: 767px) { .nav-hamburger { display: flex !important; } .nav-links { display: none; } .nav-login { display: none; } .nav-inner { gap: 12px !important; padding: 0 12px !important; } .nav-user-name { display: none !important; } .nav-user-chevron { display: none !important; } }' }} />
     </nav>
   );
 }
