@@ -372,8 +372,8 @@ export default function Dashboard() {
           </div>
           )}
           <div className="table-wrap">
-            <table className="table today-table" style={{ width: '100%' }}>
-              <thead><tr><th style={{width:'15%'}} data-label="Time">Time</th><th style={{width:'28%'}} data-label="Invitee">Invitee</th><th style={{width:'25%'}} data-label="Event">Event</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'20%'}} data-label="Actions">Actions</th></tr></thead>
+            <table className="table today-table">
+              <thead><tr><th style={{width:'15%'}} data-label="Time">Time</th><th style={{width:'25%'}} data-label="Invitee">Invitee</th><th style={{width:'22%'}} data-label="Event">Event</th><th style={{width:'13%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
@@ -444,8 +444,8 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table upcoming-table" style={{ width: '100%' }}>
-              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'15%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
+            <table className="table upcoming-table">
+              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'14%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'13%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {upcomingPaginated.map((b) => (
                   <tr key={b.id}>
@@ -525,8 +525,8 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table past-table" style={{ width: '100%' }}>
-              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'15%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
+            <table className="table past-table">
+              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'14%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'13%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {pastPaginated.map((b) => (
                   <tr key={b.id}>
@@ -570,9 +570,11 @@ export default function Dashboard() {
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
         .dash-page { overflow-x: hidden; }
-        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; white-space: nowrap; }
+        .table { table-layout: fixed; width: 100%; }
+        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; white-space: nowrap !important; }
+        .dash-page .table td[data-label="Actions"] .btn { font-size: 11px !important; padding: 3px 6px !important; border-radius: 6px !important; }
+        .dash-page .table-wrap { overflow-x: auto; max-width: 100%; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
@@ -611,7 +613,6 @@ export default function Dashboard() {
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; margin: 0 !important; }
           
           .dash-page .table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; width: 100% !important; max-width: 100% !important; }
-          .dash-page .table { table-layout: auto !important; min-width: 600px !important; }
         }
         @media (max-width: 600px) {
           .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
@@ -653,8 +654,8 @@ export default function Dashboard() {
 
           /* Stack action buttons vertically so they fit in a narrow actions column */
           .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
-          .dash-actions > * { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 4px 6px !important; font-size: 10px !important; margin: 0 !important; }
-          .dash-actions .btn { padding: 4px 6px !important; font-size: 10px !important; }
+          .dash-actions > * { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 4px 6px !important; font-size: 11px !important; margin: 0 !important; }
+          .dash-actions .btn { padding: 4px 6px !important; font-size: 11px !important; }
         }
       ` }} />
       {cancelModal.show && (
