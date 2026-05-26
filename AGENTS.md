@@ -92,7 +92,7 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 4. Write E2E tests (Playwright/Cypress) for critical flows
 
 ## Critical Context
-- `RESEND_API_KEY=RESEND_API_KEY_REDACTED` in `Backend/.env`
+- `RESEND_API_KEY` in `Backend/.env` (set from Resend dashboard)
 - `DATABASE_URL=postgres://postgres:postgres@localhost:5432/calendly_mvp` — PostgreSQL via Docker
 - Celery on Windows crashes with `PermissionError` on `prefork` — always `--pool=solo`
 - `@import "tailwindcss"` at line 1 of `index.css` — any `@import url(...)` after it breaks
