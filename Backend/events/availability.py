@@ -69,12 +69,15 @@ def get_available_slots(event_type, target_date: date, host_timezone: str = 'UTC
         for busy in google_busy:
             def _parse_gc_dt(s):
                 s = s.replace('Z', '+00:00').replace('+00:00+00:00', '+00:00')
-                return pytz.utc.localize(datetime.fromisoformat(s)) if 'T' in s else pytz.utc.localize(datetime.combine(datetime.fromisoformat(s).date(), time.min))
+                dt = datetime.fromisoformat(s)
+                if dt.tzinfo is None:
+                    return pytz.utc.localize(dt)
+                return dt
             blocked_times = list(blocked_times) + [{
                 'start_datetime': _parse_gc_dt(busy['start']),
                 'end_datetime': _parse_gc_dt(busy['end']),
             }]
-    except (GoogleCalendarToken.DoesNotExist, ImportError):
+    except (GoogleCalendarToken.DoesNotExist, ImportError, ValueError):
         pass
 
     if event_type.max_bookings_per_day:
