@@ -373,6 +373,7 @@ export default function Dashboard() {
           )}
           <div className="table-wrap">
             <table className="table today-table">
+              <colgroup><col style={{width:'15%'}} /><col style={{width:'28%'}} /><col style={{width:'25%'}} /><col style={{width:'12%'}} /><col style={{width:'20%'}} /></colgroup>
               <thead><tr><th data-label="Time">Time</th><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {todayPaginated.map((b) => (
@@ -445,6 +446,7 @@ export default function Dashboard() {
           <>
           <div className="table-wrap">
             <table className="table upcoming-table">
+              <colgroup><col style={{width:'16%'}} /><col style={{width:'16%'}} /><col style={{width:'15%'}} /><col style={{width:'14%'}} /><col style={{width:'12%'}} /><col style={{width:'27%'}} /></colgroup>
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {upcomingPaginated.map((b) => (
@@ -526,6 +528,7 @@ export default function Dashboard() {
           <>
           <div className="table-wrap">
             <table className="table past-table">
+              <colgroup><col style={{width:'16%'}} /><col style={{width:'16%'}} /><col style={{width:'15%'}} /><col style={{width:'14%'}} /><col style={{width:'12%'}} /><col style={{width:'27%'}} /></colgroup>
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {pastPaginated.map((b) => (
@@ -575,42 +578,6 @@ export default function Dashboard() {
         .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 6px 8px; font-size: 11px; }
         
-        .dash-page table.today-table th:nth-child(1),
-        .dash-page table.today-table td:nth-child(1) { width: 18%; }
-        .dash-page table.today-table th:nth-child(2),
-        .dash-page table.today-table td:nth-child(2) { width: 26%; }
-        .dash-page table.today-table th:nth-child(3),
-        .dash-page table.today-table td:nth-child(3) { width: 23%; }
-        .dash-page table.today-table th:nth-child(4),
-        .dash-page table.today-table td:nth-child(4) { width: 14%; }
-        .dash-page table.today-table th:nth-child(5),
-        .dash-page table.today-table td:nth-child(5) { width: 19%; }
-
-        .dash-page table.upcoming-table th:nth-child(1),
-        .dash-page table.upcoming-table td:nth-child(1),
-        .dash-page table.past-table th:nth-child(1),
-        .dash-page table.past-table td:nth-child(1) { width: 18%; }
-        .dash-page table.upcoming-table th:nth-child(2),
-        .dash-page table.upcoming-table td:nth-child(2),
-        .dash-page table.past-table th:nth-child(2),
-        .dash-page table.past-table td:nth-child(2) { width: 18%; }
-        .dash-page table.upcoming-table th:nth-child(3),
-        .dash-page table.upcoming-table td:nth-child(3),
-        .dash-page table.past-table th:nth-child(3),
-        .dash-page table.past-table td:nth-child(3) { width: 16%; }
-        .dash-page table.upcoming-table th:nth-child(4),
-        .dash-page table.upcoming-table td:nth-child(4),
-        .dash-page table.past-table th:nth-child(4),
-        .dash-page table.past-table td:nth-child(4) { width: 14%; }
-        .dash-page table.upcoming-table th:nth-child(5),
-        .dash-page table.upcoming-table td:nth-child(5),
-        .dash-page table.past-table th:nth-child(5),
-        .dash-page table.past-table td:nth-child(5) { width: 14%; }
-        .dash-page table.upcoming-table th:nth-child(6),
-        .dash-page table.upcoming-table td:nth-child(6),
-        .dash-page table.past-table th:nth-child(6),
-        .dash-page table.past-table td:nth-child(6) { width: 20%; }
-
         .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; white-space: nowrap !important; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
@@ -689,38 +656,6 @@ export default function Dashboard() {
             font-size: 9px !important; 
             white-space: nowrap !important;
           }
-
-          /* Distribute Today's Table columns evenly and cleanly */
-          .dash-page table.today-table th:nth-child(1),
-          .dash-page table.today-table td:nth-child(1) { width: 30% !important; } /* Time */
-          .dash-page table.today-table th:nth-child(2),
-          .dash-page table.today-table td:nth-child(2) { width: 35% !important; } /* Invitee */
-          .dash-page table.today-table th:nth-child(4),
-          .dash-page table.today-table td:nth-child(4) { width: 20% !important; } /* Status */
-          .dash-page table.today-table th:last-child,
-          .dash-page table.today-table td:last-child { width: 15% !important; } /* Actions */
-
-          /* Distribute Upcoming & Past Tables columns evenly and cleanly */
-          .dash-page table.upcoming-table th:nth-child(1),
-          .dash-page table.upcoming-table td:nth-child(1),
-          .dash-page table.past-table th:nth-child(1),
-          .dash-page table.past-table td:nth-child(1) { width: 25% !important; } /* Invitee */
-          .dash-page table.upcoming-table th:nth-child(3),
-          .dash-page table.upcoming-table td:nth-child(3),
-          .dash-page table.past-table th:nth-child(3),
-          .dash-page table.past-table td:nth-child(3) { width: 20% !important; } /* Date */
-          .dash-page table.upcoming-table th:nth-child(4),
-          .dash-page table.upcoming-table td:nth-child(4),
-          .dash-page table.past-table th:nth-child(4),
-          .dash-page table.past-table td:nth-child(4) { width: 20% !important; } /* Time */
-          .dash-page table.upcoming-table th:nth-child(5),
-          .dash-page table.upcoming-table td:nth-child(5),
-          .dash-page table.past-table th:nth-child(5),
-          .dash-page table.past-table td:nth-child(5) { width: 20% !important; } /* Status */
-          .dash-page table.upcoming-table th:last-child,
-          .dash-page table.upcoming-table td:last-child,
-          .dash-page table.past-table th:last-child,
-          .dash-page table.past-table td:last-child { width: 15% !important; } /* Actions */
 
           /* Stack action buttons vertically so they fit in a narrow actions column */
           .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
