@@ -23,7 +23,7 @@ const HOURS_12 = Array.from({ length: 48 }, (_, i) => {
 });
 
 const TimeSelect = ({ value, onChange, style }) => (
-  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ minWidth: '120px', padding: '7px 10px', fontSize: '13px', ...style }}>
+  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ minWidth: '120px', ...style }}>
     {HOURS_12.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
   </select>
 );
@@ -226,7 +226,7 @@ export default function AvailabilityPage() {
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'flex-end' }} className="avail-block-form">
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start date</label>
-                  <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field avail-block-input" style={{ padding: '8px 10px', fontSize: '13px' }} />
+                  <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field avail-block-input" />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start time</label>
@@ -234,7 +234,7 @@ export default function AvailabilityPage() {
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End date</label>
-                  <input type="date" value={blockForm.end_date} onChange={(e) => setBlockForm({ ...blockForm, end_date: e.target.value })} className="field avail-block-input" style={{ padding: '8px 10px', fontSize: '13px' }} />
+                  <input type="date" value={blockForm.end_date} onChange={(e) => setBlockForm({ ...blockForm, end_date: e.target.value })} className="field avail-block-input" />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End time</label>
@@ -242,7 +242,7 @@ export default function AvailabilityPage() {
                 </div>
                 <div style={{ flex: 1, minWidth: '140px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Reason</label>
-                  <input type="text" value={blockForm.reason} onChange={(e) => setBlockForm({ ...blockForm, reason: e.target.value })} className="field" style={{ padding: '8px 10px', fontSize: '13px' }} placeholder="e.g. Lunch break, PTO" />
+                  <input type="text" value={blockForm.reason} onChange={(e) => setBlockForm({ ...blockForm, reason: e.target.value })} className="field" placeholder="e.g. Lunch break, PTO" />
                 </div>
                 <button onClick={addBlocked} className="btn btn-primary btn-sm" style={{ marginBottom: '1px', height: '36px' }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ marginRight: '5px' }}><path d="M12 5v14M5 12h14"/></svg>
@@ -271,9 +271,11 @@ export default function AvailabilityPage() {
         </div>
       </main>
       <style dangerouslySetInnerHTML={{ __html: `
-        .avail-block-input, .avail-block-form select.field { width: 160px; }
+        .avail-block-form .field { padding: 8px 32px 8px 10px !important; font-size: 13px; }
+        .avail-block-form select.field, .avail-block-input { width: 160px; }
+        .avail-block-input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23A1A1AA' stroke-width='2'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px !important; }
         @media (max-width: 767px) {
-          .avail-block-input, .avail-block-form select.field { width: 100% !important; }
+          .avail-block-form select.field, .avail-block-input { width: 100% !important; }
           .avail-day-row { flex-direction: column !important; gap: 8px !important; }
           .avail-day-label { min-width: auto !important; width: 100% !important; padding-top: 0 !important; }
           .avail-time-row { flex-wrap: wrap !important; }

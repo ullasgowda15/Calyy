@@ -67,6 +67,9 @@ export default function Dashboard() {
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [subStatus, setSubStatus] = useState(null);
+  const [todayFiltersOpen, setTodayFiltersOpen] = useState(true);
+  const [upcomingFiltersOpen, setUpcomingFiltersOpen] = useState(true);
+  const [pastFiltersOpen, setPastFiltersOpen] = useState(true);
 
   useEffect(() => {
     integrations.getGoogleStatus().then((res) => setGoogleConnected(res.data.connected)).catch(() => {});
@@ -241,7 +244,7 @@ export default function Dashboard() {
   const mainContent = (
     <div className="page-content" style={{ maxWidth: '1280px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }} className="dash-header">
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', gap: '16px' }} className="dash-header">
         <div>
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.username} {'\uD83D\uDC4B'}
@@ -348,6 +351,16 @@ export default function Dashboard() {
             </div>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{todaysBookings.length} {todaysBookings.length === 1 ? 'booking' : 'bookings'}</span>
           </div>
+          <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Filters</span>
+            <button onClick={() => setTodayFiltersOpen(!todayFiltersOpen)} className="dash-collapse-toggle btn btn-ghost btn-sm" style={{ fontSize: '11px', gap: '4px' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d={todayFiltersOpen ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"} />
+              </svg>
+              {todayFiltersOpen ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {todayFiltersOpen && (
           <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }} className="dash-filters">
             {[['invitee','Invitee'],['event','Event'],['status','Status (select)']].map(([key, ph]) =>
               key === 'status' ? (
@@ -359,6 +372,7 @@ export default function Dashboard() {
               )
             )}
           </div>
+          )}
           <div style={{ overflowX: 'auto' }}>
             <table className="table">
               <thead><tr><th>Time</th><th>Invitee</th><th>Event</th><th>Status</th><th>Actions</th></tr></thead>
@@ -398,6 +412,16 @@ export default function Dashboard() {
           <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>Upcoming Bookings</h2>
           <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{upcomingBookings.length} upcoming</span>
         </div>
+        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Filters</span>
+          <button onClick={() => setUpcomingFiltersOpen(!upcomingFiltersOpen)} className="dash-collapse-toggle btn btn-ghost btn-sm" style={{ fontSize: '11px', gap: '4px' }}>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d={upcomingFiltersOpen ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"} />
+            </svg>
+            {upcomingFiltersOpen ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        {upcomingFiltersOpen && (
         <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }} className="dash-filters">
           {[['invitee','Invitee'],['event','Event'],['date','Date']].map(([key,ph]) => (
             <input key={key} value={upcomingFilters[key]} onChange={(e) => setUpcomingFilters(f => ({...f, [key]: e.target.value}))} placeholder={`Filter ${ph}\u2026`} className="field" style={{ width: '140px', padding: '7px 10px', fontSize: '12px' }} />
@@ -406,6 +430,7 @@ export default function Dashboard() {
             {FILTERABLE_STATUSES.map(s => <option key={s} value={s}>{s || 'All statuses'}</option>)}
           </select>
         </div>
+        )}
         {loading ? (
           <div style={{ padding: '20px' }}>
             {Array(4).fill(0).map((_, i) => <div key={i} style={{ display: 'flex', gap: '16px', padding: '14px 0', borderBottom: '1px solid var(--border)' }}>{[120,180,100,80].map((w,j) => <Skeleton key={j} w={`${w}px`} h="16px" />)}</div>)}
@@ -475,6 +500,17 @@ export default function Dashboard() {
           </div>
         )}
         {pastBookings.length > 0 && (
+          <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border)' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 600 }}>Filters</span>
+            <button onClick={() => setPastFiltersOpen(!pastFiltersOpen)} className="dash-collapse-toggle btn btn-ghost btn-sm" style={{ fontSize: '11px', gap: '4px' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d={pastFiltersOpen ? "M18 15l-6-6-6 6" : "M6 9l6 6 6-6"} />
+              </svg>
+              {pastFiltersOpen ? 'Hide' : 'Show'}
+            </button>
+          </div>
+        )}
+        {pastBookings.length > 0 && pastFiltersOpen && (
           <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
             <select value={pastFilters.status} onChange={(e) => setPastFilters(f => ({...f, status: e.target.value}))} className="field" style={{ width: '160px', padding: '7px 10px', fontSize: '12px' }}>
               {FILTERABLE_STATUSES.map(s => <option key={s} value={s}>{s || 'All statuses'}</option>)}
@@ -536,29 +572,27 @@ export default function Dashboard() {
         {mainContent}
       </main>
       <style dangerouslySetInnerHTML={{ __html: `
+        .dash-collapse-toggle { display: none; }
         @media (max-width: 767px) {
+          .dash-collapse-toggle { display: inline-flex !important; }
+          .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
+          .dash-header > div:first-child { flex: 1; min-width: 0; }
+          .dash-header > div:last-child { flex-direction: column !important; align-items: stretch !important; gap: 6px !important; }
+          .dash-header > div:last-child > * { width: 100% !important; justify-content: center !important; }
+          .dash-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+          .dash-stat-grid .stat-card { padding: 14px 12px !important; }
+          .dash-stat-grid .stat-value { font-size: 20px !important; }
+          .dash-stat-grid .stat-label { font-size: 10px !important; }
           .dash-filters { flex-direction: column !important; }
           .dash-filters > * { width: 100% !important; }
           .dash-actions { flex-direction: column !important; gap: 4px !important; }
           .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 8px !important; font-size: 13px !important; }
-          .dash-header { flex-direction: column !important; align-items: stretch !important; }
-          .dash-header-btns { width: 100%; }
-          .dash-header-btns > * { flex: 1; justify-content: center; }
-          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .dash-banner { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
           .dash-banner .btn { width: 100% !important; justify-content: center !important; }
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .table, .table thead, .table tbody, .table tr, .table th, .table td { display: block; }
-          .table thead { display: none !important; }
-          .table tr { padding: 14px; margin-bottom: 10px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--surface); }
-          .table td { border: none !important; padding: 5px 0 !important; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
-          .table td:empty { display: none; }
-          .table td::before { content: attr(data-label); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); flex-shrink: 0; }
-          .table td[data-label="Actions"] { flex-direction: column; }
-          .table td[data-label="Actions"]::before { align-self: flex-start; }
-          .table td .dash-actions { width: 100%; }
+          .table th, .table td { padding: 10px 8px !important; font-size: 12px !important; white-space: nowrap; }
         }
       ` }} />
       {cancelModal.show && (
