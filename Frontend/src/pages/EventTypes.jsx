@@ -47,7 +47,7 @@ export default function EventTypes() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
+      <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         <div className="page-content" style={{ maxWidth: '1280px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
             <div>

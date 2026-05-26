@@ -248,9 +248,9 @@ input[type="date"], input[type="time"] {
   .page-content { padding: 16px 12px; }
 }
 
-/* Mobile sidebar */
+/* Main content — fixed top navbar offset */
+.sidebar-main { padding-top: 60px; }
 @media (max-width: 767px) {
-  .sidebar-main { margin-left: 0 !important; padding-top: 64px !important; }
   .sidebar-main h1 { font-size: 20px; }
   .sidebar-main .page-title { font-size: 20px; }
   .sidebar-main .stat-value { font-size: 24px; }

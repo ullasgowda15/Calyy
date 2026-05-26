@@ -66,7 +66,7 @@ export default function EditEventType() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
+      <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         <div className="page-content" style={{ maxWidth: '720px' }}>
           <div style={{ marginBottom: '28px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Edit event type</h1>

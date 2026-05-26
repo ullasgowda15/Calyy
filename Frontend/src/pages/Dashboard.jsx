@@ -532,7 +532,7 @@ export default function Dashboard() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
+      <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         {mainContent}
       </main>
       {cancelModal.show && (

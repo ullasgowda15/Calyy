@@ -29,24 +29,23 @@ const links = [
 export default function Sidebar() {
   const { user, logout } = useAuth();
   const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const SidebarContent = () => (
+  const initials = user?.username?.[0]?.toUpperCase() || '?';
+
+  const DrawerContent = () => (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      {/* Logo */}
       <div style={{ padding: '20px 16px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--border)' }}>
         <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '32px', height: '32px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
         <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '17px', color: 'var(--text-primary)' }}>YourCaly</span>
-        <div style={{ marginLeft: 'auto' }}><ThemeToggle /></div>
       </div>
 
-      {/* Nav */}
       <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
         {links.map((l) => (
           <Link
             key={l.to} to={l.to}
             className={`sidebar-link${location.pathname === l.to || location.pathname.startsWith(l.to + '/') ? ' active' : ''}`}
-            onClick={() => setMobileOpen(false)}
+            onClick={() => setDrawerOpen(false)}
           >
             {l.icon}
             {l.label}
@@ -54,12 +53,11 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      {/* User footer */}
       <div style={{ padding: '12px 10px', borderTop: '1px solid var(--border)' }}>
         <Link
           to="/profile"
           className={`sidebar-link${location.pathname === '/profile' ? ' active' : ''}`}
-          onClick={() => setMobileOpen(false)}
+          onClick={() => setDrawerOpen(false)}
           style={{ marginBottom: '6px' }}
         >
           {user?.avatar ? (
@@ -70,7 +68,7 @@ export default function Sidebar() {
               display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px',
               fontWeight: 700, color: 'var(--accent)', flexShrink: 0,
             }}>
-              {user?.username?.[0]?.toUpperCase() || '?'}
+              {initials}
             </div>
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
@@ -99,45 +97,51 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Desktop */}
-      <aside style={{
-        width: '220px', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: 50,
-        background: 'var(--surface)', borderRight: '1.5px solid var(--border)',
-      }} className="hidden-mobile">
-        <SidebarContent />
-      </aside>
+      {/* Fixed top navbar */}
+      <header style={{
+        position: 'fixed', top: 0, left: 0, right: 0, height: '60px', zIndex: 50,
+        background: 'var(--surface)', borderBottom: '1.5px solid var(--border)',
+      }}>
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '10px' }}>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
+            <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '30px', height: '30px', borderRadius: '8px', objectFit: 'cover' }} />
+            <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', color: 'var(--text-primary)' }}>YourCaly</span>
+          </Link>
 
-      {/* Mobile toggle */}
-      <button
-        onClick={() => setMobileOpen(true)}
-        className="show-mobile"
-        style={{
-          position: 'fixed', top: '16px', left: '16px', zIndex: 60, width: '40px', height: '40px',
-          background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '10px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-          boxShadow: 'var(--shadow-md)', color: 'var(--text-primary)',
-        }}
-        aria-label="Open menu"
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M3 12h18M3 6h18M3 18h18"/>
-        </svg>
-      </button>
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <ThemeToggle />
+            <button
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              style={{
+                width: '36px', height: '36px', borderRadius: '10px',
+                background: 'var(--surface-3)', border: '1.5px solid var(--border)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                color: 'var(--text-primary)',
+              }}
+              aria-label="Toggle menu"
+            >
+              {drawerOpen
+                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+              }
+            </button>
+          </div>
+        </div>
+      </header>
 
-      {/* Mobile overlay */}
-      {mobileOpen && (
+      {/* Drawer overlay */}
+      {drawerOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 55 }}>
-          <div onClick={() => setMobileOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} />
+          <div onClick={() => setDrawerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} />
           <aside style={{
-            position: 'absolute', top: 0, left: 0, width: 'min(240px, 85vw)', height: '100%',
+            position: 'absolute', top: 0, left: 0, width: 'min(260px, 85vw)', height: '100%',
             background: 'var(--surface)', borderRight: '1.5px solid var(--border)',
+            boxShadow: 'var(--shadow-lg)',
           }}>
-            <SidebarContent />
+            <DrawerContent />
           </aside>
         </div>
       )}
-
-      <style dangerouslySetInnerHTML={{ __html: '@media (min-width: 768px) { .hidden-mobile { display: flex; flex-direction: column; } .show-mobile { display: none !important; } } @media (max-width: 767px) { .hidden-mobile { display: none; } .show-mobile { display: flex; } }' }} />
     </>
   );
 }
