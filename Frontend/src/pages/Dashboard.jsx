@@ -65,7 +65,7 @@ export default function Dashboard() {
   const [cancelModal, setCancelModal] = useState({ show: false, id: null, cancelToken: '', reason: '' });
   const [refundModal, setRefundModal] = useState({ show: false, id: null });
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
-  const [showOnboarding, setShowOnboarding] = useState(() => !localStorage.getItem('caly-onboarding-dismissed'));
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [subStatus, setSubStatus] = useState(null);
 
   useEffect(() => {
@@ -97,8 +97,12 @@ export default function Dashboard() {
   useEffect(() => { fetchData(); }, []);
 
   useEffect(() => {
-    if (!loading && allBookings.length === 0 && stats.active === 0) {
-      setShowOnboarding(true);
+    if (!loading) {
+      if (allBookings.length === 0 && stats.active === 0) {
+        setShowOnboarding(!localStorage.getItem('caly-onboarding-dismissed'));
+      } else {
+        setShowOnboarding(false);
+      }
     }
   }, [loading, allBookings, stats.active]);
 
