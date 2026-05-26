@@ -6,15 +6,25 @@ import { useToast } from '../components/Toast';
 import { getUserTimezone, formatDateTimeUTC } from '../utils/datetime';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-const HOURS = Array.from({ length: 48 }, (_, i) => {
-  const h = Math.floor(i / 2).toString().padStart(2, '0');
+
+function to12h(hhmm) {
+  if (!hhmm) return '';
+  const [h, m] = hhmm.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return `${h12}:${String(m).padStart(2, '0')} ${ampm}`;
+}
+
+const HOURS_12 = Array.from({ length: 48 }, (_, i) => {
+  const h = Math.floor(i / 2);
   const m = i % 2 === 0 ? '00' : '30';
-  return `${h}:${m}`;
+  const hh = String(h).padStart(2, '0');
+  return { value: `${hh}:${m}`, label: to12h(`${hh}:${m}`) };
 });
 
 const TimeSelect = ({ value, onChange }) => (
-  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ width: '110px', padding: '7px 10px', fontSize: '13px' }}>
-    {HOURS.map((h) => <option key={h} value={h}>{h}</option>)}
+  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ width: '130px', padding: '7px 10px', fontSize: '13px' }}>
+    {HOURS_12.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
   </select>
 );
 
@@ -220,7 +230,7 @@ export default function AvailabilityPage() {
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start time</label>
-                  <input type="time" value={blockForm.start_time} onChange={(e) => setBlockForm({ ...blockForm, start_time: e.target.value })} className="field" style={{ width: '130px', padding: '8px 10px', fontSize: '13px' }} />
+                  <TimeSelect value={blockForm.start_time} onChange={(v) => setBlockForm({ ...blockForm, start_time: v })} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End date</label>
@@ -228,7 +238,7 @@ export default function AvailabilityPage() {
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End time</label>
-                  <input type="time" value={blockForm.end_time} onChange={(e) => setBlockForm({ ...blockForm, end_time: e.target.value })} className="field" style={{ width: '130px', padding: '8px 10px', fontSize: '13px' }} />
+                  <TimeSelect value={blockForm.end_time} onChange={(v) => setBlockForm({ ...blockForm, end_time: v })} />
                 </div>
                 <div style={{ flex: 1, minWidth: '140px' }}>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Reason</label>

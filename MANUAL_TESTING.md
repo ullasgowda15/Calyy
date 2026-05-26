@@ -147,6 +147,7 @@
 - [ ] Successful payment → booking confirmed
 - [ ] Failed/cancelled payment → booking not created
 - [ ] Payment status endpoint works (no auth required)
+- [ ] ⚠️ Note: Money goes to platform's Razorpay account. Host payout logic (Razorpay Transfers) not yet implemented — coming tomorrow
 
 ---
 
