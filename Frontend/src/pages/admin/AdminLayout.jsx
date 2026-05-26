@@ -15,53 +15,72 @@ export default function AdminLayout() {
   const location = useLocation();
   const { adminUser, logout } = useAdminAuth();
   const initials = adminUser?.username?.[0]?.toUpperCase() || 'A';
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const sidebar = (
+  const NavLinks = () => (
+    <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      {NAV.map((item) => {
+        const active = item.path === '/adkrish' ? location.pathname === '/adkrish' : location.pathname.startsWith(item.path);
+        return (
+          <Link key={item.path} to={item.path} onClick={() => setDrawerOpen(false)} style={{
+            display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px',
+            borderRadius: '8px', fontSize: '13px', fontWeight: active ? 600 : 400,
+            color: active ? '#fff' : '#7F7F8C', textDecoration: 'none',
+            background: active ? '#1A1A1F' : 'transparent', transition: 'all 0.15s',
+          }}>
+            <span dangerouslySetInnerHTML={{ __html: item.icon }} style={{ display: 'flex', opacity: active ? 1 : 0.5 }} />
+            {item.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+
+  const UserSection = () => (
+    <div style={{ padding: '14px 16px', borderTop: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 700, flexShrink: 0 }}>{initials}</div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: '12px', fontWeight: 600, color: '#E4E4E7' }}>{adminUser?.username || 'Admin'}</div>
+        <div style={{ fontSize: '11px', color: '#52525B' }}>{adminUser?.email || ''}</div>
+      </div>
+      <button onClick={logout} style={{ background: 'none', border: 'none', color: '#52525B', cursor: 'pointer', padding: '4px', borderRadius: '6px', display: 'flex' }} title="Sign out">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+      </button>
+    </div>
+  );
+
+  const sidebarContent = (
     <>
       <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
         <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '15px', fontWeight: 700 }}>C</div>
         <span style={{ color: '#fff', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em' }}>YourCaly Admin</span>
       </div>
-      <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {NAV.map((item) => {
-          const active = item.path === '/adkrish' ? location.pathname === '/adkrish' : location.pathname.startsWith(item.path);
-          return (
-            <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)} style={{
-              display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px',
-              borderRadius: '8px', fontSize: '13px', fontWeight: active ? 600 : 400,
-              color: active ? '#fff' : '#7F7F8C', textDecoration: 'none',
-              background: active ? '#1A1A1F' : 'transparent', transition: 'all 0.15s',
-            }}>
-              <span dangerouslySetInnerHTML={{ __html: item.icon }} style={{ display: 'flex', opacity: active ? 1 : 0.5 }} />
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
-      <div style={{ padding: '14px 16px', borderTop: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 700, flexShrink: 0 }}>{initials}</div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#E4E4E7' }}>{adminUser?.username || 'Admin'}</div>
-          <div style={{ fontSize: '11px', color: '#52525B' }}>{adminUser?.email || ''}</div>
-        </div>
-        <button onClick={logout} style={{ background: 'none', border: 'none', color: '#52525B', cursor: 'pointer', padding: '4px', borderRadius: '6px', display: 'flex' }} title="Sign out">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-        </button>
-      </div>
+      <NavLinks />
+      <UserSection />
     </>
   );
 
   return (
     <div style={{ minHeight: '100vh', background: '#0F0F11' }}>
-      {/* Fixed top navbar */}
-      <nav style={{
-        position: 'fixed', top: 0, left: 0, right: 0, height: '60px', zIndex: 50,
+      {/* Desktop sidebar - hidden on mobile */}
+      <aside className="admin-sidebar-desktop" style={{
+        display: 'flex', flexDirection: 'column',
+        position: 'fixed', top: 0, left: 0, width: '220px', height: '100vh',
+        background: '#0F0F11', borderRight: '1px solid #1F1F23',
+        zIndex: 50, overflowY: 'auto',
+      }}>
+        {sidebarContent}
+      </aside>
+
+      {/* Mobile top navbar - hidden on desktop */}
+      <nav className="admin-sidebar-mobile-header" style={{
+        display: 'none', position: 'fixed', top: 0, left: 0, right: 0,
+        height: '60px', zIndex: 50,
         background: '#0F0F11', borderBottom: '1px solid #1F1F23',
-        display: 'flex', alignItems: 'center', padding: '0 20px', gap: '12px',
+        alignItems: 'center', padding: '0 16px', gap: '10px',
       }}>
         <button
-          onClick={() => setMobileOpen(true)}
+          onClick={() => setDrawerOpen(true)}
           style={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             width: '40px', height: '40px', flexShrink: 0,
@@ -78,22 +97,22 @@ export default function AdminLayout() {
         <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '32px', height: '32px', borderRadius: '8px', objectFit: 'cover' }} />
       </nav>
 
-      {/* Drawer overlay */}
-      {mobileOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 55 }}>
-          <div onClick={() => setMobileOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
+      {/* Mobile drawer */}
+      {drawerOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 55 }} className="admin-sidebar-mobile-drawer">
+          <div onClick={() => setDrawerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
           <aside style={{
             position: 'absolute', top: 0, left: 0, width: '240px', height: '100%',
             background: '#0F0F11', borderRight: '1px solid #1F1F23',
             display: 'flex', flexDirection: 'column',
           }}>
-            {sidebar}
+            {sidebarContent}
           </aside>
         </div>
       )}
 
       {/* Main content */}
-      <main style={{ paddingTop: '60px', minHeight: '100vh' }}>
+      <main className="admin-sidebar-main" style={{ marginLeft: '220px', minHeight: '100vh' }}>
         <div className="admin-content" style={{ padding: '24px 32px' }}>
           <Outlet />
         </div>
@@ -101,6 +120,10 @@ export default function AdminLayout() {
 
       <style dangerouslySetInnerHTML={{ __html: `
         @media (max-width: 767px) {
+          .admin-sidebar-desktop { display: none !important; }
+          .admin-sidebar-mobile-header { display: flex !important; }
+          .admin-sidebar-mobile-drawer { display: block !important; }
+          .admin-sidebar-main { margin-left: 0 !important; padding-top: 60px; }
           .admin-content { padding: 16px !important; }
         }
       ` }} />

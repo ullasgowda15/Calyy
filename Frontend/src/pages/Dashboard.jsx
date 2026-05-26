@@ -578,8 +578,7 @@ export default function Dashboard() {
         .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
-          .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
-          .dash-header > div:first-child { flex: 1; min-width: 0; }
+          .dash-header { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
           .dash-header > div:last-child { flex-direction: column !important; align-items: stretch !important; gap: 6px !important; }
           .dash-header > div:last-child > * { width: 100% !important; justify-content: center !important; }
           .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
@@ -589,13 +588,13 @@ export default function Dashboard() {
           .dash-filters { flex-direction: column !important; }
           .dash-filters > * { width: 100% !important; }
           .dash-actions { flex-direction: column !important; gap: 4px !important; }
-          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 8px !important; font-size: 13px !important; }
+          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 6px !important; font-size: 12px !important; }
           .dash-banner { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
           .dash-banner .btn { width: 100% !important; justify-content: center !important; }
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .dash-page .table th, .dash-page .table td { padding: 8px 4px !important; font-size: 11px !important; }
+          .dash-page .table th, .dash-page .table td { padding: 6px 4px !important; font-size: 12px !important; }
           .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
         }
       ` }} />
