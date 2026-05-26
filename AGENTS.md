@@ -62,6 +62,9 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
   - `bookings/serializers.py`: `pytz.utc.localize()` on timezone-aware datetime → strip tzinfo before localizing
   - `conftest.py`: `create_user` fixture missing subscription → added `subscription_status='free_trial'` so `is_subscribed()` passes; fixed `timezone` param shadowing module
 - Tests must use `pytest` (reads `pytest.ini` → `core.test_settings` disables throttling); `manage.py test` uses `core.settings` with active throttling
+- **Layout restored**: persistent fixed left sidebar (220px) on desktop (≥768px); hamburger drawer on mobile (<768px). `Sidebar.jsx` renders both views and shows/hides via CSS media queries. `.sidebar-main` uses `margin-left: 220px` on desktop, `padding-top: 60px` on mobile.
+- **Dashboard mobile**: filters stack vertically, action buttons go full-width, tables scroll horizontally, onboarding banner stacks — all via `dash-filters`/`dash-actions` CSS classes in a `<style>` media query
+- **Availability mobile**: day rows (`avail-day-row`) stack label above controls; time selects (`avail-time-row`) wrap and flex to fill width; block form (`avail-block-form`) stacks vertically; block cards (`avail-block-card`) wrap text and stack vertically — all via `<style>` media query
 
 ### Blocked
 - Google Calendar token expired — user must re-connect
@@ -78,6 +81,7 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 - Error messages return generic `'Invalid credentials'` — prevents email enumeration
 - Mobile responsive via single `page-content` CSS class with breakpoints — replaces 7 duplicate inline `<style>` tags
 - `resolveTimezone()` treats `'UTC'` as "not set" and falls back to browser timezone
+- **Layout refactored**: persistent left sidebar replaced with fixed top navbar + hamburger drawer — same on all screen sizes, no more sidebar margin offset in CSS
 - Email templates use shared `detail_rows()` helper for consistent styled tables across all 6 email types
 - Email verification uses 6-digit OTP (not token link) — simpler UX, 10-min expiry, Resend API
 - Celery beat uses `django_celery_beat DatabaseScheduler` with data migration
@@ -100,6 +104,9 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 - `get_available_slots()` in `Backend/events/availability.py` uses `host_tz.localize()` to interpret availability times, then converts to UTC for slot storage
 - Booking page displays slots via `formatTimeLocal(slot.start, form.invitee_timezone)` — times are UTC ISO strings converted to invitee's browser timezone with `hour12: true`
 - All 7 authenticated pages now use `page-content` CSS class instead of inline `padding` — single source of truth in `index.css`
+- **Layout restored**: persistent fixed left sidebar (220px) on desktop (≥768px); hamburger drawer on mobile (<768px). `Sidebar.jsx` renders both views and shows/hides via CSS media queries. `.sidebar-main` uses `margin-left: 220px` on desktop, `padding-top: 60px` on mobile.
+- **Dashboard mobile**: filters stack vertically, action buttons go full-width, tables scroll horizontally, onboarding banner stacks — all via `dash-filters`/`dash-actions`/`dash-onboarding` classes in a `<style>` media query
+- **Availability mobile**: day rows (`avail-day-row`) stack label above controls; time selects (`avail-time-row`) wrap and flex to fill width; block form (`avail-block-form`) stacks vertically; block cards (`avail-block-card`) wrap text and stack vertically — all via `<style>` media query
 - Payments test file (`test_payments.py`) not discovered by Django test runner — pre-existing issue
 - Backend throttling: `register: 5/h`, `login: 10/h`, `token-refresh: 20/h`, `booking-create: 20/h`
 - Tests use `core.test_settings` which disables throttling
@@ -123,3 +130,6 @@ Complete v1 of Caly scheduling app with time/email fixes, mobile responsiveness,
 - `Backend/payments/views.py`: `payment_status` changed to `AllowAny`
 - `Backend/events/serializers.py`: duplicate event type name returns validation error
 - `Frontend/src/pages/Login.jsx`: error message now `'Invalid credentials'`
+- `Frontend/src/components/Sidebar.jsx`: rewritten — fixed left sidebar on desktop (≥768px), top navbar + hamburger drawer on mobile (<768px)
+- `Frontend/src/pages/Dashboard.jsx`: added `<style>` media query for mobile filter stacking, full-width action buttons, horizontal table scroll
+- `Frontend/src/pages/Availability.jsx`: added `<style>` media query for mobile day-row stacking, flexible time selects, vertical block form

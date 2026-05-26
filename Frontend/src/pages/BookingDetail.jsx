@@ -92,7 +92,7 @@ export default function BookingDetail() {
     return (
       <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
         <Sidebar />
-        <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
+        <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
           <div className="page-content" style={{ maxWidth: '820px' }}>
             <div className="skeleton" style={{ width: '140px', height: '16px', marginBottom: '20px', borderRadius: '6px' }} />
             <div className="skeleton" style={{ width: '300px', height: '28px', marginBottom: '4px', borderRadius: '8px' }} />
@@ -118,7 +118,7 @@ export default function BookingDetail() {
   return (
     <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
-      <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
+      <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         <div className="page-content" style={{ maxWidth: '820px' }}>
           {/* Back link */}
           <Link to="/dashboard" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px', color: 'var(--accent)', textDecoration: 'none', marginBottom: '24px', fontWeight: 500, transition: 'opacity 0.15s' }}

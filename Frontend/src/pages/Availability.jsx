@@ -60,11 +60,11 @@ function BlockCard({ block, onRemove }) {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border)', borderLeft: '3px solid var(--danger)', transition: 'box-shadow 0.15s', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--surface)', borderRadius: '10px', padding: '12px 14px', border: '1px solid var(--border)', borderLeft: '3px solid var(--danger)', transition: 'box-shadow 0.15s', boxShadow: '0 1px 2px rgba(0,0,0,0.04)' }} className="avail-block-card">
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
         <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--danger)', flexShrink: 0 }} />
         <div style={{ minWidth: 0 }}>
-          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap' }} className="avail-block-text">
             {start} — {end}
           </span>
           {block.reason && <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginLeft: '8px' }}>({block.reason})</span>}
@@ -179,8 +179,8 @@ export default function AvailabilityPage() {
               ) : DAYS.map((day, di) => {
                 const dayWins = windows.filter((w, idx) => w.weekday === di && w.is_active);
                 return (
-                  <div key={day} style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', padding: '14px 20px', borderBottom: di < DAYS.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                    <div style={{ minWidth: '100px', paddingTop: '8px', flexShrink: 0 }}>
+                  <div key={day} style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', padding: '14px 20px', borderBottom: di < DAYS.length - 1 ? '1px solid var(--border)' : 'none' }} className="avail-day-row">
+                    <div style={{ minWidth: '100px', paddingTop: '8px', flexShrink: 0 }} className="avail-day-label">
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{day}</span>
                     </div>
                     <div style={{ flex: 1 }}>
@@ -190,7 +190,7 @@ export default function AvailabilityPage() {
                         windows.map((w, idx) => {
                           if (w.weekday !== di || !w.is_active) return null;
                           return (
-                            <div key={w.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                            <div key={w.id || idx} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }} className="avail-time-row">
                               <TimeSelect value={w.start_time} onChange={(v) => updateWindow(idx, 'start_time', v)} />
                               <span style={{ fontSize: '13px', color: 'var(--text-muted)' }}>→</span>
                               <TimeSelect value={w.end_time} onChange={(v) => updateWindow(idx, 'end_time', v)} />
@@ -223,7 +223,7 @@ export default function AvailabilityPage() {
             </div>
             <div style={{ padding: '20px' }}>
               {/* Add block form */}
-              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'flex-end' }}>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'flex-end' }} className="avail-block-form">
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start date</label>
                   <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field" style={{ width: '160px', padding: '8px 10px', fontSize: '13px' }} />
@@ -270,6 +270,20 @@ export default function AvailabilityPage() {
           </div>
         </div>
       </main>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 767px) {
+          .avail-day-row { flex-direction: column !important; gap: 8px !important; }
+          .avail-day-label { min-width: auto !important; width: 100% !important; padding-top: 0 !important; }
+          .avail-time-row { flex-wrap: wrap !important; }
+          .avail-time-row > select { width: calc(50% - 30px) !important; flex: 1; }
+          .avail-block-form { flex-direction: column !important; }
+          .avail-block-form > div { width: 100% !important; }
+          .avail-block-form .field { width: 100% !important; }
+          .avail-block-form button { width: 100% !important; justify-content: center !important; }
+          .avail-block-card { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+          .avail-block-text { white-space: normal !important; word-break: break-word !important; }
+        }
+      ` }} />
     </div>
   );
 }

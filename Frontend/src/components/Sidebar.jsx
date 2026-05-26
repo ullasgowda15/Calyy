@@ -33,53 +33,57 @@ export default function Sidebar() {
 
   const initials = user?.username?.[0]?.toUpperCase() || '?';
 
-  const DrawerContent = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ padding: '20px 16px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--border)' }}>
-        <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '32px', height: '32px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
-        <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '17px', color: 'var(--text-primary)' }}>YourCaly</span>
-      </div>
-
-      <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-        {links.map((l) => (
-          <Link
-            key={l.to} to={l.to}
-            className={`sidebar-link${location.pathname === l.to || location.pathname.startsWith(l.to + '/') ? ' active' : ''}`}
-            onClick={() => setDrawerOpen(false)}
-          >
-            {l.icon}
-            {l.label}
-          </Link>
-        ))}
-      </nav>
-
-      <div style={{ padding: '12px 10px', borderTop: '1px solid var(--border)' }}>
+  const NavLinks = () => (
+    <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+      {links.map((l) => (
         <Link
-          to="/profile"
-          className={`sidebar-link${location.pathname === '/profile' ? ' active' : ''}`}
+          key={l.to} to={l.to}
+          className={`sidebar-link${location.pathname === l.to || location.pathname.startsWith(l.to + '/') ? ' active' : ''}`}
           onClick={() => setDrawerOpen(false)}
-          style={{ marginBottom: '6px' }}
         >
-          {user?.avatar ? (
-            <img src={user.avatar} alt="" style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-          ) : (
-            <div style={{
-              width: '28px', height: '28px', borderRadius: '50%', background: 'var(--accent-light)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px',
-              fontWeight: 700, color: 'var(--accent)', flexShrink: 0,
-            }}>
-              {initials}
-            </div>
-          )}
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.username || 'Profile'}</div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email || ''}</div>
-          </div>
+          {l.icon}
+          {l.label}
         </Link>
+      ))}
+    </nav>
+  );
+
+  const UserSection = () => (
+    <div style={{ borderTop: '1px solid var(--border)', padding: '10px' }}>
+      <Link
+        to="/profile"
+        onClick={() => setDrawerOpen(false)}
+        style={{
+          display: 'flex', alignItems: 'center', gap: '10px', padding: '10px',
+          borderRadius: 'var(--radius)', textDecoration: 'none',
+          background: 'var(--surface-3)', marginBottom: '8px',
+          transition: 'background 0.15s',
+        }}
+        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--border)'}
+        onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
+      >
+        {user?.avatar ? (
+          <img src={user.avatar} alt="" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        ) : (
+          <div style={{
+            width: '32px', height: '32px', borderRadius: '50%', background: 'var(--accent-light)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px',
+            fontWeight: 700, color: 'var(--accent)', flexShrink: 0,
+          }}>
+            {initials}
+          </div>
+        )}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.username || 'Profile'}</div>
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email || ''}</div>
+        </div>
+      </Link>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <ThemeToggle />
         <button
           onClick={logout}
           style={{
-            width: '100%', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
+            flex: 1, display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px',
             borderRadius: 'var(--radius)', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)',
             background: 'transparent', border: 'none', cursor: 'pointer', transition: 'background 0.15s',
           }}
@@ -97,48 +101,63 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Fixed top navbar */}
-      <header style={{
-        position: 'fixed', top: 0, left: 0, right: 0, height: '60px', zIndex: 50,
-        background: 'var(--surface)', borderBottom: '1.5px solid var(--border)',
-      }}>
-        <div style={{ height: '100%', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '10px' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
-            <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '30px', height: '30px', borderRadius: '8px', objectFit: 'cover' }} />
-            <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', color: 'var(--text-primary)' }}>YourCaly</span>
-          </Link>
+      {/* Desktop sidebar - hidden on mobile */}
+      <aside className="sidebar-desktop">
+        <div style={{ padding: '20px 16px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--border)' }}>
+          <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '32px', height: '32px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+          <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '17px', color: 'var(--text-primary)' }}>YourCaly</span>
+        </div>
+        <NavLinks />
+        <UserSection />
+      </aside>
 
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ThemeToggle />
-            <button
-              onClick={() => setDrawerOpen(!drawerOpen)}
-              style={{
-                width: '36px', height: '36px', borderRadius: '10px',
-                background: 'var(--surface-3)', border: '1.5px solid var(--border)',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'var(--text-primary)',
-              }}
-              aria-label="Toggle menu"
-            >
-              {drawerOpen
-                ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-              }
-            </button>
+      {/* Mobile top navbar + drawer - hidden on desktop */}
+      <header className="sidebar-mobile-header">
+        <div style={{ height: '100%', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '10px' }}>
+          <button
+            onClick={() => setDrawerOpen(!drawerOpen)}
+            style={{
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: 'var(--surface-3)', border: '1.5px solid var(--border)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--text-primary)', flexShrink: 0,
+            }}
+            aria-label="Toggle menu"
+          >
+            {drawerOpen
+              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+            }
+          </button>
+
+          <ThemeToggle />
+
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+            <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
+              <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '30px', height: '30px', borderRadius: '8px', objectFit: 'cover' }} />
+              <span className="sidebar-brand-name" style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', color: 'var(--text-primary)' }}>YourCaly</span>
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* Drawer overlay */}
+      {/* Mobile drawer overlay */}
       {drawerOpen && (
-        <div style={{ position: 'fixed', inset: 0, zIndex: 55 }}>
+        <div className="sidebar-mobile-drawer">
           <div onClick={() => setDrawerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} />
           <aside style={{
             position: 'absolute', top: 0, left: 0, width: 'min(260px, 85vw)', height: '100%',
             background: 'var(--surface)', borderRight: '1.5px solid var(--border)',
             boxShadow: 'var(--shadow-lg)',
           }}>
-            <DrawerContent />
+            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ padding: '20px 16px 16px', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid var(--border)' }}>
+                <img src="/YourCalyLogo.png" alt="YourCaly" style={{ width: '32px', height: '32px', borderRadius: '10px', objectFit: 'cover', flexShrink: 0 }} />
+                <span style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '17px', color: 'var(--text-primary)' }}>YourCaly</span>
+              </div>
+              <NavLinks />
+              <UserSection />
+            </div>
           </aside>
         </div>
       )}

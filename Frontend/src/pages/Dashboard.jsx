@@ -348,7 +348,7 @@ export default function Dashboard() {
             </div>
             <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{todaysBookings.length} {todaysBookings.length === 1 ? 'booking' : 'bookings'}</span>
           </div>
-          <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }} className="dash-filters">
             {[['invitee','Invitee'],['event','Event'],['status','Status (select)']].map(([key, ph]) =>
               key === 'status' ? (
                 <select key={key} value={todayFilters[key]} onChange={(e) => setTodayFilters(f => ({...f, [key]: e.target.value}))} className="field" style={{ width: '140px', padding: '7px 10px', fontSize: '12px' }}>
@@ -370,7 +370,7 @@ export default function Dashboard() {
                     <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -398,7 +398,7 @@ export default function Dashboard() {
           <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>Upcoming Bookings</h2>
           <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{upcomingBookings.length} upcoming</span>
         </div>
-        <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ padding: '12px 16px', display: 'flex', gap: '10px', flexWrap: 'wrap', borderBottom: '1px solid var(--border)' }} className="dash-filters">
           {[['invitee','Invitee'],['event','Event'],['date','Date']].map(([key,ph]) => (
             <input key={key} value={upcomingFilters[key]} onChange={(e) => setUpcomingFilters(f => ({...f, [key]: e.target.value}))} placeholder={`Filter ${ph}\u2026`} className="field" style={{ width: '140px', padding: '7px 10px', fontSize: '12px' }} />
           ))}
@@ -432,7 +432,7 @@ export default function Dashboard() {
                     <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td><StatusBadge status={b.status} /></td>
                     <td>
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -530,11 +530,25 @@ export default function Dashboard() {
   );
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
+      <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         {mainContent}
       </main>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 767px) {
+          .dash-filters { flex-direction: column !important; }
+          .dash-filters > * { width: 100% !important; }
+          .dash-header-btns { width: 100%; }
+          .dash-header-btns > * { flex: 1; justify-content: center; }
+          .dash-actions { flex-direction: column !important; gap: 4px !important; }
+          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 8px !important; font-size: 13px !important; }
+          .table { min-width: 500px; }
+          .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
+          .dash-onboarding-btns { width: 100%; }
+          .dash-onboarding-btns > * { flex: 1; justify-content: center; }
+        }
+      ` }} />
       {cancelModal.show && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,.45)' }} onClick={() => setCancelModal({ ...cancelModal, show: false })}>
           <div style={{ background: 'var(--surface)', borderRadius: '14px', padding: '28px', width: '100%', maxWidth: '400px', boxShadow: '0 12px 40px rgba(0,0,0,.25)' }} onClick={(e) => e.stopPropagation()}>
