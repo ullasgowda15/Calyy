@@ -372,9 +372,8 @@ export default function Dashboard() {
           </div>
           )}
           <div className="table-wrap">
-            <table className="table today-table">
-              <colgroup><col style={{width:'15%'}} /><col style={{width:'28%'}} /><col style={{width:'25%'}} /><col style={{width:'12%'}} /><col style={{width:'20%'}} /></colgroup>
-              <thead><tr><th data-label="Time">Time</th><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
+            <table className="table today-table" style={{ width: '100%' }}>
+              <thead><tr><th style={{width:'15%'}} data-label="Time">Time</th><th style={{width:'28%'}} data-label="Invitee">Invitee</th><th style={{width:'25%'}} data-label="Event">Event</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'20%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
@@ -445,9 +444,8 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table upcoming-table">
-              <colgroup><col style={{width:'16%'}} /><col style={{width:'16%'}} /><col style={{width:'15%'}} /><col style={{width:'14%'}} /><col style={{width:'12%'}} /><col style={{width:'27%'}} /></colgroup>
-              <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
+            <table className="table upcoming-table" style={{ width: '100%' }}>
+              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'15%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {upcomingPaginated.map((b) => (
                   <tr key={b.id}>
@@ -527,9 +525,8 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table past-table">
-              <colgroup><col style={{width:'16%'}} /><col style={{width:'16%'}} /><col style={{width:'15%'}} /><col style={{width:'14%'}} /><col style={{width:'12%'}} /><col style={{width:'27%'}} /></colgroup>
-              <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
+            <table className="table past-table" style={{ width: '100%' }}>
+              <thead><tr><th style={{width:'18%'}} data-label="Invitee">Invitee</th><th style={{width:'18%'}} data-label="Event">Event</th><th style={{width:'15%'}} data-label="Date">Date</th><th style={{width:'12%'}} data-label="Time">Time</th><th style={{width:'12%'}} data-label="Status">Status</th><th style={{width:'25%'}} data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {pastPaginated.map((b) => (
                   <tr key={b.id}>
@@ -572,12 +569,9 @@ export default function Dashboard() {
       </main>
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
-        .table { table-layout: fixed; width: 100%; }
-        .table th, .table td { box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page { overflow-x: hidden; }
-        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
-        .dash-page .table td { padding: 6px 8px; font-size: 11px; }
-        
+        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; white-space: nowrap; }
+        .dash-page .table td { padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; white-space: nowrap !important; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
