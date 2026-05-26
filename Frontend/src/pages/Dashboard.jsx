@@ -242,7 +242,7 @@ export default function Dashboard() {
   ];
 
   const mainContent = (
-    <div className="page-content" style={{ maxWidth: '1280px' }}>
+    <div className="page-content dash-page" style={{ maxWidth: '1280px' }}>
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', gap: '16px' }} className="dash-header">
         <div>
@@ -375,7 +375,7 @@ export default function Dashboard() {
           )}
           <div style={{ overflowX: 'auto' }}>
             <table className="table">
-              <thead><tr><th>Time</th><th>Invitee</th><th>Event</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th data-label="Time">Time</th><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
@@ -384,7 +384,7 @@ export default function Dashboard() {
                     <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
+                      <div style={{ display: 'flex', gap: '6px' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -398,7 +398,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {todayPaginated.length === 0 && <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
+                {todayPaginated.length === 0 && <tr><td colSpan={10} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -447,7 +447,7 @@ export default function Dashboard() {
           <>
           <div style={{ overflowX: 'auto' }}>
             <table className="table">
-              <thead><tr><th>Invitee</th><th>Event</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {upcomingPaginated.map((b) => (
                   <tr key={b.id}>
@@ -457,7 +457,7 @@ export default function Dashboard() {
                     <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
+                      <div style={{ display: 'flex', gap: '6px' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -471,7 +471,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {upcomingPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
+                {upcomingPaginated.length === 0 && <tr><td colSpan={10} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -530,7 +530,7 @@ export default function Dashboard() {
           <>
           <div style={{ overflowX: 'auto' }}>
             <table className="table">
-              <thead><tr><th>Invitee</th><th>Event</th><th>Date</th><th>Time</th><th>Status</th><th>Actions</th></tr></thead>
+              <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {pastPaginated.map((b) => (
                   <tr key={b.id}>
@@ -540,7 +540,7 @@ export default function Dashboard() {
                     <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
-                      <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', gap: '6px' }}>
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -554,7 +554,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {pastPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
+                {pastPaginated.length === 0 && <tr><td colSpan={10} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -579,9 +579,9 @@ export default function Dashboard() {
           .dash-header > div:first-child { flex: 1; min-width: 0; }
           .dash-header > div:last-child { flex-direction: column !important; align-items: stretch !important; gap: 6px !important; }
           .dash-header > div:last-child > * { width: 100% !important; justify-content: center !important; }
-          .dash-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
-          .dash-stat-grid .stat-card { padding: 14px 12px !important; }
-          .dash-stat-grid .stat-value { font-size: 20px !important; }
+          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+          .dash-stat-grid .stat-card { padding: 10px !important; }
+          .dash-stat-grid .stat-value { font-size: 18px !important; }
           .dash-stat-grid .stat-label { font-size: 10px !important; }
           .dash-filters { flex-direction: column !important; }
           .dash-filters > * { width: 100% !important; }
@@ -592,7 +592,10 @@ export default function Dashboard() {
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .table th, .table td { padding: 10px 8px !important; font-size: 12px !important; white-space: nowrap; }
+          .table { table-layout: fixed; width: 100%; }
+          .table th, .table td { padding: 8px 4px !important; font-size: 11px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
+          .dash-page { overflow-x: hidden; }
         }
       ` }} />
       {cancelModal.show && (
