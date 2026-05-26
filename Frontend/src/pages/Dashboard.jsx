@@ -67,9 +67,9 @@ export default function Dashboard() {
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null, name: '' });
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [subStatus, setSubStatus] = useState(null);
-  const [todayFiltersOpen, setTodayFiltersOpen] = useState(true);
-  const [upcomingFiltersOpen, setUpcomingFiltersOpen] = useState(true);
-  const [pastFiltersOpen, setPastFiltersOpen] = useState(true);
+  const [todayFiltersOpen, setTodayFiltersOpen] = useState(false);
+  const [upcomingFiltersOpen, setUpcomingFiltersOpen] = useState(false);
+  const [pastFiltersOpen, setPastFiltersOpen] = useState(false);
 
   useEffect(() => {
     integrations.getGoogleStatus().then((res) => setGoogleConnected(res.data.connected)).catch(() => {});
