@@ -570,15 +570,19 @@ export default function Dashboard() {
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
         .table { table-layout: fixed; width: 100%; }
+        .table th, .table td { box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 6px 8px; font-size: 11px; }
+        .dash-page { overflow-x: hidden; }
+        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
+        .dash-page .table td { padding: 6px 8px; font-size: 11px; }
         .table th, .table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page { overflow-x: hidden; }
         .dash-page .table th { padding: 8px 12px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 10px 12px; font-size: 13px; }
-        .dash-page .table td:first-child { width: 25%; }
-        .dash-page .table td:nth-child(2) { width: 25%; }
-        .dash-page .table td:nth-child(3) { width: 20%; }
-        .dash-page .table td:nth-child(4) { width: 12%; }
-        .dash-page .table td:last-child { width: 18%; }
+        .dash-page .table th[data-label="Time"], .dash-page .table td[data-label="Time"] { width: 20%; }
+        .dash-page .table th[data-label="Invitee"], .dash-page .table td[data-label="Invitee"] { width: 30%; }
+        .dash-page .table th[data-label="Event"], .dash-page .table td[data-label="Event"] { width: 20%; }
+        .dash-page .table th[data-label="Status"], .dash-page .table td[data-label="Status"] { width: 15%; white-space: nowrap; }
+        .dash-page .table th[data-label="Actions"], .dash-page .table td[data-label="Actions"] { width: 15%; }
         .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
