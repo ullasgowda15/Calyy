@@ -536,7 +536,7 @@ export default function Dashboard() {
                     <td data-label="Time" style={{ color: 'var(--text-secondary)' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
-                      <div style={{ display: 'flex', gap: '6px' }}>
+                      <div style={{ display: 'flex', gap: '6px' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
                           <>
@@ -570,101 +570,117 @@ export default function Dashboard() {
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
         .dash-page { overflow-x: hidden; }
-        .table { table-layout: fixed; width: 100%; }
-        .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
-        .dash-page .table td { padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dash-page .table th[data-label],
-        .dash-page .table td[data-label] { width: auto; min-width: 80px; }
-        .dash-page .table th[data-label="Status"],
-        .dash-page .table td[data-label="Status"] { min-width: 110px; white-space: nowrap; }
-        .dash-page .table th[data-label="Actions"],
-        .dash-page .table td[data-label="Actions"] { min-width: 130px; white-space: normal; }
-        .dash-actions { display: flex !important; flex-wrap: wrap; gap: 4px; justify-content: flex-start; }
-        .dash-actions .btn { padding: 2px 4px !important; font-size: 9px !important; width: auto !important; max-width: 100% !important; box-sizing: border-box; }
         .dash-page .table-wrap { overflow-x: auto; max-width: 100%; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
+
+        /* Desktop table defaults */
+        .dash-page .table { table-layout: auto; width: 100%; border-collapse: collapse; }
+        .dash-page .table th { padding: 10px 12px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); background: transparent; white-space: nowrap; }
+        .dash-page .table td { padding: 10px 12px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dash-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+        .dash-actions .btn { padding: 4px 10px; font-size: 11px; border-radius: 6px; white-space: nowrap; }
+
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
           .dash-header { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; }
-          .dash-header > div:first-child { flex: 1; min-width: 0; }
           .dash-header > div:first-child h1 { font-size: 20px !important; }
           .dash-header > div:first-child p { font-size: 13px !important; }
           .dash-header-actions { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; width: 100% !important; }
           .dash-header-actions > *:first-child { grid-column: span 2 !important; }
           .dash-header-actions > * { width: 100% !important; justify-content: center !important; }
-          
           .dash-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
           .dash-stat-grid .stat-card { padding: 12px 14px !important; gap: 4px !important; }
           .dash-stat-grid .stat-value { font-size: 18px !important; }
           .dash-stat-grid .stat-label { font-size: 10px !important; }
-
           .dash-past-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; padding: 12px 14px !important; }
           .dash-past-stat-grid .stat-card { padding: 12px 14px !important; gap: 4px !important; }
           .dash-past-stat-grid .stat-value { font-size: 18px !important; }
           .dash-past-stat-grid .stat-label { font-size: 10px !important; }
-          
           .dash-filters { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; padding: 12px 16px !important; }
           .dash-filters > * { width: 100% !important; margin: 0 !important; font-size: 13px !important; padding: 8px 10px !important; }
           .dash-filters > *:last-child:nth-child(odd) { grid-column: span 2 !important; }
-          
           .dash-banner { display: grid !important; grid-template-columns: auto 1fr !important; gap: 8px 12px !important; padding: 14px 16px !important; }
           .dash-banner svg { grid-column: 1 !important; align-self: start !important; margin-top: 2px !important; }
           .dash-banner p { grid-column: 2 !important; font-size: 13px !important; line-height: 1.4 !important; }
           .dash-banner .btn, .dash-banner a.btn { grid-column: 1 / span 2 !important; width: 100% !important; justify-content: center !important; margin-top: 4px !important; }
-
           .dash-onboarding { display: grid !important; grid-template-columns: auto 1fr !important; gap: 12px 14px !important; padding: 20px 16px !important; }
           .dash-onboarding-icon { grid-column: 1 !important; grid-row: 1 !important; align-self: start !important; }
           .dash-onboarding-text { grid-column: 2 !important; grid-row: 1 !important; min-width: 0 !important; }
           .dash-onboarding-btns { grid-column: 1 / span 2 !important; grid-row: 2 !important; display: flex !important; flex-direction: column !important; gap: 8px !important; width: 100% !important; margin-top: 4px !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; margin: 0 !important; }
-          
-          .dash-page .table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; width: 100% !important; max-width: 100% !important; }
+          .dash-page .table-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; width: 100% !important; }
         }
+
+        /* ===== PHONE: <=600px ===== */
         @media (max-width: 600px) {
           .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
           .dash-past-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-          
-          /* Keep standard table layout but force it to fit phone screen width without horizontal scroll */
-          .dash-page .table-wrap { overflow-x: hidden !important; width: 100% !important; max-width: 100% !important; }
-          .dash-page .table { table-layout: fixed !important; width: 100% !important; min-width: 100% !important; }
-          
-          /* Hide 'Event' column on phones to make everything fit neatly */
+
+          .dash-page .table-wrap { overflow-x: hidden !important; }
+          .dash-page .table { table-layout: fixed !important; width: 100% !important; }
+
+          /* Hide Event column */
           .dash-page .table th[data-label="Event"],
           .dash-page .table td[data-label="Event"] { display: none !important; }
 
-          /* Completely uniform font-size (11px) across all headers and cells */
-          .dash-page .table th, 
-          .dash-page .table td { 
-            font-size: 11px !important; 
-            padding: 8px 4px !important; 
-            white-space: normal !important; 
-            word-break: break-word !important; 
-            overflow: visible !important; 
-            text-overflow: clip !important; 
+          /* Uniform cell styling */
+          .dash-page .table th,
+          .dash-page .table td {
+            font-size: 10px !important;
+            padding: 8px 3px !important;
+            white-space: normal !important;
+            word-break: break-word !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            vertical-align: middle !important;
           }
-          
-          /* Ensure Status headers, values, and badges NEVER wrap awkwardly */
-          .dash-page .table th[data-label="Status"],
-          .dash-page .table td[data-label="Status"],
-          .dash-page .table td[data-label="Status"] .badge {
-            white-space: nowrap !important;
-            word-break: normal !important;
-          }
-          
-          /* Prevent badge text wrapping */
-          .dash-page .badge { 
-            padding: 2px 6px !important; 
-            font-size: 9px !important; 
-            white-space: nowrap !important;
+          .dash-page .table th {
+            font-size: 9px !important;
+            letter-spacing: 0.03em !important;
           }
 
-          /* Stack action buttons vertically so they fit in a narrow actions column */
-          .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
-          .dash-actions > * { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 4px 6px !important; font-size: 11px !important; margin: 0 !important; }
-          .dash-actions .btn { padding: 4px 6px !important; font-size: 11px !important; }
-          .dash-actions .btn:first-child { padding: 2px !important; width: auto !important; }
-          .dash-actions .btn-danger { padding: 2px !important; width: auto !important; }
+          /* --- Today's Table: 4 visible cols (Time, Invitee, Status, Actions) --- */
+          .today-table th:nth-child(1), .today-table td:nth-child(1) { width: 28% !important; }
+          .today-table th:nth-child(2), .today-table td:nth-child(2) { width: 27% !important; }
+          .today-table th:nth-child(4), .today-table td:nth-child(4) { width: 20% !important; }
+          .today-table th:nth-child(5), .today-table td:nth-child(5) { width: 25% !important; }
+
+          /* --- Upcoming & Past Tables: 5 visible cols (Invitee, Date, Time, Status, Actions) --- */
+          .upcoming-table th:nth-child(1), .upcoming-table td:nth-child(1),
+          .past-table th:nth-child(1), .past-table td:nth-child(1) { width: 22% !important; }
+          .upcoming-table th:nth-child(3), .upcoming-table td:nth-child(3),
+          .past-table th:nth-child(3), .past-table td:nth-child(3) { width: 19% !important; }
+          .upcoming-table th:nth-child(4), .upcoming-table td:nth-child(4),
+          .past-table th:nth-child(4), .past-table td:nth-child(4) { width: 17% !important; }
+          .upcoming-table th:nth-child(5), .upcoming-table td:nth-child(5),
+          .past-table th:nth-child(5), .past-table td:nth-child(5) { width: 18% !important; }
+          .upcoming-table th:nth-child(6), .upcoming-table td:nth-child(6),
+          .past-table th:nth-child(6), .past-table td:nth-child(6) { width: 24% !important; }
+
+          /* Status badge */
+          .dash-page .badge {
+            padding: 2px 5px !important;
+            font-size: 8px !important;
+            white-space: nowrap !important;
+            display: inline-block !important;
+          }
+
+          /* Action buttons: stack vertically, compact */
+          .dash-actions {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 3px !important;
+            align-items: stretch !important;
+          }
+          .dash-actions .btn {
+            padding: 3px 2px !important;
+            font-size: 9px !important;
+            text-align: center !important;
+            white-space: nowrap !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+          }
         }
       ` }} />
       {cancelModal.show && (
