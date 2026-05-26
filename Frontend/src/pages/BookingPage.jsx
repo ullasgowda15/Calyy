@@ -83,8 +83,8 @@ export default function BookingPage() {
     try {
       const data = { event_type_id: selectedEvent.id, ...form, start_datetime: selectedSlot.start };
       const res = await bookings.createBooking(data);
-      if (res.data.requires_payment) { setBookingId(res.data.booking_id); setCancelToken(res.data.cancel_token); setShowForm(false); }
-      else navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
+      // V2: payment collection — add `if (res.data.requires_payment) { ... }` here
+      navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
     } catch (err) {
       setError(err.response?.data?.detail || 'Booking failed. This slot may no longer be available.');
     } finally { setSubmitting(false); }

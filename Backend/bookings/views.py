@@ -86,20 +86,22 @@ class CreateBookingView(generics.CreateAPIView):
 
         booking = serializer.instance
 
-        if event_type and event_type.price and float(event_type.price) > 0:
-            booking.status = 'pending'
-            booking.payment_status = 'unpaid'
-            booking.pending_until = timezone.now() + timedelta(minutes=10)
-            booking.save(update_fields=['status', 'payment_status', 'pending_until'])
-            return Response({
-                'requires_payment': True,
-                'booking_id': str(booking.id),
-                'cancel_token': str(booking.cancel_token),
-                'event_type_id': str(event_type.id),
-                'price': str(event_type.price),
-                'currency': event_type.currency,
-                'booking_data': request.data,
-            }, status=status.HTTP_200_OK)
+        # V2: Host payment collection — disabled until platform is established
+        # When re-enabling, uncomment the block below.
+        # if event_type and event_type.price and float(event_type.price) > 0:
+        #     booking.status = 'pending'
+        #     booking.payment_status = 'unpaid'
+        #     booking.pending_until = timezone.now() + timedelta(minutes=10)
+        #     booking.save(update_fields=['status', 'payment_status', 'pending_until'])
+        #     return Response({
+        #         'requires_payment': True,
+        #         'booking_id': str(booking.id),
+        #         'cancel_token': str(booking.cancel_token),
+        #         'event_type_id': str(event_type.id),
+        #         'price': str(event_type.price),
+        #         'currency': event_type.currency,
+        #         'booking_data': request.data,
+        #     }, status=status.HTTP_200_OK)
 
         booking.status = 'confirmed'
         booking.save(update_fields=['status'])
