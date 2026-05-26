@@ -574,27 +574,39 @@ export default function Dashboard() {
         .dash-page { overflow-x: hidden; }
         .dash-page .table th { padding: 8px 12px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 10px 12px; font-size: 13px; }
+        .dash-page .table td:first-child { width: 25%; }
+        .dash-page .table td:nth-child(2) { width: 25%; }
+        .dash-page .table td:nth-child(3) { width: 20%; }
+        .dash-page .table td:nth-child(4) { width: 12%; }
+        .dash-page .table td:last-child { width: 18%; }
+        .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
-          .dash-header { flex-direction: column !important; align-items: stretch !important; gap: 12px !important; }
-          .dash-header > div:last-child { flex-direction: column !important; align-items: stretch !important; gap: 6px !important; }
-          .dash-header > div:last-child > * { width: 100% !important; justify-content: center !important; }
-          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
-          .dash-stat-grid .stat-card { padding: 10px !important; }
-          .dash-stat-grid .stat-value { font-size: 18px !important; }
-          .dash-stat-grid .stat-label { font-size: 10px !important; }
+          .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
+          .dash-header > div:first-child { flex: 1; min-width: 0; }
+          .dash-header > div:first-child h1 { font-size: 18px !important; }
+          .dash-header > div:first-child p { font-size: 12px !important; }
+          .dash-header > div:last-child { flex-direction: row !important; flex-wrap: wrap !important; gap: 6px !important; flex-shrink: 0; }
+          .dash-header > div:last-child > * { width: auto !important; justify-content: center !important; padding: 6px 10px !important; font-size: 11px !important; }
+          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
+          .dash-stat-grid .stat-card { padding: 6px 8px !important; gap: 2px !important; }
+          .dash-stat-grid .stat-value { font-size: 14px !important; }
+          .dash-stat-grid .stat-label { font-size: 8px !important; }
           .dash-filters { flex-direction: column !important; }
           .dash-filters > * { width: 100% !important; }
           .dash-actions { flex-direction: column !important; gap: 4px !important; }
-          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 6px !important; font-size: 12px !important; }
+          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 5px 8px !important; font-size: 12px !important; }
+          .dash-actions .btn { padding: 5px 8px !important; font-size: 12px !important; }
           .dash-banner { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
           .dash-banner .btn { width: 100% !important; justify-content: center !important; }
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
           .dash-page .table th, .dash-page .table td { padding: 6px 4px !important; font-size: 12px !important; }
+          .dash-page .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+          .dash-page .table { min-width: 700px; }
           .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
         }
       ` }} />
