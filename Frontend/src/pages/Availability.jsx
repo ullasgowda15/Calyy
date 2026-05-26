@@ -32,7 +32,7 @@ function localToUTC(localDatetime) {
   if (!localDatetime) return '';
   const parts = localDatetime.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/);
   if (!parts) return localDatetime;
-  const d = new Date(Date.UTC(+parts[1], +parts[2] - 1, +parts[3], +parts[4], +parts[5]));
+  const d = new Date(+parts[1], +parts[2] - 1, +parts[3], +parts[4], +parts[5]);
   if (isNaN(d.getTime())) return localDatetime;
   return d.toISOString().slice(0, 19);
 }
