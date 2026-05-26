@@ -247,6 +247,7 @@ export default function ReschedulePage() {
         </div>
       </div>
       <Footer />
+      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .booking-bottom { grid-template-columns: 1fr !important; } }' }} />
     </div>
   );
 }

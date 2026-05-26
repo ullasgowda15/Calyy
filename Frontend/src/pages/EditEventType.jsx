@@ -76,7 +76,7 @@ export default function EditEventType() {
             {error && <div style={{ background: 'var(--surface-error)', border: '1px solid var(--border-error)', borderRadius: '10px', padding: '12px 14px', marginBottom: '16px', fontSize: '13px', color: 'var(--text-error)' }}>{error}</div>}
             <Section title="Basic details">
               <Field label="Event name"><input name="name" value={form.name} onChange={handleChange} required className="field" /></Field>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <Field label="Duration">
                   <select name="duration" value={form.duration} onChange={handleChange} className="field">
                     {DURATIONS.map((d) => <option key={d} value={d}>{d} minutes</option>)}
@@ -99,7 +99,7 @@ export default function EditEventType() {
               </Field>
             </Section>
             <Section title="Scheduling controls">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <Field label="Buffer before (min)"><input type="number" name="buffer_before" value={form.buffer_before} onChange={handleChange} className="field" min="0" /></Field>
                 <Field label="Buffer after (min)"><input type="number" name="buffer_after" value={form.buffer_after} onChange={handleChange} className="field" min="0" /></Field>
                 <Field label="Min notice (min)"><input type="number" name="min_notice" value={form.min_notice} onChange={handleChange} className="field" min="0" /></Field>
@@ -108,7 +108,7 @@ export default function EditEventType() {
               <Field label="Max bookings per day"><input type="number" name="max_bookings_per_day" value={form.max_bookings_per_day} onChange={handleChange} className="field" placeholder="Unlimited" min="1" /></Field>
             </Section>
             <Section title="Payment (optional)">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+              <div className="form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
                 <Field label="Price"><input type="number" step="0.01" name="price" value={form.price} onChange={handleChange} className="field" placeholder="0.00" min="0" /></Field>
                 <Field label="Currency">
                   <select name="currency" value={form.currency} onChange={handleChange} className="field">
@@ -151,6 +151,7 @@ export default function EditEventType() {
             <button type="submit" disabled={loading} className="btn btn-primary" style={{ width: '100%', padding: '12px', fontSize: '15px', justifyContent: 'center' }}>
               {loading ? <><svg className="spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>Saving…</> : 'Save changes'}
             </button>
+            <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .form-grid-2 { grid-template-columns: 1fr !important; } }' }} />
           </form>
         </div>
       </main>

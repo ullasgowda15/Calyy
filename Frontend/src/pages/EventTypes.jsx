@@ -49,7 +49,7 @@ export default function EventTypes() {
       <Sidebar />
       <main style={{ flex: 1, marginLeft: '220px', minHeight: '100vh' }} className="sidebar-main">
         <div className="page-content" style={{ maxWidth: '1280px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Event Types</h1>
               <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Create and manage the types of meetings you offer.</p>

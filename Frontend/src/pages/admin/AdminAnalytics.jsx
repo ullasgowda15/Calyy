@@ -39,7 +39,7 @@ export default function AdminAnalytics() {
         </select>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
         <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Bookings Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -66,7 +66,7 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
+      <div className="admin-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px' }}>
         <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Revenue Trend</h3>
           <ResponsiveContainer width="100%" height={300}>
@@ -94,6 +94,7 @@ export default function AdminAnalytics() {
           </ResponsiveContainer>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .admin-chart-grid { grid-template-columns: 1fr !important; } }' }} />
     </div>
   );
 }

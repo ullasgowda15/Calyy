@@ -70,8 +70,8 @@ export default function AdminUsers() {
         <button type="submit" style={{ padding: '9px 16px', borderRadius: '8px', background: '#2563EB', border: 'none', color: '#fff', fontSize: '13px', fontWeight: 600, cursor: 'pointer' }}>Search</button>
       </form>
 
-      <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px' }}>
+      <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', overflow: 'auto' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '13px', minWidth: '700px' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid #2A2A30' }}>
               {['User', 'Email', 'Status', 'Role', 'Events', 'Bookings', 'Joined', 'Actions'].map((h) => (

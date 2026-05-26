@@ -61,7 +61,7 @@ export default function AdminVerify2FA() {
           {error && <div style={{ background: '#7F1D1D', border: '1px solid #991B1B', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', fontSize: '13px', color: '#FCA5A5', textAlign: 'center' }}>{error}</div>}
           <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', marginBottom: '24px' }}>
             {code.map((digit, i) => (
-              <input key={i} ref={(el) => (refs.current[i] = el)} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(i, e.target.value)} onKeyDown={(e) => handleKeyDown(i, e)} style={{ width: '44px', height: '48px', textAlign: 'center', fontSize: '20px', fontWeight: 700, borderRadius: '8px', background: '#0F0F11', border: '1px solid #2A2A30', color: '#fff', outline: 'none', caretColor: '#3B82F6' }} autoFocus={i === 0} />
+              <input key={i} ref={(el) => (refs.current[i] = el)} type="text" inputMode="numeric" maxLength={1} value={digit} onChange={(e) => handleChange(i, e.target.value)} onKeyDown={(e) => handleKeyDown(i, e)} className="admin-otp-input" style={{ width: '44px', height: '48px', textAlign: 'center', fontSize: '20px', fontWeight: 700, borderRadius: '8px', background: '#0F0F11', border: '1px solid #2A2A30', color: '#fff', outline: 'none', caretColor: '#3B82F6' }} autoFocus={i === 0} />
             ))}
           </div>
           <button onClick={handleSubmit} disabled={loading || code.join('').length !== 6} style={{ width: '100%', padding: '11px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', border: 'none', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading || code.join('').length !== 6 ? 0.6 : 1 }}>
@@ -69,6 +69,7 @@ export default function AdminVerify2FA() {
           </button>
         </div>
       </div>
+      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 480px) { .admin-otp-input { width: 36px !important; height: 42px !important; font-size: 16px !important; } }' }} />
     </div>
   );
 }

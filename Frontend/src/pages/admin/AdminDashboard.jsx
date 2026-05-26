@@ -65,21 +65,21 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         <StatCard label="Total Users" value={stats?.total_users || 0} color="#3B82F6" sub={`+${stats?.new_users_today || 0} today`} />
         <StatCard label="Total Bookings" value={stats?.total_bookings || 0} color="#10B981" sub={`${stats?.bookings_today || 0} today`} />
         <StatCard label="Booking Revenue" value={`₹${(stats?.total_revenue || 0).toLocaleString()}`} color="#F59E0B" />
         <StatCard label="Platform Revenue" value={`₹${(stats?.platform_revenue || 0).toLocaleString()}`} color="#10B981" sub="From subscriptions" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '24px' }}>
         <StatCard label="Active Subscribers" value={stats?.active_subscribers || 0} color="#3B82F6" sub={`${stats?.trial_users || 0} on free trial`} />
         <StatCard label="Active Events" value={stats?.active_event_types || 0} color="#8B5CF6" />
         <StatCard label="Confirmed" value={stats?.confirmed_bookings || 0} color="#10B981" />
         <StatCard label="Cancelled" value={stats?.cancelled_bookings || 0} color="#EF4444" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
         <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Revenue — Booking vs Platform</h3>
           <div style={{ display: 'flex', gap: '16px', marginBottom: '12px', fontSize: '12px' }}>
@@ -115,7 +115,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
         <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Users over time</h3>
           <ResponsiveContainer width="100%" height={200}>
@@ -155,7 +155,7 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
+      <div className="admin-chart-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '24px' }}>
         <div style={{ backgroundColor: '#1A1A1F', borderRadius: '12px', border: '1px solid #2A2A30', padding: '20px' }}>
           <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '14px', color: '#E4E4E7', margin: '0 0 16px' }}>Top Users by Bookings</h3>
           {analytics?.top_users_by_bookings?.length > 0 ? (
@@ -226,6 +226,8 @@ export default function AdminDashboard() {
           </div>
         ) : <p style={{ fontSize: '13px', color: '#52525B', margin: 0 }}>No revenue data in this period.</p>}
       </div>
+
+      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .admin-chart-grid { grid-template-columns: 1fr !important; } }' }} />
     </div>
   );
 }

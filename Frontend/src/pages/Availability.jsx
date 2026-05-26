@@ -180,7 +180,7 @@ export default function AvailabilityPage() {
                 const dayWins = windows.filter((w, idx) => w.weekday === di && w.is_active);
                 return (
                   <div key={day} style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', padding: '14px 20px', borderBottom: di < DAYS.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                    <div style={{ width: '100px', paddingTop: '8px', flexShrink: 0 }}>
+                    <div style={{ minWidth: '100px', paddingTop: '8px', flexShrink: 0 }}>
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{day}</span>
                     </div>
                     <div style={{ flex: 1 }}>

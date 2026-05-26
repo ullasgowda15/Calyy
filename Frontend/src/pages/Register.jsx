@@ -146,7 +146,7 @@ export default function Register() {
                   </select>
                   <input type="tel" name="phoneNumber" value={form.phoneNumber} onChange={handleChange} pattern="\d{10}" maxLength={10} required className="field" placeholder="9876543210" style={{ flex: 1 }} />
                   {form.phoneNumber && (
-                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px' }}>
+                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '12px', pointerEvents: 'none' }}>
                       {checkingPhone ? '…' : phoneAvailable === true ? <span style={{ color: 'var(--success)' }}>✓</span> : phoneAvailable === false ? <span style={{ color: 'var(--danger)' }}>✗</span> : null}
                     </span>
                   )}

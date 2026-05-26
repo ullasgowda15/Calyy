@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAdminAuth } from '../../context/AdminAuthContext';
 
@@ -14,10 +15,47 @@ export default function AdminLayout() {
   const location = useLocation();
   const { adminUser, logout } = useAdminAuth();
   const initials = adminUser?.username?.[0]?.toUpperCase() || 'A';
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const sidebar = (
+    <>
+        <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '15px', fontWeight: 700 }}>C</div>
+          <span style={{ color: '#fff', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em' }}>YourCaly Admin</span>
+        </div>
+        <nav style={{ flex: 1, padding: '12px 10px', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          {NAV.map((item) => {
+            const active = item.path === '/adkrish' ? location.pathname === '/adkrish' : location.pathname.startsWith(item.path);
+            return (
+              <Link key={item.path} to={item.path} onClick={() => setMobileOpen(false)} style={{
+                display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px',
+                borderRadius: '8px', fontSize: '13px', fontWeight: active ? 600 : 400,
+                color: active ? '#fff' : '#7F7F8C', textDecoration: 'none',
+                background: active ? '#1A1A1F' : 'transparent', transition: 'all 0.15s',
+              }}>
+                <span dangerouslySetInnerHTML={{ __html: item.icon }} style={{ display: 'flex', opacity: active ? 1 : 0.5 }} />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <div style={{ padding: '14px 16px', borderTop: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '13px', fontWeight: 700, flexShrink: 0 }}>{initials}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: '12px', fontWeight: 600, color: '#E4E4E7' }}>{adminUser?.username || 'Admin'}</div>
+            <div style={{ fontSize: '11px', color: '#52525B' }}>{adminUser?.email || ''}</div>
+          </div>
+          <button onClick={logout} style={{ background: 'none', border: 'none', color: '#52525B', cursor: 'pointer', padding: '4px', borderRadius: '6px', display: 'flex' }} title="Sign out">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+          </button>
+        </div>
+    </>
+  );
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#0F0F11' }}>
-      <aside style={{ width: '240px', flexShrink: 0, background: '#0F0F11', borderRight: '1px solid #1F1F23', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
+      {/* Desktop sidebar */}
+      <aside className="admin-sidebar-desktop" style={{ width: '240px', flexShrink: 0, background: '#0F0F11', borderRight: '1px solid #1F1F23', display: 'flex', flexDirection: 'column', height: '100vh', position: 'sticky', top: 0 }}>
         <div style={{ padding: '20px 20px 16px', borderBottom: '1px solid #1F1F23', display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: 'linear-gradient(135deg, #3B82F6, #2563EB)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '15px', fontWeight: 700 }}>C</div>
           <span style={{ color: '#fff', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '16px', letterSpacing: '-0.01em' }}>YourCaly Admin</span>
@@ -49,11 +87,45 @@ export default function AdminLayout() {
           </button>
         </div>
       </aside>
+
+      {/* Mobile hamburger */}
+      <button
+        onClick={() => setMobileOpen(true)}
+        className="admin-sidebar-toggle"
+        style={{
+          position: 'fixed', top: '16px', left: '16px', zIndex: 60, width: '40px', height: '40px',
+          background: '#1A1A1F', border: '1px solid #2A2A30', borderRadius: '10px',
+          display: 'none', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+          color: '#fff',
+        }}
+        aria-label="Open admin menu"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+      </button>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div style={{ position: 'fixed', inset: 0, zIndex: 55 }}>
+          <div onClick={() => setMobileOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.5)' }} />
+          <aside style={{ position: 'absolute', top: 0, left: 0, width: '240px', height: '100%', background: '#0F0F11', borderRight: '1px solid #1F1F23', display: 'flex', flexDirection: 'column' }}>
+            {sidebar}
+          </aside>
+        </div>
+      )}
+
       <main style={{ flex: 1, background: '#0F0F11', minWidth: 0, overflow: 'auto' }}>
         <div style={{ padding: '24px 32px', minHeight: '100%' }}>
           <Outlet />
         </div>
       </main>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 767px) {
+          .admin-sidebar-desktop { display: none !important; }
+          .admin-sidebar-toggle { display: flex !important; }
+          .admin-sidebar-toggle ~ div > div { padding-left: 0 !important; }
+        }
+      ` }} />
     </div>
   );
 }

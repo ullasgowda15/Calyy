@@ -129,7 +129,7 @@ export default function Sidebar() {
         <div style={{ position: 'fixed', inset: 0, zIndex: 55 }}>
           <div onClick={() => setMobileOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)' }} />
           <aside style={{
-            position: 'absolute', top: 0, left: 0, width: '240px', height: '100%',
+            position: 'absolute', top: 0, left: 0, width: 'min(240px, 85vw)', height: '100%',
             background: 'var(--surface)', borderRight: '1.5px solid var(--border)',
           }}>
             <SidebarContent />

@@ -134,7 +134,7 @@ export default function Profile() {
                 </div>
               ) : (
                 <form onSubmit={saveProfile}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
+                  <div className="form-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', marginBottom: '14px' }}>
                     {[['first_name','First name'],['last_name','Last name']].map(([name, label]) => (
                       <div key={name}>
                         <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>{label}</label>
@@ -181,6 +181,7 @@ export default function Profile() {
             </button>
           </div>
         </div>
+        <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .form-grid-2 { grid-template-columns: 1fr !important; } }' }} />
       </main>
     </div>
   );
