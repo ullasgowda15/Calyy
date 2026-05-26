@@ -241,7 +241,7 @@ export default function Dashboard() {
   const mainContent = (
     <div className="page-content" style={{ maxWidth: '1280px' }}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' }} className="dash-header">
         <div>
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>
             Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {user?.username} {'\uD83D\uDC4B'}
@@ -265,13 +265,13 @@ export default function Dashboard() {
       </div>
 
       {subStatus && !subStatus.is_subscribed && (
-        <div style={{ background: 'var(--surface-error)', border: '1.5px solid var(--border-error)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ background: 'var(--surface-error)', border: '1.5px solid var(--border-error)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }} className="dash-banner">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
           <p style={{ fontSize: '13px', color: 'var(--text-error)', flex: 1, margin: 0 }}>Your subscription has expired — booking links are disabled. <Link to="/settings" style={{ color: 'var(--text-error)', fontWeight: 600 }}>Resubscribe</Link> to re-enable them.</p>
         </div>
       )}
       {subStatus && subStatus.is_subscribed && subStatus.subscription_status === 'free_trial' && subStatus.trial_ends_at && new Date(subStatus.trial_ends_at) > new Date() && (
-        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }} className="dash-banner">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>
             Free trial ends {new Date(subStatus.trial_ends_at).toLocaleDateString()} — <Link to="/settings" style={{ color: 'var(--text-info)', fontWeight: 600 }}>subscribe</Link> to keep your booking links active.
@@ -282,7 +282,7 @@ export default function Dashboard() {
         const daysLeft = Math.ceil((new Date(subStatus.subscribed_until) - new Date()) / (1000 * 60 * 60 * 24));
         if (daysLeft > 0 && daysLeft <= 14) {
           return (
-            <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }} className="dash-banner">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
               <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>
                 Your subscription ends in {daysLeft} day{daysLeft > 1 ? 's' : ''} — <Link to="/settings" style={{ color: 'var(--text-info)', fontWeight: 600 }}>renew</Link> to avoid interruption.
@@ -293,7 +293,7 @@ export default function Dashboard() {
         return null;
       })()}
       {!googleConnected && (
-        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }} className="dash-banner">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>Connect Google Calendar to sync bookings and check for conflicts automatically.</p>
           <Link to="/settings" className="btn btn-sm" style={{ background: 'var(--surface-2)', color: 'var(--text-secondary)', border: '1px solid var(--border)', fontWeight: 600 }}
@@ -303,7 +303,7 @@ export default function Dashboard() {
       )}
 
       {/* Stats grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '28px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '14px', marginBottom: '28px' }} className="dash-stat-grid">
         {loading ? Array(6).fill(0).map((_, i) => (
           <div key={i} className="stat-card"><Skeleton h="12px" w="60%" /><Skeleton h="32px" w="50%" style={{ marginTop: '8px' }} /></div>
         )) : statItems.map((s) => (
@@ -321,7 +321,7 @@ export default function Dashboard() {
       {showOnboarding && !loading && (
         <div className="card" style={{ marginBottom: '20px', overflow: 'hidden', background: 'var(--surface)', border: '1.5px solid var(--border)', position: 'relative' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--accent)' }} />
-          <div style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+          <div style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }} className="dash-onboarding">
             <div style={{ width: '44px', height: '44px', background: 'color-mix(in srgb, var(--accent) 12%, transparent)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
             </div>
@@ -329,7 +329,7 @@ export default function Dashboard() {
               <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>Welcome to YourCaly!</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0' }}>Create your first event type so people can book time with you.</p>
             </div>
-            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }} className="dash-onboarding-btns">
               <Link to="/event-types/new" className="btn btn-primary btn-sm">Create event type</Link>
               <Link to="/availability" className="btn btn-ghost btn-sm">Set availability</Link>
               <button onClick={() => { localStorage.setItem('caly-onboarding-dismissed', '1'); setShowOnboarding(false); }} className="btn btn-ghost btn-sm" style={{ opacity: 0.6 }}>Dismiss</button>
@@ -365,11 +365,11 @@ export default function Dashboard() {
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td>{b.invitee_name}</td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td><StatusBadge status={b.status} /></td>
-                    <td>
+                    <td data-label="Time" style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Invitee">{b.invitee_name}</td>
+                    <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
+                    <td data-label="Status"><StatusBadge status={b.status} /></td>
+                    <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
@@ -384,7 +384,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {todayPaginated.length === 0 && <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>No matches</td></tr>}
+                {todayPaginated.length === 0 && <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -426,12 +426,12 @@ export default function Dashboard() {
               <tbody>
                 {upcomingPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 500 }}>{b.invitee_name}</td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td><StatusBadge status={b.status} /></td>
-                    <td>
+                    <td data-label="Invitee" style={{ fontWeight: 500 }}>{b.invitee_name}</td>
+                    <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
+                    <td data-label="Date" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Status"><StatusBadge status={b.status} /></td>
+                    <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }} className="dash-actions">
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
@@ -446,7 +446,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {upcomingPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>No matches</td></tr>}
+                {upcomingPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -498,12 +498,12 @@ export default function Dashboard() {
               <tbody>
                 {pastPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td style={{ fontWeight: 500 }}>{b.invitee_name}</td>
-                    <td style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td><StatusBadge status={b.status} /></td>
-                    <td>
+                    <td data-label="Invitee" style={{ fontWeight: 500 }}>{b.invitee_name}</td>
+                    <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
+                    <td data-label="Date" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Status"><StatusBadge status={b.status} /></td>
+                    <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                         <button onClick={() => navigate(`/booking/${b.id}`)} className="btn btn-sm" style={{ background: 'var(--surface-3)', color: 'var(--text-primary)', border: '1px solid var(--border)', fontSize: '11px' }}>View</button>
                         {b.status === 'confirmed' && (
@@ -518,7 +518,7 @@ export default function Dashboard() {
                     </td>
                   </tr>
                 ))}
-                {pastPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }}>No matches</td></tr>}
+                {pastPaginated.length === 0 && <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px' }} data-label="">No matches</td></tr>}
               </tbody>
             </table>
           </div>
@@ -539,14 +539,26 @@ export default function Dashboard() {
         @media (max-width: 767px) {
           .dash-filters { flex-direction: column !important; }
           .dash-filters > * { width: 100% !important; }
-          .dash-header-btns { width: 100%; }
-          .dash-header-btns > * { flex: 1; justify-content: center; }
           .dash-actions { flex-direction: column !important; gap: 4px !important; }
           .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 8px !important; font-size: 13px !important; }
-          .table { min-width: 500px; }
+          .dash-header { flex-direction: column !important; align-items: stretch !important; }
+          .dash-header-btns { width: 100%; }
+          .dash-header-btns > * { flex: 1; justify-content: center; }
+          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .dash-banner { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
+          .dash-banner .btn { width: 100% !important; justify-content: center !important; }
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
-          .dash-onboarding-btns { width: 100%; }
-          .dash-onboarding-btns > * { flex: 1; justify-content: center; }
+          .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
+          .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
+          .table, .table thead, .table tbody, .table tr, .table th, .table td { display: block; }
+          .table thead { display: none !important; }
+          .table tr { padding: 14px; margin-bottom: 10px; border: 1.5px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+          .table td { border: none !important; padding: 5px 0 !important; display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+          .table td:empty { display: none; }
+          .table td::before { content: attr(data-label); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); flex-shrink: 0; }
+          .table td[data-label="Actions"] { flex-direction: column; }
+          .table td[data-label="Actions"]::before { align-self: flex-start; }
+          .table td .dash-actions { width: 100%; }
         }
       ` }} />
       {cancelModal.show && (

@@ -88,7 +88,7 @@ export default function Profile() {
 
           <div className="card" style={{ overflow: 'hidden' }}>
             {/* Avatar section */}
-            <div style={{ padding: '24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ padding: '24px', borderBottom: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '20px' }} className="profile-avatar-row">
               <div style={{ position: 'relative' }}>
                 {avatar ? (
                   <img src={avatar} alt="Avatar" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--border)' }} />
@@ -126,7 +126,7 @@ export default function Profile() {
               {!editing ? (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                   {[['First name', profile.first_name || '—'], ['Last name', profile.last_name || '—'], ['Phone', user?.phone || '—'], ['Timezone', profile.timezone], ['Bio', profile.bio || '—']].map(([label, value]) => (
-                    <div key={label} style={{ display: 'flex', gap: '16px' }}>
+                    <div key={label} style={{ display: 'flex', gap: '16px' }} className="profile-info-row">
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', width: '100px', flexShrink: 0 }}>{label}</span>
                       <span style={{ fontSize: '13px', color: 'var(--text-primary)' }}>{value}</span>
                     </div>
@@ -181,7 +181,16 @@ export default function Profile() {
             </button>
           </div>
         </div>
-        <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .form-grid-2 { grid-template-columns: 1fr !important; } }' }} />
+        <style dangerouslySetInnerHTML={{ __html: `
+          @media (max-width: 767px) {
+            .form-grid-2 { grid-template-columns: 1fr !important; }
+            .profile-avatar-row { flex-direction: column !important; align-items: flex-start !important; gap: 12px !important; }
+            .profile-avatar-row > div:last-child { width: 100%; }
+            .profile-avatar-row button { align-self: flex-start; }
+            .profile-info-row { flex-direction: column !important; gap: 2px !important; }
+            .profile-info-row > span:first-child { width: auto !important; }
+          }
+        ` }} />
       </main>
     </div>
   );

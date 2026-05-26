@@ -22,8 +22,8 @@ const HOURS_12 = Array.from({ length: 48 }, (_, i) => {
   return { value: `${hh}:${m}`, label: to12h(`${hh}:${m}`) };
 });
 
-const TimeSelect = ({ value, onChange }) => (
-  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ width: '130px', padding: '7px 10px', fontSize: '13px' }}>
+const TimeSelect = ({ value, onChange, style }) => (
+  <select value={value} onChange={(e) => onChange(e.target.value)} className="field" style={{ minWidth: '120px', padding: '7px 10px', fontSize: '13px', ...style }}>
     {HOURS_12.map((opt) => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
   </select>
 );
@@ -226,7 +226,7 @@ export default function AvailabilityPage() {
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '24px', alignItems: 'flex-end' }} className="avail-block-form">
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start date</label>
-                  <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field" style={{ width: '160px', padding: '8px 10px', fontSize: '13px' }} />
+                  <input type="date" value={blockForm.start_date} onChange={(e) => setBlockForm({ ...blockForm, start_date: e.target.value })} className="field avail-block-input" style={{ padding: '8px 10px', fontSize: '13px' }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>Start time</label>
@@ -234,7 +234,7 @@ export default function AvailabilityPage() {
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End date</label>
-                  <input type="date" value={blockForm.end_date} onChange={(e) => setBlockForm({ ...blockForm, end_date: e.target.value })} className="field" style={{ width: '160px', padding: '8px 10px', fontSize: '13px' }} />
+                  <input type="date" value={blockForm.end_date} onChange={(e) => setBlockForm({ ...blockForm, end_date: e.target.value })} className="field avail-block-input" style={{ padding: '8px 10px', fontSize: '13px' }} />
                 </div>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '5px' }}>End time</label>
@@ -271,11 +271,13 @@ export default function AvailabilityPage() {
         </div>
       </main>
       <style dangerouslySetInnerHTML={{ __html: `
+        .avail-block-input, .avail-block-form select.field { width: 160px; }
         @media (max-width: 767px) {
+          .avail-block-input, .avail-block-form select.field { width: 100% !important; }
           .avail-day-row { flex-direction: column !important; gap: 8px !important; }
           .avail-day-label { min-width: auto !important; width: 100% !important; padding-top: 0 !important; }
           .avail-time-row { flex-wrap: wrap !important; }
-          .avail-time-row > select { width: calc(50% - 30px) !important; flex: 1; }
+          .avail-time-row > select { width: calc(50% - 30px) !important; flex: 1; min-width: auto !important; }
           .avail-block-form { flex-direction: column !important; }
           .avail-block-form > div { width: 100% !important; }
           .avail-block-form .field { width: 100% !important; }
