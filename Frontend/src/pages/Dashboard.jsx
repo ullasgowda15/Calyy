@@ -372,12 +372,12 @@ export default function Dashboard() {
           </div>
           )}
           <div className="table-wrap">
-            <table className="table">
+            <table className="table today-table">
               <thead><tr><th data-label="Time">Time</th><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td data-label="Time" style={{ fontWeight: 600, whiteSpace: 'nowrap' }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ fontWeight: 600 }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Invitee">{b.invitee_name}</td>
                     <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
@@ -444,15 +444,15 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table">
+            <table className="table upcoming-table">
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {upcomingPaginated.map((b) => (
                   <tr key={b.id}>
                     <td data-label="Invitee" style={{ fontWeight: 500 }}>{b.invitee_name}</td>
                     <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td data-label="Date" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Date" style={{ color: 'var(--text-secondary)' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ color: 'var(--text-secondary)' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px' }} className="dash-actions">
@@ -525,15 +525,15 @@ export default function Dashboard() {
         ) : (
           <>
           <div className="table-wrap">
-            <table className="table">
+            <table className="table past-table">
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
                 {pastPaginated.map((b) => (
                   <tr key={b.id}>
                     <td data-label="Invitee" style={{ fontWeight: 500 }}>{b.invitee_name}</td>
                     <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
-                    <td data-label="Date" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
-                    <td data-label="Time" style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Date" style={{ color: 'var(--text-secondary)' }}>{formatDateLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ color: 'var(--text-secondary)' }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
                     <td data-label="Actions">
                       <div style={{ display: 'flex', gap: '6px' }}>
@@ -626,13 +626,13 @@ export default function Dashboard() {
           
           /* Keep standard table layout but force it to fit phone screen width without horizontal scroll */
           .dash-page .table-wrap { overflow-x: hidden !important; width: 100% !important; max-width: 100% !important; }
-          .dash-page .table { table-layout: auto !important; width: 100% !important; min-width: 100% !important; }
+          .dash-page .table { table-layout: fixed !important; width: 100% !important; min-width: 100% !important; }
           
           /* Hide 'Event' column on phones to make everything fit neatly */
           .dash-page .table th[data-label="Event"],
           .dash-page .table td[data-label="Event"] { display: none !important; }
 
-          /* Wrap cell text nicely instead of cutting off */
+          /* Completely uniform font-size (11px) across all headers and cells */
           .dash-page .table th, 
           .dash-page .table td { 
             font-size: 11px !important; 
@@ -643,8 +643,52 @@ export default function Dashboard() {
             text-overflow: clip !important; 
           }
           
-          .dash-page .table td[data-label="Time"] { font-size: 10px !important; font-weight: 700 !important; }
-          .dash-page .badge { padding: 2px 6px !important; font-size: 9px !important; }
+          /* Ensure Status headers, values, and badges NEVER wrap awkwardly */
+          .dash-page .table th[data-label="Status"],
+          .dash-page .table td[data-label="Status"],
+          .dash-page .table td[data-label="Status"] .badge {
+            white-space: nowrap !important;
+            word-break: normal !important;
+          }
+          
+          /* Prevent badge text wrapping */
+          .dash-page .badge { 
+            padding: 2px 6px !important; 
+            font-size: 9px !important; 
+            white-space: nowrap !important;
+          }
+
+          /* Distribute Today's Table columns evenly and cleanly */
+          .dash-page table.today-table th:nth-child(1),
+          .dash-page table.today-table td:nth-child(1) { width: 30% !important; } /* Time */
+          .dash-page table.today-table th:nth-child(2),
+          .dash-page table.today-table td:nth-child(2) { width: 35% !important; } /* Invitee */
+          .dash-page table.today-table th:nth-child(4),
+          .dash-page table.today-table td:nth-child(4) { width: 20% !important; } /* Status */
+          .dash-page table.today-table th:last-child,
+          .dash-page table.today-table td:last-child { width: 15% !important; } /* Actions */
+
+          /* Distribute Upcoming & Past Tables columns evenly and cleanly */
+          .dash-page table.upcoming-table th:nth-child(1),
+          .dash-page table.upcoming-table td:nth-child(1),
+          .dash-page table.past-table th:nth-child(1),
+          .dash-page table.past-table td:nth-child(1) { width: 25% !important; } /* Invitee */
+          .dash-page table.upcoming-table th:nth-child(3),
+          .dash-page table.upcoming-table td:nth-child(3),
+          .dash-page table.past-table th:nth-child(3),
+          .dash-page table.past-table td:nth-child(3) { width: 20% !important; } /* Date */
+          .dash-page table.upcoming-table th:nth-child(4),
+          .dash-page table.upcoming-table td:nth-child(4),
+          .dash-page table.past-table th:nth-child(4),
+          .dash-page table.past-table td:nth-child(4) { width: 20% !important; } /* Time */
+          .dash-page table.upcoming-table th:nth-child(5),
+          .dash-page table.upcoming-table td:nth-child(5),
+          .dash-page table.past-table th:nth-child(5),
+          .dash-page table.past-table td:nth-child(5) { width: 20% !important; } /* Status */
+          .dash-page table.upcoming-table th:last-child,
+          .dash-page table.upcoming-table td:last-child,
+          .dash-page table.past-table th:last-child,
+          .dash-page table.past-table td:last-child { width: 15% !important; } /* Actions */
 
           /* Stack action buttons vertically so they fit in a narrow actions column */
           .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
