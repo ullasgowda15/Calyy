@@ -297,7 +297,7 @@ input[type="date"], input[type="time"] {
 }
 .stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
 .stat-label { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--text-muted); }
-.stat-value { font-size: 28px; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); }
+.stat-value { font-size: 28px; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; color: var(--text-primary); letter-spacing: -0.02em; }
 
 /* Booking detail grid — stack on mobile */
 @media (max-width: 767px) {

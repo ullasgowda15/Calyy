@@ -224,21 +224,21 @@ export default function Dashboard() {
   };
 
   const statItems = [
-    { label: 'Total bookings', value: stats.total, color: 'var(--accent)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg> },
-    { label: 'Upcoming', value: stats.upcoming, color: 'var(--success)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> },
-    { label: 'Active event types', value: stats.active, color: 'var(--accent)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> },
-    { label: 'Total revenue', value: `\u20B9${analytics.totalRevenue.toFixed(2)}`, color: 'var(--success)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-    { label: 'Cancellation rate', value: `${analytics.cancellationRate}%`, color: 'var(--danger)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> },
-    { label: 'No-show rate', value: `${analytics.noShowRate}%`, color: 'var(--warning)', icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><path d="M4.93 4.93l14.14 14.14"/></svg> },
+    { label: 'Total bookings', value: stats.total, color: 'var(--accent)', sub: null },
+    { label: 'Upcoming', value: stats.upcoming, color: 'var(--success)', sub: null },
+    { label: 'Active event types', value: stats.active, color: 'var(--accent)', sub: null },
+    { label: 'Total revenue', value: `\u20B9${analytics.totalRevenue.toFixed(2)}`, color: 'var(--success)', sub: null },
+    { label: 'Cancellation rate', value: `${analytics.cancellationRate}%`, color: 'var(--danger)', sub: null },
+    { label: 'No-show rate', value: `${analytics.noShowRate}%`, color: 'var(--warning)', sub: null },
   ];
 
   const pastStatItems = [
-    { label: 'Past bookings', value: pastAnalytics.total, color: 'var(--accent)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> },
-    { label: 'Completed', value: pastAnalytics.completed, color: 'var(--success)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg> },
-    { label: 'Cancelled', value: pastAnalytics.cancelled, color: 'var(--danger)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> },
-    { label: 'No-show', value: pastAnalytics.noShow, color: 'var(--warning)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg> },
-    { label: 'Revenue', value: `\u20B9${pastAnalytics.paidRevenue.toFixed(2)}`, color: 'var(--success)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> },
-    { label: 'Completion rate', value: `${pastAnalytics.completionRate}%`, color: 'var(--accent)', icon: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg> },
+    { label: 'Past bookings', value: pastAnalytics.total, color: 'var(--accent)', sub: null },
+    { label: 'Completed', value: pastAnalytics.completed, color: 'var(--success)', sub: null },
+    { label: 'Cancelled', value: pastAnalytics.cancelled, color: 'var(--danger)', sub: null },
+    { label: 'No-show', value: pastAnalytics.noShow, color: 'var(--warning)', sub: null },
+    { label: 'Revenue', value: `\u20B9${pastAnalytics.paidRevenue.toFixed(2)}`, color: 'var(--success)', sub: null },
+    { label: 'Completion rate', value: `${pastAnalytics.completionRate}%`, color: 'var(--accent)', sub: null },
   ];
 
   const mainContent = (
@@ -311,11 +311,9 @@ export default function Dashboard() {
           <div key={i} className="stat-card"><Skeleton h="12px" w="60%" /><Skeleton h="32px" w="50%" style={{ marginTop: '8px' }} /></div>
         )) : statItems.map((s) => (
           <div key={s.label} className="stat-card">
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <span className="stat-label">{s.label}</span>
-              <div style={{ color: s.color, opacity: 0.6 }}>{s.icon}</div>
-            </div>
+            <div className="stat-label">{s.label}</div>
             <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+            {s.sub != null && <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{s.sub}</div>}
           </div>
         ))}
       </div>
@@ -489,12 +487,10 @@ export default function Dashboard() {
         {pastBookings.length > 0 && (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
             {pastStatItems.map((s) => (
-              <div key={s.label} className="stat-card" style={{ padding: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
-                  <span className="stat-label" style={{ fontSize: '11px' }}>{s.label}</span>
-                  <div style={{ color: s.color, opacity: 0.5 }}>{s.icon}</div>
-                </div>
-                <div className="stat-value" style={{ color: s.color, fontSize: '20px' }}>{s.value}</div>
+              <div key={s.label} className="stat-card">
+                <div className="stat-label">{s.label}</div>
+                <div className="stat-value" style={{ color: s.color }}>{s.value}</div>
+                {s.sub != null && <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>{s.sub}</div>}
               </div>
             ))}
           </div>
@@ -576,6 +572,10 @@ export default function Dashboard() {
         .table { table-layout: fixed; width: 100%; }
         .table th, .table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page { overflow-x: hidden; }
+        .dash-page .table th { padding: 8px 12px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
+        .dash-page .table td { padding: 10px 12px; font-size: 13px; }
+        .dash-page .stat-card { border-radius: 12px; }
+        .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
           .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
@@ -595,7 +595,7 @@ export default function Dashboard() {
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .table th, .table td { padding: 8px 4px !important; font-size: 11px !important; }
+          .dash-page .table th, .dash-page .table td { padding: 8px 4px !important; font-size: 11px !important; }
           .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
         }
       ` }} />
