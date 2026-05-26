@@ -573,6 +573,9 @@ export default function Dashboard() {
       </main>
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
+        .table { table-layout: fixed; width: 100%; }
+        .table th, .table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .dash-page { overflow-x: hidden; }
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
           .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
@@ -592,10 +595,8 @@ export default function Dashboard() {
           .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
           .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
           .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .table { table-layout: fixed; width: 100%; }
-          .table th, .table td { padding: 8px 4px !important; font-size: 11px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .table th, .table td { padding: 8px 4px !important; font-size: 11px !important; }
           .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
-          .dash-page { overflow-x: hidden; }
         }
       ` }} />
       {cancelModal.show && (
