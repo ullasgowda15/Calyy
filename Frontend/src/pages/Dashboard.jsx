@@ -573,7 +573,11 @@ export default function Dashboard() {
         .table { table-layout: fixed; width: 100%; }
         .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 6px 8px; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dash-page .table td[data-label="Actions"] .btn { font-size: 11px !important; padding: 3px 6px !important; border-radius: 6px !important; }
+        .dash-page .table th[data-label],
+        .dash-page .table td[data-label] { width: auto; min-width: 80px; }
+        .dash-page .table th[data-label="Actions"],
+        .dash-page .table td[data-label="Actions"] { width: 100px; }
+        .dash-actions .btn { padding: 3px 6px !important; font-size: 9px !important; max-width: 70px !important; }
         .dash-page .table-wrap { overflow-x: auto; max-width: 100%; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
