@@ -656,8 +656,8 @@ export default function Dashboard() {
           .dash-actions { display: flex !important; flex-direction: column !important; gap: 4px !important; width: 100% !important; align-items: stretch !important; }
           .dash-actions > * { width: 100% !important; text-align: center !important; justify-content: center !important; padding: 4px 6px !important; font-size: 11px !important; margin: 0 !important; }
           .dash-actions .btn { padding: 4px 6px !important; font-size: 11px !important; }
-          .dash-actions .btn:first-child { padding: 2px !important; }
-          .dash-actions .btn-danger { padding: 2px !important; }
+          .dash-actions .btn:first-child { padding: 2px !important; width: auto !important; }
+          .dash-actions .btn-danger { padding: 2px !important; width: auto !important; }
         }
       ` }} />
       {cancelModal.show && (
