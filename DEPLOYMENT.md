@@ -45,15 +45,15 @@ Railway automatically injects `DATABASE_URL` and `REDIS_URL` into all linked ser
 | `ALLOWED_HOSTS` | `.railway.app,localhost` |
 | `FRONTEND_URL` | `https://caly.vercel.app` (update after frontend deploy) |
 | `BASE_URL` | `https://caly-backend.up.railway.app` (update after deploy) |
-| `RESEND_API_KEY` | `RESEND_API_KEY_REDACTED` |
+| `RESEND_API_KEY` | Get from [Resend dashboard](https://resend.com/api-keys) |
 | `C_FORCE_ROOT` | `true` |
-| `RAZORPAY_KEY_ID` | `RAZORPAY_KEY_ID_REDACTED` |
-| `RAZORPAY_KEY_SECRET` | `RAZORPAY_KEY_SECRET_REDACTED` |
-| `RAZORPAY_WEBHOOK_SECRET` | `whsec_your_webhook_secret` (replace with real secret from Razorpay dashboard) |
-| `GOOGLE_CLIENT_ID` | `GOOGLE_CLIENT_ID_REDACTED` |
-| `GOOGLE_CLIENT_SECRET` | `GOOGLE_CLIENT_SECRET_REDACTED` |
-| `GOOGLE_REDIRECT_URI` | `https://caly-backend.up.railway.app/api/integrations/google/callback/` |
-| `CORS_ALLOWED_ORIGINS` | `https://caly.vercel.app` (update after frontend deploy) |
+| `RAZORPAY_KEY_ID` | Get from [Razorpay dashboard](https://dashboard.razorpay.com) |
+| `RAZORPAY_KEY_SECRET` | Get from [Razorpay dashboard](https://dashboard.razorpay.com) |
+| `RAZORPAY_WEBHOOK_SECRET` | Get from Razorpay dashboard → Settings → Webhooks |
+| `GOOGLE_CLIENT_ID` | Get from [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials |
+| `GOOGLE_CLIENT_SECRET` | Get from [Google Cloud Console](https://console.cloud.google.com) → APIs & Services → Credentials |
+| `GOOGLE_REDIRECT_URI` | `https://api.yourcaly.com/api/integrations/google/callback/` |
+| `CORS_ALLOWED_ORIGINS` | `https://yourcaly.com` |
 
 4. After setting all vars, Railway auto-redeploys the service
 

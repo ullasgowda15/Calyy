@@ -1,8 +1,10 @@
 import secrets
+import logging
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
@@ -88,8 +90,21 @@ class PublicProfileView(generics.RetrieveAPIView):
     queryset = User.objects.all()
 
 
+logger = logging.getLogger(__name__)
+
+
 class LoginView(TokenObtainPairView):
     throttle_scope = 'login'
+
+    def post(self, request, *args, **kwargs):
+        try:
+            response = super().post(request, *args, **kwargs)
+        except Exception as exc:
+            logger.warning('Failed login attempt for %s: %s', request.data.get('email', 'unknown'), str(exc))
+            raise
+        if response.status_code == 401:
+            logger.warning('Failed login attempt for %s', request.data.get('email', 'unknown'))
+        return response
 
 
 class TokenRefreshThrottledView(TokenRefreshView):
@@ -193,3 +208,16 @@ def change_password(request):
     user.save()
     update_session_auth_hash(request, user)
     return Response({'message': 'Password changed successfully'})
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def logout(request):
+    try:
+        refresh_token = request.data.get('refresh')
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+    except Exception:
+        pass
+    return Response({'message': 'Logged out successfully'})

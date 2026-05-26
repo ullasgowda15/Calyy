@@ -45,6 +45,7 @@ export const auth = {
   verifyEmail: (data) => api.post('/auth/verify-email/', data),
   resendOtp: (data) => api.post('/auth/resend-otp/', data),
   changePassword: (data) => api.post('/auth/me/change-password/', data),
+  logout: (refresh) => api.post('/auth/logout/', { refresh }),
 };
 
 export const eventTypes = {

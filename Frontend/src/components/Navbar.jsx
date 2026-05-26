@@ -154,10 +154,7 @@ export default function Navbar({ simple }) {
         </div>
       )}
 
-      <style>{`
-        @media (min-width: 768px) { .nav-hamburger { display: none !important; } .nav-links { display: flex; gap: 24px; } .nav-mobile-menu { display: none !important; } .nav-login { display: flex; } }
-        @media (max-width: 767px) { .nav-hamburger { display: flex !important; } .nav-links { display: none; } .nav-login { display: none; } }
-      `}</style>
+      <style dangerouslySetInnerHTML={{ __html: '@media (min-width: 768px) { .nav-hamburger { display: none !important; } .nav-links { display: flex; gap: 24px; } .nav-mobile-menu { display: none !important; } .nav-login { display: flex; } } @media (max-width: 767px) { .nav-hamburger { display: flex !important; } .nav-links { display: none; } .nav-login { display: none; } }' }} />
     </nav>
   );
 }

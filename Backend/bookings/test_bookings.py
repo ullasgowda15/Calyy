@@ -75,9 +75,10 @@ class TestFreeBookingCreation:
             'invitee_timezone': 'UTC',
             'start_datetime': (future_monday + timedelta(hours=2)).isoformat(),
         })
-        assert res.status_code == 200
-        assert res.data.get('requires_payment') is True
-        assert 'price' in res.data
+        assert res.status_code == 201
+        assert res.data.get('status') == 'confirmed'
+        assert 'event_type_price' in res.data
+        assert 'requires_payment' not in res.data
 
 
 class TestBookingCancellation:
@@ -128,11 +129,16 @@ class TestHostBookingList:
         res = anon_client.get('/api/bookings/my/')
         assert res.status_code == 401
 
-    def test_booking_response_has_cancel_token(self, auth_client, confirmed_booking):
+    def test_booking_list_hides_cancel_token(self, auth_client, confirmed_booking):
         res = auth_client.get('/api/bookings/my/')
         assert res.status_code == 200
         assert len(res.data) > 0
-        assert 'cancel_token' in res.data[0]
+        assert 'cancel_token' not in res.data[0]
+
+    def test_booking_detail_shows_cancel_token(self, auth_client, confirmed_booking):
+        res = auth_client.get(f'/api/bookings/{confirmed_booking.id}/')
+        assert res.status_code == 200
+        assert 'cancel_token' in res.data
 
 
 class TestBookingStatusUpdate:

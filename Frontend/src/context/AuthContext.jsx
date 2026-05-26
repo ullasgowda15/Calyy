@@ -56,7 +56,13 @@ export function AuthProvider({ children }) {
     return profile;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const refresh = localStorage.getItem('refresh_token');
+    if (refresh) {
+      try {
+        await auth.logout(refresh);
+      } catch (_) {}
+    }
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     setUser(null);

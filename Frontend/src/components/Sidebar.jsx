@@ -137,10 +137,7 @@ export default function Sidebar() {
         </div>
       )}
 
-      <style>{`
-        @media (min-width: 768px) { .hidden-mobile { display: flex; flex-direction: column; } .show-mobile { display: none !important; } }
-        @media (max-width: 767px) { .hidden-mobile { display: none; } .show-mobile { display: flex; } }
-      `}</style>
+      <style dangerouslySetInnerHTML={{ __html: '@media (min-width: 768px) { .hidden-mobile { display: flex; flex-direction: column; } .show-mobile { display: none !important; } } @media (max-width: 767px) { .hidden-mobile { display: none; } .show-mobile { display: flex; } }' }} />
     </>
   );
 }
