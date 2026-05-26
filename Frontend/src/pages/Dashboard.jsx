@@ -251,7 +251,7 @@ export default function Dashboard() {
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Here's what's happening with your bookings today.</p>
         </div>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }} className="dash-header-actions">
           <button onClick={copyLink} className="btn btn-ghost btn-sm" style={{ gap: '6px' }}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
             Copy booking link
@@ -323,10 +323,10 @@ export default function Dashboard() {
         <div className="card" style={{ marginBottom: '20px', overflow: 'hidden', background: 'var(--surface)', border: '1.5px solid var(--border)', position: 'relative' }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '4px', height: '100%', background: 'var(--accent)' }} />
           <div style={{ padding: '24px 28px', display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }} className="dash-onboarding">
-            <div style={{ width: '44px', height: '44px', background: 'color-mix(in srgb, var(--accent) 12%, transparent)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div style={{ width: '44px', height: '44px', background: 'color-mix(in srgb, var(--accent) 12%, transparent)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }} className="dash-onboarding-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M12 5v14M5 12h14"/></svg>
             </div>
-            <div style={{ flex: 1, minWidth: '200px' }}>
+            <div style={{ flex: 1, minWidth: '200px' }} className="dash-onboarding-text">
               <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 2px' }}>Welcome to YourCaly!</h3>
               <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0' }}>Create your first event type so people can book time with you.</p>
             </div>
@@ -371,7 +371,7 @@ export default function Dashboard() {
             )}
           </div>
           )}
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-wrap">
             <table className="table">
               <thead><tr><th data-label="Time">Time</th><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
@@ -443,7 +443,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-wrap">
             <table className="table">
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
@@ -485,7 +485,7 @@ export default function Dashboard() {
           <span style={{ fontSize: '12px', color: 'var(--text-muted)', background: 'var(--surface-3)', padding: '3px 10px', borderRadius: '99px' }}>{pastAnalytics.total} past</span>
         </div>
         {pastBookings.length > 0 && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', padding: '16px 20px', borderBottom: '1px solid var(--border)' }} className="dash-past-stat-grid">
             {pastStatItems.map((s) => (
               <div key={s.label} className="stat-card">
                 <div className="stat-label">{s.label}</div>
@@ -524,7 +524,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-wrap">
             <table className="table">
               <thead><tr><th data-label="Invitee">Invitee</th><th data-label="Event">Event</th><th data-label="Date">Date</th><th data-label="Time">Time</th><th data-label="Status">Status</th><th data-label="Actions">Actions</th></tr></thead>
               <tbody>
@@ -584,30 +584,66 @@ export default function Dashboard() {
         .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
           .dash-collapse-toggle { display: inline-flex !important; }
-          .dash-header { flex-direction: row !important; align-items: flex-start !important; gap: 12px !important; }
+          .dash-header { flex-direction: column !important; align-items: stretch !important; gap: 16px !important; }
           .dash-header > div:first-child { flex: 1; min-width: 0; }
-          .dash-header > div:first-child h1 { font-size: 18px !important; }
-          .dash-header > div:first-child p { font-size: 12px !important; }
-          .dash-header > div:last-child { flex-direction: row !important; flex-wrap: wrap !important; gap: 6px !important; flex-shrink: 0; }
-          .dash-header > div:last-child > * { width: auto !important; justify-content: center !important; padding: 6px 10px !important; font-size: 11px !important; }
-          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 6px !important; }
-          .dash-stat-grid .stat-card { padding: 6px 8px !important; gap: 2px !important; }
-          .dash-stat-grid .stat-value { font-size: 14px !important; }
-          .dash-stat-grid .stat-label { font-size: 8px !important; }
-          .dash-filters { flex-direction: column !important; }
-          .dash-filters > * { width: 100% !important; }
-          .dash-actions { flex-direction: column !important; gap: 4px !important; }
-          .dash-actions > * { width: 100% !important; justify-content: center !important; padding: 5px 8px !important; font-size: 12px !important; }
-          .dash-actions .btn { padding: 5px 8px !important; font-size: 12px !important; }
-          .dash-banner { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
-          .dash-banner .btn { width: 100% !important; justify-content: center !important; }
-          .dash-onboarding { flex-direction: column !important; align-items: flex-start !important; }
-          .dash-onboarding-btns { width: 100%; flex-direction: column !important; }
-          .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; }
-          .dash-page .table th, .dash-page .table td { padding: 6px 4px !important; font-size: 12px !important; }
+          .dash-header > div:first-child h1 { font-size: 20px !important; }
+          .dash-header > div:first-child p { font-size: 13px !important; }
+          .dash-header-actions { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; width: 100% !important; }
+          .dash-header-actions > *:first-child { grid-column: span 2 !important; }
+          .dash-header-actions > * { width: 100% !important; justify-content: center !important; }
+          
+          .dash-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; }
+          .dash-stat-grid .stat-card { padding: 12px 14px !important; gap: 4px !important; }
+          .dash-stat-grid .stat-value { font-size: 18px !important; }
+          .dash-stat-grid .stat-label { font-size: 10px !important; }
+
+          .dash-past-stat-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 10px !important; padding: 12px 14px !important; }
+          .dash-past-stat-grid .stat-card { padding: 12px 14px !important; gap: 4px !important; }
+          .dash-past-stat-grid .stat-value { font-size: 18px !important; }
+          .dash-past-stat-grid .stat-label { font-size: 10px !important; }
+          
+          .dash-filters { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; padding: 12px 16px !important; }
+          .dash-filters > * { width: 100% !important; margin: 0 !important; font-size: 13px !important; padding: 8px 10px !important; }
+          .dash-filters > *:last-child:nth-child(odd) { grid-column: span 2 !important; }
+          
+          .dash-banner { display: grid !important; grid-template-columns: auto 1fr !important; gap: 8px 12px !important; padding: 14px 16px !important; }
+          .dash-banner svg { grid-column: 1 !important; align-self: start !important; margin-top: 2px !important; }
+          .dash-banner p { grid-column: 2 !important; font-size: 13px !important; line-height: 1.4 !important; }
+          .dash-banner .btn, .dash-banner a.btn { grid-column: 1 / span 2 !important; width: 100% !important; justify-content: center !important; margin-top: 4px !important; }
+
+          .dash-onboarding { display: grid !important; grid-template-columns: auto 1fr !important; gap: 12px 14px !important; padding: 20px 16px !important; }
+          .dash-onboarding-icon { grid-column: 1 !important; grid-row: 1 !important; align-self: start !important; }
+          .dash-onboarding-text { grid-column: 2 !important; grid-row: 1 !important; min-width: 0 !important; }
+          .dash-onboarding-btns { grid-column: 1 / span 2 !important; grid-row: 2 !important; display: flex !important; flex-direction: column !important; gap: 8px !important; width: 100% !important; margin-top: 4px !important; }
+          .dash-onboarding-btns > * { width: 100% !important; justify-content: center !important; margin: 0 !important; }
+          
           .dash-page .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
           .dash-page .table { min-width: 700px; }
-          .table th[data-label="Event"], .table td[data-label="Event"] { display: none; }
+        }
+        @media (max-width: 680px) {
+          .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+          .dash-past-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+          
+          /* Table to Cards layout */
+          .dash-page table.table thead { display: none !important; }
+          .dash-page table.table, 
+          .dash-page table.table tbody, 
+          .dash-page table.table tr, 
+          .dash-page table.table td { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+          .dash-page table.table tbody tr { background: var(--surface) !important; border: 1.5px solid var(--border) !important; border-radius: var(--radius) !important; padding: 14px 16px !important; margin-bottom: 12px !important; box-shadow: var(--shadow-sm) !important; }
+          .dash-page table.table tbody tr:hover { background: var(--surface) !important; }
+          .dash-page table.table td { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 8px 0 !important; border-bottom: 1px dashed var(--border) !important; font-size: 13px !important; text-align: right !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+          .dash-page table.table td:last-child { border-bottom: none !important; flex-direction: column !important; align-items: stretch !important; text-align: left !important; padding-bottom: 0 !important; }
+          
+          .dash-page table.table td[data-label]::before { content: attr(data-label) !important; font-weight: 600 !important; color: var(--text-secondary) !important; font-family: 'Plus Jakarta Sans', sans-serif !important; font-size: 12px !important; text-transform: uppercase !important; letter-spacing: 0.03em !important; text-align: left !important; margin-right: 16px !important; flex-shrink: 0 !important; }
+          .dash-page table.table td[data-label="Actions"]::before { margin-bottom: 8px !important; }
+          .dash-page table.table td[data-label=""]::before,
+          .dash-page table.table td:not([data-label])::before { display: none !important; }
+          .dash-page table.table td[data-label=""] { justify-content: center !important; text-align: center !important; border: none !important; }
+
+          .dash-actions { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; gap: 6px !important; width: 100% !important; justify-content: flex-end !important; }
+          .dash-actions > * { flex: 1 1 calc(50% - 4px) !important; min-width: 80px !important; justify-content: center !important; padding: 6px 10px !important; font-size: 11px !important; width: auto !important; }
+          .dash-actions > *:only-child { flex: 1 !important; }
         }
       ` }} />
       {cancelModal.show && (
