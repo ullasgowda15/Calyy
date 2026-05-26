@@ -27,7 +27,7 @@ export default function AdminAnalytics() {
 
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+      <div className="admin-dash-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Analytics</h1>
           <p style={{ fontSize: '13px', color: '#7F7F8C', margin: 0 }}>Detailed platform metrics and trends</p>
@@ -94,7 +94,7 @@ export default function AdminAnalytics() {
           </ResponsiveContainer>
         </div>
       </div>
-      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .admin-chart-grid { grid-template-columns: 1fr !important; } }' }} />
+      <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .admin-chart-grid { grid-template-columns: 1fr !important; } .admin-dash-header { flex-direction: column !important; align-items: stretch !important; } }' }} />
     </div>
   );
 }

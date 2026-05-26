@@ -37,12 +37,13 @@ export default function AdminEventTypes() {
   };
 
   return (
+    <>
     <div>
       <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 20px', letterSpacing: '-0.02em' }}>Event Types <span style={{ fontSize: '14px', fontWeight: 400, color: '#7F7F8C' }}>({total})</span></h1>
 
       {error && <div style={{ background: '#7F1D1D', border: '1px solid #991B1B', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', fontSize: '13px', color: '#FCA5A5' }}>{error}</div>}
 
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
+      <form onSubmit={handleSearch} className="admin-search-form" style={{ display: 'flex', gap: '10px', marginBottom: '16px', flexWrap: 'wrap' }}>
         <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search event name or host…" style={{ flex: 1, minWidth: '200px', padding: '9px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }} />
         <select value={isActive} onChange={(e) => { setIsActive(e.target.value); setPage(1); }} style={{ padding: '9px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
           <option value="">All</option>
@@ -97,5 +98,11 @@ export default function AdminEventTypes() {
         </div>
       )}
     </div>
+      <style dangerouslySetInnerHTML={{ __html: `
+        @media (max-width: 767px) {
+          .admin-search-form > * { min-width: 100% !important; flex: none !important; }
+        }
+      ` }} />
+    </>
   );
 }
