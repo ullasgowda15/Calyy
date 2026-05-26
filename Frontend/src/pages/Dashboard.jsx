@@ -377,7 +377,7 @@ export default function Dashboard() {
               <tbody>
                 {todayPaginated.map((b) => (
                   <tr key={b.id}>
-                    <td data-label="Time" style={{ fontWeight: 600 }}>{formatDateTimeUTC(b.start_datetime, resolveTimezone(user?.timezone))}</td>
+                    <td data-label="Time" style={{ fontWeight: 600 }}>{formatTimeLocal(b.start_datetime, resolveTimezone(user?.timezone))}</td>
                     <td data-label="Invitee">{b.invitee_name}</td>
                     <td data-label="Event" style={{ color: 'var(--text-secondary)' }}>{b.event_type_name}</td>
                     <td data-label="Status"><StatusBadge status={b.status} /></td>
@@ -570,20 +570,48 @@ export default function Dashboard() {
       <style dangerouslySetInnerHTML={{ __html: `
         .dash-collapse-toggle { display: none; }
         .table { table-layout: fixed; width: 100%; }
-        .table th, .table td { box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 6px 8px; font-size: 11px; }
+        .table th, .table td { box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .dash-page { overflow-x: hidden; }
         .dash-page .table th { padding: 6px 8px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
         .dash-page .table td { padding: 6px 8px; font-size: 11px; }
-        .table th, .table td { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .dash-page { overflow-x: hidden; }
-        .dash-page .table th { padding: 8px 12px; font-size: 11px; letter-spacing: 0.05em; background: transparent; border-bottom-width: 1px; }
-        .dash-page .table td { padding: 10px 12px; font-size: 13px; }
-        .dash-page .table th[data-label="Time"], .dash-page .table td[data-label="Time"] { width: 20%; }
-        .dash-page .table th[data-label="Invitee"], .dash-page .table td[data-label="Invitee"] { width: 30%; }
-        .dash-page .table th[data-label="Event"], .dash-page .table td[data-label="Event"] { width: 20%; }
-        .dash-page .table th[data-label="Status"], .dash-page .table td[data-label="Status"] { width: 15%; white-space: nowrap; }
-        .dash-page .table th[data-label="Actions"], .dash-page .table td[data-label="Actions"] { width: 15%; }
-        .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; }
+        
+        .dash-page table.today-table th:nth-child(1),
+        .dash-page table.today-table td:nth-child(1) { width: 18%; }
+        .dash-page table.today-table th:nth-child(2),
+        .dash-page table.today-table td:nth-child(2) { width: 26%; }
+        .dash-page table.today-table th:nth-child(3),
+        .dash-page table.today-table td:nth-child(3) { width: 23%; }
+        .dash-page table.today-table th:nth-child(4),
+        .dash-page table.today-table td:nth-child(4) { width: 14%; }
+        .dash-page table.today-table th:nth-child(5),
+        .dash-page table.today-table td:nth-child(5) { width: 19%; }
+
+        .dash-page table.upcoming-table th:nth-child(1),
+        .dash-page table.upcoming-table td:nth-child(1),
+        .dash-page table.past-table th:nth-child(1),
+        .dash-page table.past-table td:nth-child(1) { width: 18%; }
+        .dash-page table.upcoming-table th:nth-child(2),
+        .dash-page table.upcoming-table td:nth-child(2),
+        .dash-page table.past-table th:nth-child(2),
+        .dash-page table.past-table td:nth-child(2) { width: 18%; }
+        .dash-page table.upcoming-table th:nth-child(3),
+        .dash-page table.upcoming-table td:nth-child(3),
+        .dash-page table.past-table th:nth-child(3),
+        .dash-page table.past-table td:nth-child(3) { width: 16%; }
+        .dash-page table.upcoming-table th:nth-child(4),
+        .dash-page table.upcoming-table td:nth-child(4),
+        .dash-page table.past-table th:nth-child(4),
+        .dash-page table.past-table td:nth-child(4) { width: 14%; }
+        .dash-page table.upcoming-table th:nth-child(5),
+        .dash-page table.upcoming-table td:nth-child(5),
+        .dash-page table.past-table th:nth-child(5),
+        .dash-page table.past-table td:nth-child(5) { width: 14%; }
+        .dash-page table.upcoming-table th:nth-child(6),
+        .dash-page table.upcoming-table td:nth-child(6),
+        .dash-page table.past-table th:nth-child(6),
+        .dash-page table.past-table td:nth-child(6) { width: 20%; }
+
+        .dash-page .table td[data-label="Actions"] .btn { font-size: 12px !important; padding: 4px 8px !important; border-radius: 6px !important; white-space: nowrap !important; }
         .dash-page .stat-card { border-radius: 12px; }
         .dash-page .card { border-radius: 12px; }
         @media (max-width: 767px) {
