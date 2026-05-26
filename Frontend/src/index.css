@@ -282,7 +282,6 @@ input[type="date"], input[type="time"] {
   .sidebar-main input, .sidebar-main select, .sidebar-main textarea { max-width: 100%; width: 100%; box-sizing: border-box; }
   .sidebar-main .table th,
   .sidebar-main .table td { padding: 10px 10px; font-size: 13px; white-space: nowrap; }
-  .sidebar-main .table { min-width: 600px; }
   .sidebar-main .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .sidebar-main .stat-card { padding: 14px 16px; }
   .sidebar-main .btn { font-size: 13px; padding: 6px 10px; }

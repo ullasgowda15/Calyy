@@ -614,11 +614,19 @@ export default function Dashboard() {
 
         /* ===== PHONE: <=600px ===== */
         @media (max-width: 600px) {
+          /* Contain everything within viewport */
+          .dash-page { 
+            max-width: 100vw !important; 
+            overflow-x: hidden !important; 
+            box-sizing: border-box !important; 
+          }
+          .dash-page * { max-width: 100% !important; box-sizing: border-box !important; }
+
           .dash-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
           .dash-past-stat-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
 
-          .dash-page .table-wrap { overflow-x: hidden !important; }
-          .dash-page .table { table-layout: fixed !important; width: 100% !important; }
+          .dash-page .table-wrap { overflow-x: hidden !important; width: 100% !important; }
+          .dash-page .table { table-layout: fixed !important; width: 100% !important; min-width: 0 !important; }
 
           /* Hide Event column */
           .dash-page .table th[data-label="Event"],
