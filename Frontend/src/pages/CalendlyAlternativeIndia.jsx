@@ -108,7 +108,7 @@ export default function CalendlyAlternativeIndia() {
             </div>
           </div>
 
-          <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
+          {false && (<div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ display: 'flex' }}>
                 {['#3B82F6','#10B981','#F59E0B','#EF4444','#8B5CF6'].map((c,i) => (
@@ -117,11 +117,11 @@ export default function CalendlyAlternativeIndia() {
               </div>
               {false && <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>2,400+</strong> professionals use YourCaly</span>}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            {false && (<div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginLeft: '4px' }}>4.9/5 rating</span>
-            </div>
-          </div>
+            </div>)}
+          </div>)}
         </div>
       </section>
 
