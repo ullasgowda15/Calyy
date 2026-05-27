@@ -47,7 +47,7 @@ export default function CalendlyAlternativeIndia() {
                 Made in India — For India
               </div>
               <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(36px, 5vw, 60px)', lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 20px', letterSpacing: '-0.02em' }}>
-                The Calendly alternative<br /><span style={{ color: 'var(--accent)' }}>India deserves</span>
+                YourCaly — The Calendly alternative<br /><span style={{ color: 'var(--accent)' }}>India deserves</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
                 Pricing in INR. Payments via Razorpay (UPI, cards, net banking). Timezone-ready for IST. YourCaly is built for Indian professionals — from freelancers to enterprises.

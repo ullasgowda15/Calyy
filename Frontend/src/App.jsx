@@ -27,6 +27,7 @@ import Terms from './pages/Terms';
 import ReschedulePage from './pages/ReschedulePage';
 import VerifyEmail from './pages/VerifyEmail';
 import HowItWorks from './pages/HowItWorks';
+import About from './pages/About';
 import ForCoaches from './pages/ForCoaches';
 import ForConsultants from './pages/ForConsultants';
 import ForFreelancers from './pages/ForFreelancers';
@@ -78,6 +79,7 @@ export default function App() {
               <Route path="/reschedule/:rescheduleToken" element={<ReschedulePage />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/about" element={<About />} />
               <Route path="/for-coaches" element={<ForCoaches />} />
               <Route path="/for-consultants" element={<ForConsultants />} />
               <Route path="/for-freelancers" element={<ForFreelancers />} />

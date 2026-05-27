@@ -47,7 +47,7 @@ export default function ForFreelancers() {
                 Built for freelancers
               </div>
               <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(36px, 5vw, 60px)', lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 20px', letterSpacing: '-0.02em' }}>
-                Freelance smarter.<br /><span style={{ color: 'var(--accent)' }}>Book faster.</span>
+                YourCaly — Freelance smarter.<br /><span style={{ color: 'var(--accent)' }}>Book faster.</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
                 YourCaly makes it easy for clients to book your services. Share your link, set your hours, and let automation handle the rest.

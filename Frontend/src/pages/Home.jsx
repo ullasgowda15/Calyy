@@ -171,7 +171,7 @@ export default function Home() {
 
   return (
     <div style={{ background: 'var(--surface-2)', minHeight: '100vh' }}>
-      <SeoMeta title="Scheduling Platform for Indian Professionals" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
+      <SeoMeta title="YourCaly | Scheduling Platform For Indian Professionals" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
@@ -203,11 +203,11 @@ export default function Home() {
                 lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 20px',
                 letterSpacing: '-0.02em',
               }}>
-                Scheduling that works<br />
-                <span style={{ color: 'var(--accent)' }}>for everyone.</span>
+                YourCaly — Scheduling<br />
+                <span style={{ color: 'var(--accent)' }}>that works for everyone.</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
-                Share your YourCaly link. Your invitees pick a time that works. No more back-and-forth emails.
+                YourCaly scheduling platform. Share your link, set your hours, and let clients book meetings without the back-and-forth.
               </p>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/register" className="btn btn-primary btn-lg">

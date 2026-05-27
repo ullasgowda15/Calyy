@@ -47,7 +47,7 @@ export default function ForConsultants() {
                 Built for consultants
               </div>
               <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(36px, 5vw, 60px)', lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 20px', letterSpacing: '-0.02em' }}>
-                Scheduling for<br /><span style={{ color: 'var(--accent)' }}>consultants</span>
+                YourCaly — Scheduling for<br /><span style={{ color: 'var(--accent)' }}>consultants</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
                 Your clients deserve a seamless booking experience. YourCaly automates scheduling so you can focus on delivering results.
