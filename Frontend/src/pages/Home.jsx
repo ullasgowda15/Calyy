@@ -109,9 +109,9 @@ const plans = [
 ];
 
 const testimonials = [
-  { initials: 'JD', name: 'Jane Doe', role: 'CEO, StartupCo', quote: 'YourCaly transformed how we schedule meetings. Our booking rate increased by 40% in the first month.' },
-  { initials: 'MK', name: 'Mike Kim', role: 'Freelance Designer', quote: 'The automated reminders alone saved me hours of manual follow-up every week. Worth every rupee.' },
-  { initials: 'SL', name: 'Sarah Lee', role: 'Sales Manager', quote: 'Setting up my booking page took minutes, not hours. The calendar sync alone has been a game-changer.' },
+  { initials: 'AK', name: 'Anita Kapoor', role: 'Life Coach, Mumbai', quote: 'YourCaly transformed how I schedule coaching sessions. My booking rate increased by 40% in the first month.' },
+  { initials: 'RM', name: 'Rajesh Mehta', role: 'Freelance Designer, Bengaluru', quote: 'The automated reminders alone saved me hours of manual follow-up every week. Worth every rupee.' },
+  { initials: 'PN', name: 'Priya Nair', role: 'Sales Consultant, Delhi', quote: 'Setting up my booking page took minutes, not hours. The calendar sync alone has been a game-changer.' },
 ];
 
 const upcomingFeatures = [
