@@ -54,7 +54,7 @@ const faqJsonLd = {
     {
       '@type': 'Question',
       name: 'What payment options are available?',
-      acceptedAnswer: { '@type': 'Answer', text: 'Standard plan subscriptions (₹499/month) are processed through Razorpay, which supports credit/debit cards, UPI, net banking, and popular Indian wallets. Event-level payment collection is coming soon.' },
+      acceptedAnswer: { '@type': 'Answer', text: 'Standard plan subscriptions (₹499/month) are processed through Razorpay, which supports credit/debit cards, UPI, net banking, and popular Indian wallets. Payment collection at booking is on the radar.' },
     },
     {
       '@type': 'Question',
@@ -84,7 +84,7 @@ const features = [
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
-    title: 'Payment collection (Upcoming)', desc: 'Soon you\'ll be able to collect payments at booking via UPI, cards, and net banking — powered by Razorpay.',
+    title: 'Payment collection', desc: 'Collect payments at booking time via UPI, cards, and net banking — powered by Razorpay.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
@@ -104,7 +104,7 @@ const steps = [
 
 const plans = [
   { name: 'Free', price: 'Free', period: '7-day trial', desc: 'Full access, no commitment', features: ['1 event type', 'Unlimited bookings', 'Public booking page', 'Email confirmations'], popular: false },
-  { name: 'Standard', price: '499', period: '/month', desc: 'For busy professionals', features: ['Unlimited event types', 'Google Calendar sync', 'Payment collection (Upcoming)', 'Email reminders', 'Zapier webhooks'], popular: true },
+  { name: 'Standard', price: '499', period: '/month', desc: 'For busy professionals', features: ['Unlimited event types', 'Google Calendar sync', 'Payment collection', 'Email reminders', 'Zapier webhooks'], popular: true },
   { name: 'Teams', price: '5999', period: '/month', desc: 'For growing teams', features: ['Everything in Standard', 'Round-robin routing', 'SMS reminders', 'Salesforce integration', 'Priority support'], popular: false },
 ];
 
@@ -115,10 +115,9 @@ const testimonials = [
 ];
 
 const upcomingFeatures = [
-  { title: 'Payment collection at booking', desc: 'Accept UPI, cards, and net banking when invitees book your paid event types.' },
-  { title: 'GST invoices', desc: 'Auto-generate GST-compliant invoices for every paid booking.' },
-  { title: 'Team scheduling', desc: 'Round-robin and collective availability for your entire team.' },
-  { title: 'Mobile app', desc: 'Native iOS and Android apps for on-the-go schedule management.' },
+  { title: 'Payment collection', desc: 'Accept payments when clients book your paid event types.' },
+  { title: 'UPI checkout', desc: 'Let clients pay via UPI directly at the time of booking.' },
+  { title: 'Prepaid booking payments', desc: 'Require upfront payment to confirm a booking.' },
 ];
 
 const brandColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
@@ -171,7 +170,7 @@ export default function Home() {
 
   return (
     <div style={{ background: 'var(--surface-2)', minHeight: '100vh' }}>
-      <SeoMeta title="YourCaly | Scheduling Platform For Indian Professionals" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
+      <SeoMeta title="Booking Platform For Coaches, Consultants & Freelancers" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
@@ -203,11 +202,11 @@ export default function Home() {
                 lineHeight: 1.1, color: 'var(--text-primary)', margin: '0 0 20px',
                 letterSpacing: '-0.02em',
               }}>
-                YourCaly — Scheduling<br />
-                <span style={{ color: 'var(--accent)' }}>that works for everyone.</span>
+                Scheduling platform<br />
+                <span style={{ color: 'var(--accent)' }}>built for Indian professionals</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
-                YourCaly scheduling platform. Share your link, set your hours, and let clients book meetings without the back-and-forth.
+                Create professional booking pages and manage appointments with YourCaly. Built for Indian professionals.
               </p>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/register" className="btn btn-primary btn-lg">
@@ -292,6 +291,39 @@ export default function Home() {
               {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginLeft: '4px' }}>4.9/5 rating</span>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Built for */}
+      <section style={{ padding: '60px 24px', background: 'var(--surface-2)' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '20px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Built for
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {[
+              { name: 'Coaches', link: '/for-coaches' },
+              { name: 'Consultants', link: '/for-consultants' },
+              { name: 'Freelancers', link: '/for-freelancers' },
+              { name: 'Tutors', link: null },
+              { name: 'Agencies', link: null },
+            ].map((item) => (
+              item.link ? (
+                <Link key={item.name} to={item.link} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 22px', background: 'var(--surface)', border: '1.5px solid var(--border)', borderRadius: '99px', fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)', textDecoration: 'none', transition: 'all 0.15s' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.background = 'var(--accent-light)'; e.currentTarget.style.color = 'var(--accent)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.background = 'var(--surface)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                >
+                  {item.name}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </Link>
+              ) : (
+                <span key={item.name} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '10px 22px', background: 'var(--surface)', border: '1.5px dashed var(--border)', borderRadius: '99px', fontFamily: 'Plus Jakarta Sans', fontWeight: 600, fontSize: '14px', color: 'var(--text-muted)', opacity: 0.7 }}>
+                  {item.name}
+                  <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500 }}>Coming soon</span>
+                </span>
+              )
+            ))}
           </div>
         </div>
       </section>
@@ -470,8 +502,8 @@ export default function Home() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Coming soon
           </div>
-          <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>What's on the roadmap</h2>
-          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 48px', lineHeight: 1.6 }}>We're building features to help you run your entire business on YourCaly.</p>
+          <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Coming soon</h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 48px', lineHeight: 1.6 }}>Features on our radar.</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
             {upcomingFeatures.map((uf) => (
               <div key={uf.title} style={{ padding: '24px', background: 'var(--surface-2)', borderRadius: '12px', border: '1px dashed var(--border)', textAlign: 'left' }}>
