@@ -1,6 +1,6 @@
 {
   "redirects": [
-    { "source": "/(.*)", "has": [{ "type": "host", "value": "www.yourcaly.com" }], "destination": "https://yourcaly.com/:1", "permanent": true }
+    { "source": "/:path*", "has": [{ "type": "host", "value": "www.yourcaly.com" }], "destination": "https://yourcaly.com/:path*", "permanent": true }
   ],
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
