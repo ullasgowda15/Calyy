@@ -115,7 +115,7 @@ export default function ForConsultants() {
                   <div key={i} style={{ width: '32px', height: '32px', borderRadius: '50%', background: c, border: '2px solid var(--surface)', marginLeft: i > 0 ? '-10px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#fff', fontWeight: 700, boxShadow: '0 0 10px rgba(0,0,0,0.15)' }}>{['P','K','R','M','T'][i]}</div>
                 ))}
               </div>
-              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>600+</strong> consultants use YourCaly</span>
+              {false && <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>600+</strong> consultants use YourCaly</span>}
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}

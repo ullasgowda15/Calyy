@@ -119,7 +119,7 @@ export default function About() {
         <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div className="card" style={{ padding: '56px 40px', background: 'var(--accent)', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Start scheduling with YourCaly</h2>
-            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ Indian professionals using YourCaly. Start your 7-day free trial. No credit card required.</p>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Start your 7-day free trial. No credit card required.</p>
             <Link to="/register" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '13px 28px', background: '#fff', color: 'var(--accent)', borderRadius: '12px', fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', textDecoration: 'none', transition: 'transform 0.15s, box-shadow 0.15s' }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}

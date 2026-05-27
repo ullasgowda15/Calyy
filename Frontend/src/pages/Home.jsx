@@ -277,6 +277,7 @@ export default function Home() {
 
           {/* Social proof */}
           <div style={{ marginTop: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '24px', flexWrap: 'wrap' }}>
+            {false && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ display: 'flex' }}>
                 {brandColors.slice(0,5).map((c,i) => (
@@ -287,6 +288,7 @@ export default function Home() {
               </div>
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}><strong style={{ color: 'var(--text-primary)' }}>2,400+</strong> professionals use YourCaly</span>
             </div>
+            )}
             <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
               {[1,2,3,4,5].map(i => <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>)}
               <span style={{ fontSize: '13px', color: 'var(--text-secondary)', marginLeft: '4px' }}>4.9/5 rating</span>
@@ -440,6 +442,7 @@ export default function Home() {
         </div>
       </section>
 
+      {false && (<>
       {/* Testimonials */}
       <section style={{ padding: '80px 24px', background: 'var(--surface)' }}>
         <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
@@ -466,6 +469,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </>)}
 
       {/* FAQ */}
       <section style={{ padding: '60px 24px', background: 'var(--surface-2)' }}>
@@ -520,7 +524,7 @@ export default function Home() {
         <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div className="card" style={{ padding: '56px 40px', background: 'var(--accent)', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Start scheduling smarter today</h2>
-            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ professionals using YourCaly to save time and grow their business.</p>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Start your 7-day free trial. No credit card required.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/register" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '13px 28px',
