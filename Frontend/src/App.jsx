@@ -27,6 +27,10 @@ import Terms from './pages/Terms';
 import ReschedulePage from './pages/ReschedulePage';
 import VerifyEmail from './pages/VerifyEmail';
 import HowItWorks from './pages/HowItWorks';
+import ForCoaches from './pages/ForCoaches';
+import ForConsultants from './pages/ForConsultants';
+import ForFreelancers from './pages/ForFreelancers';
+import CalendlyAlternativeIndia from './pages/CalendlyAlternativeIndia';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminVerify2FA from './pages/admin/AdminVerify2FA';
@@ -74,6 +78,10 @@ export default function App() {
               <Route path="/reschedule/:rescheduleToken" element={<ReschedulePage />} />
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/how-it-works" element={<HowItWorks />} />
+              <Route path="/for-coaches" element={<ForCoaches />} />
+              <Route path="/for-consultants" element={<ForConsultants />} />
+              <Route path="/for-freelancers" element={<ForFreelancers />} />
+              <Route path="/calendly-alternative-india" element={<CalendlyAlternativeIndia />} />
               <Route path="/adkrish/login" element={<AdminLogin />} />
               <Route path="/adkrish/verify-2fa" element={<AdminVerify2FA />} />
               <Route path="/adkrish" element={<AdminGuard><AdminLayout /></AdminGuard>}>

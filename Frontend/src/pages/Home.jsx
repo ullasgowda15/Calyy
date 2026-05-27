@@ -1,7 +1,73 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import SeoMeta from '../components/SeoMeta';
+import { Helmet } from 'react-helmet-async';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      name: 'YourCaly',
+      url: 'https://yourcaly.com',
+      logo: 'https://yourcaly.com/YourCalyLogo.png',
+      description: 'Scheduling platform built for Indian professionals. Create booking pages, manage availability, and automate meeting scheduling.',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'YourCaly',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      description: 'Create booking pages and schedule meetings easily. Built for coaches, consultants and freelancers in India.',
+      offers: [
+        { '@type': 'Offer', price: '0', priceCurrency: 'INR', description: '7-day free trial' },
+        { '@type': 'Offer', price: '499', priceCurrency: 'INR', description: 'Standard plan per month' },
+      ],
+      featureList: [
+        'Unlimited event types',
+        'Smart availability management',
+        'Automated email reminders',
+        'Timezone-aware booking',
+        'Google Calendar sync',
+        'Public booking pages',
+      ],
+    },
+  ],
+};
+
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'How do invitees book a meeting?',
+      acceptedAnswer: { '@type': 'Answer', text: 'They visit your public booking link, pick an event type, select an available time slot, fill in their details, and confirm. You\'ll receive an email notification with their details.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I sync with Google Calendar?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Yes. Go to Settings and connect your Google Calendar. Events you create on YourCaly will automatically appear in your Google Calendar and vice versa.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'What payment options are available?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Standard plan subscriptions (₹499/month) are processed through Razorpay, which supports credit/debit cards, UPI, net banking, and popular Indian wallets. Event-level payment collection is coming soon.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Can I customise my booking page?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Your booking page uses your name, username, and event type details. More customisation options are coming soon.' },
+    },
+    {
+      '@type': 'Question',
+      name: 'Is there a mobile app?',
+      acceptedAnswer: { '@type': 'Answer', text: 'Not yet, but the web app is fully responsive and works great on mobile browsers.' },
+    },
+  ],
+};
 
 const features = [
   {
@@ -18,7 +84,7 @@ const features = [
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
-    title: 'Payment collection', desc: 'Collect payment at booking via UPI, cards, and net banking — powered by Razorpay.',
+    title: 'Payment collection (Upcoming)', desc: 'Soon you\'ll be able to collect payments at booking via UPI, cards, and net banking — powered by Razorpay.',
   },
   {
     icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>,
@@ -37,18 +103,48 @@ const steps = [
 ];
 
 const plans = [
-  { name: 'Free', price: '0', period: '/month', desc: 'Perfect to get started', features: ['1 event type', 'Unlimited bookings', 'Public booking page', 'Email confirmations'], popular: false },
-  { name: 'Standard', price: '499', period: '/month', desc: 'For busy professionals', features: ['Unlimited event types', 'Google Calendar sync', 'Payment collection', 'Email reminders', 'Zapier webhooks'], popular: true },
+  { name: 'Free', price: 'Free', period: '7-day trial', desc: 'Full access, no commitment', features: ['1 event type', 'Unlimited bookings', 'Public booking page', 'Email confirmations'], popular: false },
+  { name: 'Standard', price: '499', period: '/month', desc: 'For busy professionals', features: ['Unlimited event types', 'Google Calendar sync', 'Payment collection (Upcoming)', 'Email reminders', 'Zapier webhooks'], popular: true },
   { name: 'Teams', price: '5999', period: '/month', desc: 'For growing teams', features: ['Everything in Standard', 'Round-robin routing', 'SMS reminders', 'Salesforce integration', 'Priority support'], popular: false },
 ];
 
 const testimonials = [
   { initials: 'JD', name: 'Jane Doe', role: 'CEO, StartupCo', quote: 'YourCaly transformed how we schedule meetings. Our booking rate increased by 40% in the first month.' },
   { initials: 'MK', name: 'Mike Kim', role: 'Freelance Designer', quote: 'The automated reminders alone saved me hours of manual follow-up every week. Worth every rupee.' },
-  { initials: 'SL', name: 'Sarah Lee', role: 'Sales Manager', quote: 'Setting up payment collection for consultations was effortless. It just works, every time.' },
+  { initials: 'SL', name: 'Sarah Lee', role: 'Sales Manager', quote: 'Setting up my booking page took minutes, not hours. The calendar sync alone has been a game-changer.' },
+];
+
+const upcomingFeatures = [
+  { title: 'Payment collection at booking', desc: 'Accept UPI, cards, and net banking when invitees book your paid event types.' },
+  { title: 'GST invoices', desc: 'Auto-generate GST-compliant invoices for every paid booking.' },
+  { title: 'Team scheduling', desc: 'Round-robin and collective availability for your entire team.' },
+  { title: 'Mobile app', desc: 'Native iOS and Android apps for on-the-go schedule management.' },
 ];
 
 const brandColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+
+const profiles = [
+  { role: 'Fitness Coach', name: 'G. Mann', initial: 'G' },
+  { role: 'Dietician / Nutritionist', name: 'R. Diwekar', initial: 'R' },
+  { role: 'Makeup Artist', name: 'P. Garg', initial: 'P' },
+  { role: 'Physiotherapist', name: 'Dr. A. Jain', initial: 'A' },
+  { role: 'Dermatologist', name: 'Dr. J. Sharad', initial: 'J' },
+  { role: 'Career Coach', name: 'S. Maheshwari', initial: 'S' },
+  { role: 'Business Consultant', name: 'A. Warikoo', initial: 'A' },
+  { role: 'Finance Advisor', name: 'R. Ranade', initial: 'R' },
+  { role: 'Therapist / Psychologist', name: 'S. Gupta', initial: 'S' },
+  { role: 'Yoga Teacher', name: 'B. Ramdev', initial: 'B' },
+  { role: 'Lawyer', name: 'H. Salve', initial: 'H' },
+  { role: 'Interior Designer', name: 'G. Khan', initial: 'G' },
+  { role: 'Wedding Photographer', name: 'J. Radhik', initial: 'J' },
+  { role: 'Wedding Planner', name: 'V. Mohan', initial: 'V' },
+  { role: 'Freelancer / SEO Consultant', name: 'N. Patel', initial: 'N' },
+  { role: 'Coding Mentor', name: 'L. Babbar', initial: 'L' },
+  { role: 'IELTS Trainer', name: 'K. Keshari', initial: 'K' },
+  { role: 'UPSC Mentor', name: 'R. Saini', initial: 'R' },
+  { role: 'CA / Tax Consultant', name: 'N. Bhatia', initial: 'N' },
+  { role: 'Wedding Stylist', name: 'A. Hakim', initial: 'A' },
+];
 
 export default function Home() {
   const location = useLocation();
@@ -62,14 +158,28 @@ export default function Home() {
     }
   }, [location.hash]);
 
+  const [profileIdx, setProfileIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setProfileIdx((i) => (i + 1) % profiles.length);
+    }, 3500);
+    return () => clearInterval(id);
+  }, []);
+
+  const current = profiles[profileIdx];
+  const urlSlug = current.name.toLowerCase().replace(/^dr\.\s*/i, '').replace(/[^a-z0-9]/g, '');
+
   return (
     <div style={{ background: 'var(--surface-2)', minHeight: '100vh' }}>
+      <SeoMeta title="Scheduling Platform for Indian Professionals" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
+      <Helmet>
+        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+      </Helmet>
       <Navbar />
 
-      {/* SEO meta via document title is handled by index.html - this is the visual content */}
-
       {/* Hero */}
-      <section style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '80px 24px 72px', overflow: 'hidden', position: 'relative' }}>
+      <section style={{ background: 'var(--surface)', borderBottom: '1px solid var(--border)', padding: '100px 24px 96px', overflow: 'hidden', position: 'relative' }}>
         {/* Background grid decoration */}
         <div style={{ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(var(--border) 1px, transparent 1px)', backgroundSize: '28px 28px', opacity: 0.5, pointerEvents: 'none' }} />
         {/* Gradient overlay */}
@@ -97,7 +207,7 @@ export default function Home() {
                 <span style={{ color: 'var(--accent)' }}>for everyone.</span>
               </h1>
               <p style={{ fontSize: 'clamp(16px, 2vw, 19px)', color: 'var(--text-secondary)', maxWidth: '480px', lineHeight: 1.6, margin: '0 0 36px' }}>
-                Share your YourCaly link. Your invitees pick a time. Collect payment. All in one elegant flow.
+                Share your YourCaly link. Your invitees pick a time that works. No more back-and-forth emails.
               </p>
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                 <Link to="/register" className="btn btn-primary btn-lg">
@@ -116,21 +226,21 @@ export default function Home() {
                     {['#FF5F57','#FEBC2E','#28C840'].map((c,i) => <div key={i} style={{ width: '10px', height: '10px', borderRadius: '50%', background: c }} />)}
                   </div>
                   <div style={{ flex: 1, height: '28px', background: 'var(--surface)', borderRadius: '6px', display: 'flex', alignItems: 'center', paddingLeft: '10px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                    yourcaly.com/sarah-chen
+                    yourcaly.com/book/{urlSlug}
                   </div>
                 </div>
-                <div style={{ padding: '24px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                <div style={{ padding: '20px 24px', display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
                   <div style={{ minWidth: '180px', flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '16px' }}>S</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '20px' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: '18px' }}>{current.initial}</div>
                       <div>
-                        <div style={{ fontWeight: 700, fontSize: '14px', color: 'var(--text-primary)' }}>Sarah Chen</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>30 min · Video call</div>
+                        <div style={{ fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)' }}>{current.name}</div>
+                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{current.role}</div>
                       </div>
                     </div>
                     <div style={{ background: 'var(--surface-2)', borderRadius: '10px', padding: '14px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>May 2025</span>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>May 2026</span>
                         <div style={{ display: 'flex', gap: '4px' }}>
                           {['‹','›'].map((a,i) => <div key={i} style={{ width: '20px', height: '20px', background: 'var(--surface)', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', color: 'var(--text-secondary)', cursor: 'pointer' }}>{a}</div>)}
                         </div>
@@ -172,7 +282,7 @@ export default function Home() {
               <div style={{ display: 'flex' }}>
                 {brandColors.slice(0,5).map((c,i) => (
                   <div key={i} style={{ width: '32px', height: '32px', borderRadius: '50%', background: c, border: '2px solid var(--surface)', marginLeft: i > 0 ? '-10px' : 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', color: '#fff', fontWeight: 700, boxShadow: '0 0 10px rgba(0,0,0,0.15)' }}>
-                    {String.fromCharCode(65 + i)}
+                    {['P','M','K','R','T'][i]}
                   </div>
                 ))}
               </div>
@@ -249,7 +359,7 @@ export default function Home() {
               Pricing
             </div>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(28px, 3.5vw, 40px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Simple, transparent pricing</h2>
-            <p style={{ fontSize: '17px', color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto' }}>No hidden fees. Start free, upgrade when you need more.</p>
+            <p style={{ fontSize: '17px', color: 'var(--text-secondary)', maxWidth: '400px', margin: '0 auto' }}>Start with a 7-day free trial. No credit card required.</p>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px', maxWidth: '900px', margin: '0 auto' }}>
             {plans.map((p) => (
@@ -271,7 +381,7 @@ export default function Home() {
                   <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '18px', color: 'var(--text-primary)', margin: '0 0 4px' }}>{p.name}</h3>
                   <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 16px' }}>{p.desc}</p>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
-                    <span style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'Plus Jakarta Sans', color: 'var(--text-primary)', lineHeight: 1 }}>₹{p.price}</span>
+                    <span style={{ fontSize: '36px', fontWeight: 800, fontFamily: 'Plus Jakarta Sans', color: 'var(--text-primary)', lineHeight: 1 }}>{p.name === 'Free' ? 'Free' : `₹${p.price}`}</span>
                     <span style={{ fontSize: '14px', color: 'var(--text-muted)' }}>{p.period}</span>
                   </div>
                 </div>
@@ -334,9 +444,9 @@ export default function Home() {
           </div>
           <div style={{ borderTop: '1px solid var(--border)' }}>
             {[
-              { q: 'How do invitees book a meeting?', a: 'They visit your public booking link, pick an event type, select an available time slot, fill in their details, and confirm. If the event has a price, they pay first.' },
+              { q: 'How do invitees book a meeting?', a: 'They visit your public booking link, pick an event type, select an available time slot, fill in their details, and confirm. You\'ll receive an email notification with their details.' },
               { q: 'Can I sync with Google Calendar?', a: 'Yes. Go to Settings and connect your Google Calendar. Events you create on YourCaly will automatically appear in your Google Calendar and vice versa.' },
-              { q: 'What payment methods are supported?', a: 'Payments are processed through Razorpay. Invitees can pay via UPI, credit/debit cards, net banking, and popular Indian wallets.' },
+              { q: 'What payment options are available?', a: 'Standard plan subscriptions (₹499/month) are processed through Razorpay, which supports credit/debit cards, UPI, net banking, and popular Indian wallets. Event-level payment collection is coming soon.' },
               { q: 'Can I customise my booking page?', a: 'Your booking page uses your name, username, and event type details. More customisation options are coming soon.' },
               { q: 'Is there a mobile app?', a: 'Not yet — but the web app is fully responsive and works great on mobile browsers.' },
             ].map((item, i) => (
@@ -354,12 +464,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* What's coming */}
+      <section style={{ padding: '60px 24px', background: 'var(--surface)' }}>
+        <div style={{ maxWidth: '960px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', background: 'var(--surface-3)', borderRadius: '99px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Coming soon
+          </div>
+          <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: 'var(--text-primary)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>What's on the roadmap</h2>
+          <p style={{ fontSize: '16px', color: 'var(--text-secondary)', maxWidth: '500px', margin: '0 auto 48px', lineHeight: 1.6 }}>We're building features to help you run your entire business on YourCaly.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' }}>
+            {upcomingFeatures.map((uf) => (
+              <div key={uf.title} style={{ padding: '24px', background: 'var(--surface-2)', borderRadius: '12px', border: '1px dashed var(--border)', textAlign: 'left' }}>
+                <h3 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', margin: '0 0 6px' }}>{uf.title}</h3>
+                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6, margin: 0 }}>{uf.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section style={{ padding: '80px 24px', background: 'var(--surface)' }}>
+      <section style={{ padding: '80px 24px', background: 'var(--surface-2)' }}>
         <div style={{ maxWidth: '680px', margin: '0 auto', textAlign: 'center' }}>
           <div className="card" style={{ padding: '56px 40px', background: 'var(--accent)', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
             <h2 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: 'clamp(26px, 3vw, 36px)', color: '#fff', margin: '0 0 14px', letterSpacing: '-0.02em' }}>Start scheduling smarter today</h2>
-            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ professionals using YourCaly to save time and get paid for their time.</p>
+            <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.8)', margin: '0 0 32px', lineHeight: 1.6 }}>Join 2,400+ professionals using YourCaly to save time and grow their business.</p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/register" style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '13px 28px',
