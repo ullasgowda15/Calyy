@@ -21,7 +21,7 @@ export default function Privacy() {
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>5. Revoking Google Access</h2>
           <p>You can revoke Google Calendar access at any time via YourCaly Settings or your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'none' }}>Google Account permissions page</a>. Revoking access stops all calendar sync immediately.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>6. Contact</h2>
-           <p>For questions about this policy, contact us at support@yourcaly.com.</p>
+           <p>For questions about this policy, contact us at privacy@yourcaly.com.</p>
         </div>
         <Link to="/" style={{ display: 'inline-block', marginTop: '24px', color: 'var(--accent)', fontSize: '14px', textDecoration: 'none' }}>&larr; Back to home</Link>
       </div>
