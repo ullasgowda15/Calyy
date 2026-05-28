@@ -17,7 +17,7 @@ const steps = [
   {
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v16h16"/><polyline points="20 10 12 18 8 14"/></svg>,
     title: 'Share your booking link',
-    desc: 'Each event type gets a unique link like yourcaly.com/your-username/meeting. Share it with clients, colleagues, or anyone who needs to book time with you.',
+    desc: 'Share your booking page link (yourcaly.com/book/username) with clients, colleagues, or anyone who needs to book time with you.',
   },
   {
     icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83M16.62 12l-5.74 9.94"/></svg>,
@@ -56,7 +56,7 @@ export default function HowItWorks() {
                   {s.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>{s.title}</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>{s.title}{i === 3 && <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '99px', background: 'var(--warning)', color: '#000' }}>Upcoming</span>}</div>
                   <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{s.desc}</p>
                 </div>
               </div>
@@ -81,7 +81,7 @@ export default function HowItWorks() {
                   {s.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>{s.title}</div>
+                  <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '8px' }}>{s.title}{i === 3 && <span style={{ fontSize: '10px', fontWeight: 600, padding: '2px 7px', borderRadius: '99px', background: 'var(--warning)', color: '#000' }}>Upcoming</span>}</div>
                   <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{s.desc}</p>
                 </div>
               </div>
