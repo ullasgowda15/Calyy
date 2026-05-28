@@ -10,7 +10,7 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
-SCOPES = ['https://www.googleapis.com/auth/calendar']
+SCOPES = ['https://www.googleapis.com/auth/calendar.events']
 
 
 def get_credentials(google_token) -> Credentials | None:

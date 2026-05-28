@@ -14,7 +14,7 @@ from .serializers import WebhookSubscriptionSerializer
 from bookings.tasks import sync_google_calendar_event
 
 SCOPES = [
-    'https://www.googleapis.com/auth/calendar',
+    'https://www.googleapis.com/auth/calendar.events',
     'openid',
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
