@@ -46,7 +46,7 @@ export default function Footer() {
         </div>
         <div style={{ borderTop: '1px solid #2A2A30', paddingTop: '24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <p style={{ fontSize: '13px', color: '#52525B', margin: 0 }}>&copy; {new Date().getFullYear()} YourCaly. All rights reserved.</p>
-          <p style={{ fontSize: '13px', color: '#52525B', margin: 0 }}>Scheduling for Indian professionals.</p>
+          <p style={{ fontSize: '13px', color: '#52525B', margin: 0 }}>Contact: <a href="mailto:support@yourcaly.com" style={{ color: '#A1A1AA', textDecoration: 'none' }}>support@yourcaly.com</a></p>
         </div>
         <style dangerouslySetInnerHTML={{ __html: '@media (max-width: 767px) { .footer-desc { max-width: 100% !important; } }' }} />
       </div>

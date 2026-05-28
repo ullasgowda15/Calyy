@@ -22,6 +22,8 @@ export default function Terms() {
           <p>YourCaly is provided "as is" without warranties. We are not liable for damages arising from use of the service.</p>
           <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>6. Changes</h2>
           <p>We may update these terms. Continued use after changes constitutes acceptance.</p>
+          <h2 style={{ fontSize: '18px', color: 'var(--text-primary)', marginTop: '28px' }}>7. Contact</h2>
+          <p>For questions about these terms, contact us at <a href="mailto:support@yourcaly.com" style={{ color: 'var(--accent)', textDecoration: 'none' }}>support@yourcaly.com</a>.</p>
         </div>
         <Link to="/" style={{ display: 'inline-block', marginTop: '24px', color: 'var(--accent)', fontSize: '14px', textDecoration: 'none' }}>&larr; Back to home</Link>
       </div>
