@@ -70,6 +70,7 @@ export const availability = {
 };
 
 export const bookings = {
+  generateSessionToken: () => api.get('/bookings/session-token/'),
   createBooking: (data) => api.post('/bookings/', data),
   getMyBookings: (status) => api.get(`/bookings/my/${status ? `?status=${status}` : ''}`),
   cancelBooking: (id, token, data) => api.post(`/bookings/${id}/cancel/?token=${token}`, data),

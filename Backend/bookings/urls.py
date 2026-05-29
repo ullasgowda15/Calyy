@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import CreateBookingView, HostBookingListView, BookingDetailView, cancel_booking, reschedule_booking, reschedule_by_token, update_booking_status, host_cancel_booking
+from .views import CreateBookingView, HostBookingListView, BookingDetailView, cancel_booking, reschedule_booking, reschedule_by_token, update_booking_status, host_cancel_booking, generate_session_token
 
 urlpatterns = [
     path('', CreateBookingView.as_view(), name='create_booking'),
+    path('session-token/', generate_session_token, name='generate_session_token'),
     path('my/', HostBookingListView.as_view(), name='host_bookings'),
     path('<uuid:pk>/', BookingDetailView.as_view(), name='booking_detail'),
     path('<uuid:booking_id>/cancel/', cancel_booking, name='cancel_booking'),

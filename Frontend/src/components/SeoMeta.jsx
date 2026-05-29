@@ -4,7 +4,7 @@ const SITE_URL = 'https://yourcaly.com';
 const DEFAULT_OG_IMAGE = 'https://yourcaly.com/YourCalyLogo.png';
 
 export default function SeoMeta({ title, description, canonical, ogImage }) {
-  const fullTitle = title ? `YourCaly | ${title}` : 'YourCaly | Booking Platform For Indian Professionals';
+  const fullTitle = title ? `YourCaly | ${title}` : 'YourCaly | Scheduling Platform For Indian Professionals';
   const fullDesc = description || 'Create booking pages and schedule meetings easily. Built for coaches, consultants and freelancers in India.';
   const canonicalUrl = canonical ? `${SITE_URL}${canonical}` : SITE_URL;
   const image = ogImage || DEFAULT_OG_IMAGE;

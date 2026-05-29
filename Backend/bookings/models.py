@@ -3,6 +3,20 @@ from django.db import models
 from django.conf import settings
 
 
+class BookingSession(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    used = models.BooleanField(default=False)
+
+    def is_expired(self):
+        from django.utils import timezone
+        return timezone.now() > self.expires_at
+
+    class Meta:
+        ordering = ['-created_at']
+
+
 class Booking(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending'),

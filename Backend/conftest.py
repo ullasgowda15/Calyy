@@ -78,6 +78,16 @@ def second_auth_client(second_user):
 
 
 @pytest.fixture
+def booking_session(db):
+    from bookings.models import BookingSession
+    from django.utils import timezone
+    from datetime import timedelta
+    return BookingSession.objects.create(
+        expires_at=timezone.now() + timedelta(minutes=30)
+    )
+
+
+@pytest.fixture
 def free_event_type(host_user):
     from events.models import EventType
     return EventType.objects.create(

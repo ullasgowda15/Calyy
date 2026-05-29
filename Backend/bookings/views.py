@@ -6,8 +6,8 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.db import transaction
-from datetime import timedelta
-from .models import Booking
+from datetime import timedelta, datetime
+from .models import Booking, BookingSession
 from .serializers import BookingCreateSerializer, BookingSerializer, BookingListSerializer
 from .tasks import send_booking_confirmation, send_booking_reminder, send_cancellation_email, send_no_show_email, send_rescheduled_email, sync_google_calendar_event, delete_google_calendar_event, deliver_webhook_task
 from django_ratelimit.decorators import ratelimit
@@ -47,6 +47,17 @@ def finalize_booking(booking):
     _safe_delay(deliver_webhook_task, str(host.id), 'booking.created', BookingSerializer(booking).data)
 
 
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
+@ratelimit(key='ip', rate='60/h', method='GET')
+def generate_session_token(request):
+    import uuid
+    session = BookingSession.objects.create(
+        expires_at=timezone.now() + timedelta(minutes=30)
+    )
+    return Response({'booking_token': str(session.id)})
+
+
 class CreateBookingView(generics.CreateAPIView):
     serializer_class = BookingCreateSerializer
     permission_classes = (permissions.AllowAny,)
@@ -59,6 +70,17 @@ class CreateBookingView(generics.CreateAPIView):
         finalize_booking(booking)
 
     def create(self, request, *args, **kwargs):
+        booking_token = request.data.get('booking_token')
+        if not booking_token:
+            return Response({'error': 'Missing booking session token. Refresh the page and try again.'}, status=403)
+
+        try:
+            session = BookingSession.objects.get(id=booking_token, used=False)
+            if session.is_expired():
+                return Response({'error': 'Booking session expired. Refresh the page and try again.'}, status=403)
+        except BookingSession.DoesNotExist:
+            return Response({'error': 'Invalid booking session. Refresh the page and try again.'}, status=403)
+
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         event_type = serializer.validated_data.get('event_type')
@@ -105,6 +127,8 @@ class CreateBookingView(generics.CreateAPIView):
 
         booking.status = 'confirmed'
         booking.save(update_fields=['status'])
+        session.used = True
+        session.save(update_fields=['used'])
         self._finalize_booking(booking)
         return Response(BookingSerializer(booking).data, status=status.HTTP_201_CREATED)
 

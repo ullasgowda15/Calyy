@@ -170,7 +170,7 @@ export default function Home() {
 
   return (
     <div style={{ background: 'var(--surface-2)', minHeight: '100vh' }}>
-      <SeoMeta title="Booking Platform For Coaches, Consultants & Freelancers" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
+      <SeoMeta title="Scheduling Platform For Indian Professionals" canonical="/" ogImage="https://yourcaly.com/YourCalyLogo.png" />
       <Helmet>
         <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>

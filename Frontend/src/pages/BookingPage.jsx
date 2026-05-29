@@ -28,6 +28,11 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [sessionToken, setSessionToken] = useState(null);
+
+  useEffect(() => {
+    bookings.generateSessionToken().then((res) => setSessionToken(res.data.booking_token)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     eventTypes.getPublicEventTypes(username).then((res) => {
@@ -81,12 +86,12 @@ export default function BookingPage() {
   const handleSubmit = async (e) => {
     e.preventDefault(); setError(''); setSubmitting(true);
     try {
-      const data = { event_type_id: selectedEvent.id, ...form, start_datetime: selectedSlot.start };
+      const data = { event_type_id: selectedEvent.id, ...form, start_datetime: selectedSlot.start, booking_token: sessionToken };
       const res = await bookings.createBooking(data);
       // V2: payment collection — add `if (res.data.requires_payment) { ... }` here
       navigate('/booking-confirmed', { state: { booking: res.data, eventType: selectedEvent, host: username } });
     } catch (err) {
-      setError(err.response?.data?.detail || 'Booking failed. This slot may no longer be available.');
+      setError(err.response?.data?.error || err.response?.data?.detail || err.response?.data?.non_field_errors?.[0] || 'Booking failed. Please try again.');
     } finally { setSubmitting(false); }
   };
 
