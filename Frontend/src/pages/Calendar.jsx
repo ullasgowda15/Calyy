@@ -93,10 +93,10 @@ export default function Calendar() {
   };
 
   return (
-    <div className="page-layout">
+    <div style={{ minHeight: '100vh', background: 'var(--surface-2)', display: 'flex' }}>
       <Sidebar />
-      <main className="page-content" style={{ paddingTop: 'clamp(60px, 8vh, 80px)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
+        <div className="page-content" style={{ maxWidth: '1200px' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '28px', color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>Calendar</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
