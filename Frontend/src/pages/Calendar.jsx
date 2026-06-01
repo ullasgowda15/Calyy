@@ -49,7 +49,7 @@ export default function Calendar() {
     const cells = [];
     const prevPadding = firstDay;
     for (let i = prevPadding - 1; i >= 0; i--) {
-      cells.push({ day: prevMonthDays - i, muted: true, date: null });
+      cells.push({ day: prevMonthDays - i, muted: true, date: null, bookings: [] });
     }
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -58,7 +58,7 @@ export default function Calendar() {
     }
     const remaining = 42 - cells.length;
     for (let d = 1; d <= remaining; d++) {
-      cells.push({ day: d, muted: true, date: null });
+      cells.push({ day: d, muted: true, date: null, bookings: [] });
     }
     return cells;
   }, [currentYear, currentMonth, daysInMonth, firstDay, prevMonthDays, bookingsByDate, today]);
