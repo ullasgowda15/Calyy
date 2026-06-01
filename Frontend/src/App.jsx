@@ -33,6 +33,7 @@ import ForCoaches from './pages/ForCoaches';
 import ForConsultants from './pages/ForConsultants';
 import ForFreelancers from './pages/ForFreelancers';
 import CalendlyAlternativeIndia from './pages/CalendlyAlternativeIndia';
+import Calendar from './pages/Calendar';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminVerify2FA from './pages/admin/AdminVerify2FA';
@@ -67,6 +68,7 @@ export default function App() {
               <Route path="/event-types/new" element={<ProtectedRoute><CreateEventType /></ProtectedRoute>} />
               <Route path="/event-types/:id/edit" element={<ProtectedRoute><EditEventType /></ProtectedRoute>} />
               <Route path="/availability" element={<ProtectedRoute><Availability /></ProtectedRoute>} />
+              <Route path="/calendar" element={<ProtectedRoute><Calendar /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/booking/:id" element={<ProtectedRoute><BookingDetail /></ProtectedRoute>} />

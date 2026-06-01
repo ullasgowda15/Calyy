@@ -83,30 +83,36 @@ export default function Settings() {
                 <div className="skeleton" style={{ width: '100px', height: '34px', borderRadius: '8px' }} />
               </div>
             ) : googleStatus?.connected ? (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-success)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="2"><path d="M5 13l4 4L19 7"/></svg>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Connected</div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{googleStatus.email}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>Connected</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{googleStatus.email}</div>
-                  </div>
+                  <button disabled onClick={disconnectGoogle} className="btn btn-danger btn-sm" style={{ opacity: 0.5, cursor: 'not-allowed' }}>Disconnect</button>
                 </div>
-                <button onClick={disconnectGoogle} className="btn btn-danger btn-sm">Disconnect</button>
+                <p style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '8px', fontWeight: 500 }}>Under Google verification — disconnect temporarily unavailable</p>
               </div>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+                    </div>
+                    <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Not connected</div>
                   </div>
-                  <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Not connected</div>
+                  <button disabled onClick={connectGoogle} className="btn btn-secondary btn-sm" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                    Connect Google Calendar
+                  </button>
                 </div>
-                <button onClick={connectGoogle} className="btn btn-secondary btn-sm">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
-                  Connect Google Calendar
-                </button>
+                <p style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '8px', fontWeight: 500 }}>Under Google verification — connect temporarily unavailable</p>
               </div>
             )}
           </Section>

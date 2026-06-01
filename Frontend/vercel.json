@@ -1,6 +1,65 @@
 {
   "redirects": [
-    { "source": "/:path*", "has": [{ "type": "host", "value": "www.yourcaly.com" }], "destination": "https://yourcaly.com/:path*", "permanent": true }
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.yourcaly.com"
+        }
+      ],
+      "destination": "https://yourcaly.com/:path*",
+      "permanent": true
+    }
   ],
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/for-coaches",
+      "destination": "/for-coaches/index.html"
+    },
+    {
+      "source": "/for-consultants",
+      "destination": "/for-consultants/index.html"
+    },
+    {
+      "source": "/for-freelancers",
+      "destination": "/for-freelancers/index.html"
+    },
+    {
+      "source": "/calendly-alternative-india",
+      "destination": "/calendly-alternative-india/index.html"
+    },
+    {
+      "source": "/how-it-works",
+      "destination": "/how-it-works/index.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about/index.html"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/privacy/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms/index.html"
+    },
+    {
+      "source": "/login",
+      "destination": "/login/index.html"
+    },
+    {
+      "source": "/register",
+      "destination": "/register/index.html"
+    },
+    {
+      "source": "/pricing",
+      "destination": "/pricing/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
