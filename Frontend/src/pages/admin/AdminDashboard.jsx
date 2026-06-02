@@ -21,10 +21,12 @@ export default function AdminDashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [revenue, setRevenue] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [days, setDays] = useState(30);
   const [group, setGroup] = useState('day');
 
-  useEffect(() => {
+  const fetchData = (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
     Promise.all([
       admin.getDashboard(),
       admin.getAnalytics({ days }),
@@ -33,8 +35,10 @@ export default function AdminDashboard() {
       setStats(s.data);
       setAnalytics(a.data);
       setRevenue(r.data);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, [days, group]);
+    }).catch(() => {}).finally(() => { setLoading(false); setRefreshing(false); });
+  };
+
+  useEffect(() => { fetchData(); }, [days, group]);
 
   if (loading) {
     return (
@@ -51,7 +55,7 @@ export default function AdminDashboard() {
           <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Dashboard</h1>
           <p style={{ fontSize: '13px', color: '#7F7F8C', margin: 0 }}>Platform overview and key metrics</p>
         </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
           <select value={group} onChange={(e) => setGroup(e.target.value)} style={{ padding: '8px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', outline: 'none' }}>
             <option value="day">Daily</option>
             <option value="week">Weekly</option>
@@ -62,6 +66,10 @@ export default function AdminDashboard() {
             <option value={30}>Last 30 days</option>
             <option value={90}>Last 90 days</option>
           </select>
+          <button onClick={() => fetchData(true)} disabled={refreshing} style={{ padding: '8px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg className={refreshing ? 'spin' : ''} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            {refreshing ? 'Refreshing…' : 'Refresh'}
+          </button>
         </div>
       </div>
 

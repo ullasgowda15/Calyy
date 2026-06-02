@@ -12,15 +12,16 @@ export default function AdminBookings() {
   const [paymentStatus, setPaymentStatus] = useState('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState('');
 
-  const fetch = useCallback((searchVal, pageVal, statusVal, paymentVal) => {
-    setLoading(true);
+  const fetch = useCallback((searchVal, pageVal, statusVal, paymentVal, isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
     setError('');
     admin.getBookings({ page: pageVal, status: statusVal, payment_status: paymentVal, search: searchVal, sort: '-created_at', per_page: 15 })
       .then((res) => { setBookings(res.data.results); setTotal(res.data.total); })
       .catch(() => setError('Failed to load bookings'))
-      .finally(() => setLoading(false));
+      .finally(() => { setLoading(false); setRefreshing(false); });
   }, []);
 
   useEffect(() => { fetch(search, page, status, paymentStatus); }, [fetch, page, status, paymentStatus]);
@@ -34,7 +35,13 @@ export default function AdminBookings() {
   return (
     <>
     <div>
-      <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: '0 0 20px', letterSpacing: '-0.02em' }}>Bookings <span style={{ fontSize: '14px', fontWeight: 400, color: '#7F7F8C' }}>({total})</span></h1>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
+        <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '22px', color: '#fff', margin: 0, letterSpacing: '-0.02em' }}>Bookings <span style={{ fontSize: '14px', fontWeight: 400, color: '#7F7F8C' }}>({total})</span></h1>
+        <button onClick={() => fetch(search, page, status, paymentStatus, true)} disabled={refreshing} style={{ padding: '8px 12px', borderRadius: '8px', backgroundColor: '#1A1A1F', border: '1px solid #2A2A30', color: '#fff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <svg className={refreshing ? 'spin' : ''} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          {refreshing ? 'Refreshing…' : 'Refresh'}
+        </button>
+      </div>
 
       {error && <div style={{ background: '#7F1D1D', border: '1px solid #991B1B', borderRadius: '8px', padding: '10px 14px', marginBottom: '16px', fontSize: '13px', color: '#FCA5A5' }}>{error}</div>}
 
