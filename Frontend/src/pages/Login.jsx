@@ -43,7 +43,6 @@ export default function Login() {
             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 28px', lineHeight: 1.5, maxWidth: '260px' }}>Sign in with Google to access your account and manage your bookings instantly.</p>
               <button
               type="button"
-              disabled
               onClick={() => {
                 integrations.getGoogleRegisterUrl().then((res) => {
                   window.location.href = res.data.auth_url;
@@ -57,7 +56,6 @@ export default function Login() {
               style={{
                 width: '100%', maxWidth: '280px', padding: '11px', fontSize: '15px', justifyContent: 'center',
                 border: '1.5px solid var(--border)', background: 'var(--surface)',
-                opacity: 0.5, cursor: 'not-allowed',
               }}
             >
               <svg width="18" height="18" viewBox="0 0 48 48" style={{ marginRight: '8px' }}>
@@ -68,7 +66,6 @@ export default function Login() {
               </svg>
               Sign in with Google
             </button>
-            <p style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '8px', maxWidth: '240px', lineHeight: 1.4, fontWeight: 500 }}>Under Google verification — coming soon</p>
           </div>
 
           {/* Right — email form */}

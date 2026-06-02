@@ -94,9 +94,8 @@ export default function Settings() {
                       <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{googleStatus.email}</div>
                     </div>
                   </div>
-                  <button disabled onClick={disconnectGoogle} className="btn btn-danger btn-sm" style={{ opacity: 0.5, cursor: 'not-allowed' }}>Disconnect</button>
+                  <button onClick={disconnectGoogle} className="btn btn-danger btn-sm">Disconnect</button>
                 </div>
-                <p style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '8px', fontWeight: 500 }}>Under Google verification — disconnect temporarily unavailable</p>
               </div>
             ) : (
               <div>
@@ -107,12 +106,11 @@ export default function Settings() {
                     </div>
                     <div style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>Not connected</div>
                   </div>
-                  <button disabled onClick={connectGoogle} className="btn btn-secondary btn-sm" style={{ opacity: 0.5, cursor: 'not-allowed' }}>
+                  <button onClick={connectGoogle} className="btn btn-secondary btn-sm">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
                     Connect Google Calendar
                   </button>
                 </div>
-                <p style={{ fontSize: '11px', color: 'var(--warning)', marginTop: '8px', fontWeight: 500 }}>Under Google verification — connect temporarily unavailable</p>
               </div>
             )}
           </Section>

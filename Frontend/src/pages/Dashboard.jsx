@@ -298,7 +298,7 @@ export default function Dashboard() {
       {!googleConnected && (
         <div style={{ background: 'var(--surface-info)', border: '1.5px solid var(--border-info)', borderRadius: '12px', padding: '14px 18px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '12px' }} className="dash-banner">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>Google Calendar sync is under verification — coming soon. <Link to="/calendar" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>View your calendar</Link></p>
+          <p style={{ fontSize: '13px', color: 'var(--text-info)', flex: 1, margin: 0 }}>Connect Google Calendar to sync your bookings automatically and check for conflicts. <Link to="/settings" style={{ color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>Go to Settings</Link></p>
         </div>
       )}
 
