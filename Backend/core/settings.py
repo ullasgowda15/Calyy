@@ -187,10 +187,10 @@ RAZORPAY_WEBHOOK_SECRET = env('RAZORPAY_WEBHOOK_SECRET', default='')
 
 GOOGLE_CLIENT_ID = env('GOOGLE_CLIENT_ID', default='')
 GOOGLE_CLIENT_SECRET = env('GOOGLE_CLIENT_SECRET', default='')
-GOOGLE_REDIRECT_URI = env('GOOGLE_REDIRECT_URI', default='https://caly-backend.up.railway.app/api/integrations/google/callback/')
+GOOGLE_REDIRECT_URI = env('GOOGLE_REDIRECT_URI', default='http://localhost:8000/api/integrations/google/callback/')
 
-FRONTEND_URL = env('FRONTEND_URL', default='https://yourcaly.com')
-BASE_URL = env('BASE_URL', default='https://caly-backend.up.railway.app')
+FRONTEND_URL = env('FRONTEND_URL', default='http://localhost:5173')
+BASE_URL = env('BASE_URL', default='http://localhost:8000')
 
 RESEND_API_KEY = env('RESEND_API_KEY', default='')
 

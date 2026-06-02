@@ -86,16 +86,20 @@ export default function AvailabilityPage() {
   const [blockForm, setBlockForm] = useState({ start_date: todayStr(), start_time: '09:00', end_date: todayStr(), end_time: '10:00', reason: '' });
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
+  const fetchData = (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
     Promise.all([
       availability.getAvailability(),
       availability.getBlockedTimes(),
     ]).then(([avRes, blRes]) => {
       setWindows(avRes.data.map((w) => ({ ...w, start_time: w.start_time.slice(0, 5), end_time: w.end_time.slice(0, 5) })));
       setBlocked(blRes.data);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    }).catch(() => {}).finally(() => { setLoading(false); setRefreshing(false); });
+  };
+
+  useEffect(() => { fetchData(); }, []);
 
   const getDayWindows = (dayIndex) => windows.filter((w) => w.weekday === dayIndex && w.is_active);
 
@@ -155,10 +159,16 @@ export default function AvailabilityPage() {
       <Sidebar />
       <main style={{ flex: 1, minHeight: '100vh' }} className="sidebar-main">
         <div className="page-content" style={{ maxWidth: '900px' }}>
-          <div style={{ marginBottom: '28px' }}>
-            <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Availability</h1>
-            <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Set your weekly hours and block out times you're unavailable.</p>
-            <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '6px 0 0' }}>Times shown in <strong>{getUserTimezone()}</strong> — update your timezone in <Link to="/profile" style={{ color: 'var(--accent)' }}>Profile</Link> if this is wrong.</p>
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+            <div>
+              <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '24px', color: 'var(--text-primary)', margin: '0 0 4px', letterSpacing: '-0.02em' }}>Availability</h1>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', margin: 0 }}>Set your weekly hours and block out times you're unavailable.</p>
+              <p style={{ fontSize: '13px', color: 'var(--text-muted)', margin: '6px 0 0' }}>Times shown in <strong>{getUserTimezone()}</strong> — update your timezone in <Link to="/profile" style={{ color: 'var(--accent)' }}>Profile</Link> if this is wrong.</p>
+            </div>
+            <button onClick={() => fetchData(true)} disabled={refreshing} className="btn btn-secondary btn-sm">
+              <svg className={refreshing ? 'spin' : ''} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              {refreshing ? 'Refreshing…' : 'Refresh'}
+            </button>
           </div>
 
           {/* Weekly hours */}

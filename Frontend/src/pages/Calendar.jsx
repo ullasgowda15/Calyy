@@ -23,13 +23,17 @@ export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [allBookings, setAllBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const tz = getUserTimezone();
 
-  useEffect(() => {
+  const fetchData = (isRefresh = false) => {
+    if (isRefresh) setRefreshing(true); else setLoading(true);
     bookings.getMyBookings().then((res) => {
       setAllBookings(res.data);
-    }).catch(() => {}).finally(() => setLoading(false));
-  }, []);
+    }).catch(() => {}).finally(() => { setLoading(false); setRefreshing(false); });
+  };
+
+  useEffect(() => { fetchData(); }, []);
 
   const bookingsByDate = useMemo(() => {
     const map = {};
@@ -100,6 +104,12 @@ export default function Calendar() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '12px' }}>
             <h1 style={{ fontFamily: 'Plus Jakarta Sans', fontWeight: 800, fontSize: '28px', color: 'var(--text-primary)', margin: 0, letterSpacing: '-0.02em' }}>Calendar</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <button onClick={() => fetchData(true)} disabled={refreshing} className="btn btn-sm" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', fontWeight: 600, color: 'var(--text-secondary)' }}
+                onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
+                onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-2)'>
+                <svg className={refreshing ? 'spin' : ''} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                {refreshing ? ' ' : 'Refresh'}
+              </button>
               <button onClick={goToday} className="btn btn-sm" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', fontWeight: 600, color: 'var(--text-secondary)' }}
                 onMouseEnter={(e) => e.currentTarget.style.background = 'var(--surface-3)'}
                 onMouseLeave={(e) => e.currentTarget.style.background = 'var(--surface-2)'}>Today</button>
