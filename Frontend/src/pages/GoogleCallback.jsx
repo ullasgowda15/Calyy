@@ -7,6 +7,7 @@ export default function GoogleCallback() {
   const { loadProfile } = useAuth();
 
   useEffect(() => {
+    if (localStorage.getItem('access_token')) return;
     const params = new URLSearchParams(window.location.search);
     const access = params.get('access');
     const refresh = params.get('refresh');
@@ -19,7 +20,7 @@ export default function GoogleCallback() {
         localStorage.removeItem('refresh_token');
         navigate('/login?error=session_failed', { replace: true });
       });
-    } else {
+    } else if (!localStorage.getItem('access_token')) {
       navigate('/login?error=google_auth_failed', { replace: true });
     }
   }, [navigate, loadProfile]);

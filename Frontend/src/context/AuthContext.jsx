@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../api/client';
 import { getUserTimezone } from '../utils/datetime';
@@ -50,11 +50,11 @@ export function AuthProvider({ children }) {
     await login({ email: data.email, password: data.password });
   };
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     const profile = await auth.getProfile();
     setUser(profile.data);
     return profile;
-  };
+  }, []);
 
   const logout = async () => {
     const refresh = localStorage.getItem('refresh_token');
