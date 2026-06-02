@@ -92,6 +92,10 @@ function updateVercelJson() {
   if (!fs.existsSync(vercelPath)) return;
 
   const vercel = JSON.parse(fs.readFileSync(vercelPath, 'utf-8'));
+  const prerenderSources = new Set(routes.filter((r) => r.path !== '/').map((r) => r.path));
+  const existingNonPrerender = (vercel.rewrites || []).filter(
+    (r) => !prerenderSources.has(r.source) && r.source !== '/(.*)'
+  );
   const prerenderRewrites = routes
     .filter((r) => r.path !== '/')
     .map((r) => ({
@@ -100,7 +104,7 @@ function updateVercelJson() {
     }));
   const spaCatchAll = { source: '/(.*)', destination: '/index.html' };
 
-  vercel.rewrites = [...prerenderRewrites, spaCatchAll];
+  vercel.rewrites = [...existingNonPrerender, ...prerenderRewrites, spaCatchAll];
   fs.writeFileSync(vercelPath, JSON.stringify(vercel, null, 2) + '\n', 'utf-8');
   console.log(`[prerender-seo] Updated vercel.json with ${prerenderRewrites.length} prerender rewrites`);
 }
